@@ -1,0 +1,93 @@
+# Prefix that is displayed before all message
+Prefix: "&cAdvancedBan &8\xbb"
+# Notify admins if a banned player tries to join
+DenyNotify: false
+LoadingMessage: true
+# Disable UUID usage for cracked servers
+# Early versions of the webpanel will NOT work if this is disabled
+UseUUID: true
+# This will be the reason if no reason got entered
+DefaultReason: "Connection lost"
+MySQL:
+  enabled: false
+  IP: localhost
+  Port: '3306'
+  DB-Name: bans
+  Username: root
+  Password: lol123
+ChatMessages:
+  Banned: "&e&o%PLAYER% &7got banned"
+  Kicked: "&e&o%PLAYER% &7got kicked"
+  AlreadyBanned: "&7%PLAYER% is already banned"
+  Until: "&cUntil &8\xbb &7"
+  Reason: "&cReason &8\xbb &7"
+  BannedBy: "&cBanned by &8\xbb &7"
+  EndingIn: "&cUnban in &8\xbb &7"
+  Unbanned: "&e&o%PLAYER% &7got unbanned"
+  NotOnline: "&7This Player is not online!"
+  NotBanned: "&e&o%PLAYER% &7is not banned"
+  IsBanned: "&e&o%PLAYER% &7is banned"
+  NoPerms: "&7You don't have enough perms"
+  KickExempt: "&cYou are not able to kick this Player"
+  BanExempt: "&cYou are not able to ban this Player"
+  PlayerHistory: "&cPlayerHistory &8\xbb"
+  NoPlayerHistory: "&cThis Player has no Player-History"
+  RemovedPlayerHistory: "&c%PLAYER%'s history got removed"
+  UsagePlayerHistory: "&cUsage &o/history [get/clear] PLAYER"
+  UsageCheck: "&cUsage: &o/check [IP/Player]"
+  UsageKick: "&cUsage: &o/kick [Player] <Reason>"
+  UsageUnban: "&cUsage: &o/unban [IP/Player]"
+  UsageIpBan: "&cUsage: &o/ban-ip [IP/Player] <Reason>"
+  UsageTempBan: "&cUsage: &o/tempban [Player] [Number] [S/M/H/D/W/Mo/Y] <Reason>"
+  UsageBan: "&cUsage: &o/ban [IP/Player] <Reason>"
+  Loading: "&cLoading ..."
+BanListLayout:
+  Header:
+  - "&7Banlist:"
+  - "&9&lPlayer/IP &8| &c&lUntil &8| &7&lBanned by"
+  - "&e&oReason"
+  - "&7"
+  Entry:
+  - "&9%NAME% &8| &c%UNTIL% &8| &7%BY%"
+  - "&7%REASON%"
+  - "&7"
+  Footer: "&7There are currently %NO% active bans"
+HistoryLayout:
+- '&c%DATE% &8- &6%NAME%'
+- "&cType &8\xbb %TYPE%"
+- "&cReason &8\xbb &7%REASON%"
+- "&cBanned by &8\xbb &7%BY%"
+KickLayout:
+- '%PREFIX% &7Kicked'
+- '&7'
+- "&cReason &8\xbb &7%REASON%"
+- '&7'
+BanLayout:
+- '%PREFIX% &7Permenently banned'
+- '&7'
+- '&7'
+- "&cReason &8\xbb &7%REASON%"
+- '&7'
+- '&8Unban application in TS or forum'
+- "&eTS-Ip &8\xbb &c&ncomming soon"
+- "&eForum &8\xbb &c&ncomming soon"
+TempbanLayout:
+- '%PREFIX% &7Temporary banned'
+- '&7'
+- '&7'
+- "&cReason &8\xbb &7%REASON%"
+- "&cUntil &8\xbb &7%REMAINING%"
+- '&7'
+- '&8Unban application in TS or forum'
+- "&eTS-Ip &8\xbb &c&ncomming soon"
+- "&eForum &8\xbb &c&ncomming soon"
+# Commands that get executed when a player
+# get kicked or banned | Vars: %PLAYER%
+CommandsOn:
+  Ban:
+  - "report clear %PLAYER%"
+  - "Any more commands :P"
+  Tempban:
+  - "report clear %PLAYER%"
+  Kick:
+  - "Maby a broadcast?"

@@ -1,0 +1,37 @@
+name: AdvancedBan
+version: 9
+author: Leoko
+main: me.leoko.advancedban.Main
+
+commands:
+     advancedban:
+          description: Notify-User
+          usage: </command>
+     ban:
+          description: Ban a player
+          usage: </command>
+     ban-ip:
+          description: Ban an ip
+          usage: </command>
+          aliases: [banip]
+     unban:
+          description: Unban a player
+          usage: </command>
+     kick:
+          description: Kick a player
+          usage: </command>
+     banlist:
+          description: List all bans
+          usage: </command>
+     ckeck:
+          description: Check the status of a player
+          usage: </command>
+     history:
+          description: Get or clear Player-History
+          usage: </command>
+     tempban:
+          description: Tempban a player
+          usage: </command>
+     doNothing:
+          description: Console debug
+          usage: </command>
