@@ -16,7 +16,7 @@ import org.json.simple.parser.JSONParser;
 public class UUIDHandler {
 	private Map<String, String> activeUUIDs = new HashMap<String, String>();
 	
-	private static UUIDHandler instance;
+	private static UUIDHandler instance = null;
 	public static UUIDHandler get(){
 		if(instance == null) instance = new UUIDHandler();
 		return instance;

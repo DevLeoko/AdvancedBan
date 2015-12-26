@@ -16,6 +16,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 public class CommandHandler {
 	private static CommandHandler instance;
 	public static CommandHandler get(){
@@ -96,11 +99,14 @@ public class CommandHandler {
 										@Override
 										public void run() {
 											BanHandler.get().execCommands("Kick", Bukkit.getPlayer(args[1]).getName());
-											if(nGrund != null){
-												Bukkit.getPlayer(args[1]).kickPlayer(pl.getLayout(pl.KKL, nGrund + "#BannedBy#"+ getName(sender), null, null));
-											}else{
-												Bukkit.getPlayer(args[1]).kickPlayer(pl.getLayout(pl.KKL, "You got kicked#BannedBy#"+ getName(sender), null, null));
-											}
+											
+											ByteArrayDataOutput out = ByteStreams.newDataOutput();
+											out.writeUTF("KickPlayer");
+											out.writeUTF(Bukkit.getPlayer(args[1]).getName());
+											out.writeUTF(pl.getLayout(pl.KKL, (nGrund == null ? "You got kicked" : nGrund) + "#BannedBy#"+ getName(sender), null, null));
+											Bukkit.getPlayer(args[1]).sendPluginMessage(pl, "BungeeCord", out.toByteArray());
+											
+											Bukkit.getPlayer(args[1]).kickPlayer(pl.getLayout(pl.KKL, (nGrund == null ? "You got kicked" : nGrund) + "#BannedBy#"+ getName(sender), null, null));
 										}
 									});
 									pl.addHistoryEntry(args[1], grund, getName(sender) , "KICK");
@@ -408,19 +414,19 @@ public class CommandHandler {
 								}
 							}
 							
-							if(!pl.isIP(args[1]) && !Bukkit.getOfflinePlayer(args[1]).isOnline() && !pl.ips.containsKey(args[1].toLowerCase())){
+							if(!pl.isIP(args[1]) && !pl.iPs.containsKey(args[1].toLowerCase())){
 								sendMessage(sender,getMSG("NotOnline", true));
 								return true;
 							}
 							
 							String player = args[1];
 							
-							if(Bukkit.getOfflinePlayer(args[1]).isOnline()){
-							player = Bukkit.getPlayer(args[1]).getAddress().toString().split("/")[(Bukkit.getPlayer(args[1]).getAddress().toString().split("/").length)-1].split(":")[0].replaceAll("\\.", "-");
+							if(pl.iPs.containsKey(args[1].toLowerCase())){
+								player = pl.iPs.get(player.toLowerCase()).replaceAll("\\.", "-");;
 							}else if(pl.isIP(args[1])){
 								player = player.replaceAll("\\.", "-");
 							}else{
-								player = pl.ips.get(player.toLowerCase()).replaceAll("\\.", "-");
+								player = "IP_NOT_FOUND";
 							}
 							
 							if(bh.addBan(grund, "never", player, getName(sender))){

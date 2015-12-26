@@ -19,6 +19,9 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent.Result;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 @SuppressWarnings("deprecation")
 public class JoinListener implements Listener{
 	private static JoinListener instance;
@@ -34,17 +37,21 @@ public class JoinListener implements Listener{
 					e.getPlayer().sendMessage("§cPluginManager §8» §7Hey Leoko we are using §e§oAdvancedBan§7!");
 			} }, 20);
 		}
+		
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(Main.get(), new Runnable() {
+			@Override
+			public void run() {
+				Main.get().checkIP(e.getPlayer().getName(), null);
+			}
+		}, 10);
 	}
 	
 	@SuppressWarnings({ "unused", "static-access" })
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onJoin(final AsyncPlayerPreLoginEvent e){
-		Main pl = Main.get();
+		final Main pl = Main.get();
 		BanHandler bh = BanHandler.get();
 		MySQLHandler mysql = MySQLHandler.get();
-		
-		if(pl.ips.containsKey(e.getName())) pl.ips.remove(e.getName());
-		pl.ips.put(e.getName().toLowerCase(), e.getAddress().getHostAddress());
 		
 		Boolean banned = false;	
 		
@@ -150,8 +157,6 @@ public class JoinListener implements Listener{
 					e.disallow(Result.KICK_BANNED, pl.getLayout(pl.BBL, "You are permanently banned#BannedBy#Admin", null, null));
 				}
 			}
-				
-				
 	}
 	
 	public String caltcBetween(Date u, Date t){

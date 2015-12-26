@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import me.leoko.advancedban.handler.BanHandler;
 import me.leoko.advancedban.handler.CommandHandler;
 import me.leoko.advancedban.handler.MySQLHandler;
 import me.leoko.advancedban.handler.UUIDHandler;
@@ -27,12 +29,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerPreLoginEvent.Result;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 
-public class Main extends JavaPlugin implements Listener{
-	public Map<String, String> ips = new HashMap<>();
+public class Main extends JavaPlugin implements Listener, PluginMessageListener{
+	public Map<String, String> iPs = new HashMap<>();
 	
 	//Files
 	public File confFile = new File(getDataFolder().getPath(), "config.yml");
@@ -59,9 +67,14 @@ public class Main extends JavaPlugin implements Listener{
 		return instance;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
 		instance = this;
+		
+		//Bungee-Support
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 		
 		//Registering Plugin activity | MCStats
 		try {
@@ -103,6 +116,14 @@ public class Main extends JavaPlugin implements Listener{
 		if(!playerHistoryFile.exists()){
 			try { ph.save(playerHistoryFile); } catch (IOException e) { e.printStackTrace(); }
 		}
+		
+		//Reload fix | IP-Ban
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(Main.get(), new Runnable() {
+			@Override
+			public void run() {
+				for(Player p : Bukkit.getOnlinePlayers())checkIP(p.getName(), null);
+			}
+		}, 10);
 		
 		System.out.println("\n[=]---------------------------[=]"+
 						   "\n-= AdvancedBan =-"+
@@ -384,6 +405,56 @@ public class Main extends JavaPlugin implements Listener{
 			((Player) target).sendMessage(msg);
 		}else{
 			System.out.println(ChatColor.stripColor(msg));
+		}
+	}
+
+	
+	@SuppressWarnings("deprecation")
+	public void checkIP(final String name, String prefIP){
+		if(prefIP == null) prefIP = Bukkit.getPlayer(name).getAddress().toString().split("/")[(Bukkit.getPlayer(name).getAddress().toString().split("/").length)-1].split(":")[0].replaceAll("\\.", "-");
+		System.out.println("Registering IP of "+name);
+		if(iPs.containsKey(name.toLowerCase())) iPs.remove(name.toLowerCase());
+		iPs.put(name.toLowerCase(), prefIP);
+		
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("IP");
+		Bukkit.getPlayer(name).sendPluginMessage(Main.get(), "BungeeCord", out.toByteArray());
+	}
+
+	@Override
+	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+		if (!channel.equals("BungeeCord")) return;
+		
+		ByteArrayDataInput in = ByteStreams.newDataInput(message);
+		String subchannel = in.readUTF();
+		if (subchannel.equals("IP")) {
+			String ip = in.readUTF();
+			
+			if(iPs.containsKey(player.getName().toLowerCase())) iPs.remove(player.getName().toLowerCase());
+			iPs.put(player.getName().toLowerCase(), ip);
+			
+			boolean banned = false;
+			
+			if(mysql){ if(BanHandler.get().isBanned(ip.replaceAll("\\.", "-"))) banned = true; }
+			else{ 	   if(bans.contains(            ip.replaceAll("\\.", "-"))) banned = true; }
+			
+			
+			if(banned){
+				String reason = null;
+				if(mysql){
+					try {
+						MySQLHandler.get().myRs = MySQLHandler.get().myStmtT.executeQuery();
+						MySQLHandler.get().myRs.beforeFirst();
+						while(MySQLHandler.get().myRs.next()){
+							if(MySQLHandler.get().myRs.getString("name").equals(ip.replaceAll("\\.", "-"))){
+								reason = MySQLHandler.get().myRs.getString("reason");
+							}
+						}
+					}catch(SQLException ex){  ex.printStackTrace();  }
+				}else reason = bans.getString(ip.replaceAll("\\.", "-") + ".reason");
+				
+				player.kickPlayer(getLayout(BBL, reason, null, null));
+			}
 		}
 	}
 }

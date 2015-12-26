@@ -51,7 +51,7 @@ public class BanHandler {
 		
 		//Adding bans
 		@SuppressWarnings("static-access")
-		public Boolean addBan(String reason, String ending, String name, String by){
+		public boolean addBan(String reason, String ending, String name, String by){
 			String rlName = name;
 			Boolean b = true;
 			Main pl = Main.get();
@@ -62,6 +62,8 @@ public class BanHandler {
 			if(!pl.isChangedIP(rlName)){
 				if(ending.equalsIgnoreCase("never")) execCommands("Ban", rlName);
 				else execCommands("Tempban", rlName);
+			}else{
+				if(rlName.equalsIgnoreCase(Main.get().conf.getString("BungeeCordIP", "0.0.0.0").replaceAll("\\.", "-"))) return false;
 			}
 			
 			if(UUIDHandler.get().getUUID(name) != null){

@@ -1,13 +1,22 @@
 # Prefix that is displayed before all message
 Prefix: "&cAdvancedBan &8\xbb"
+
 # Notify admins if a banned player tries to join
 DenyNotify: false
 LoadingMessage: true
+
 # Disable UUID usage for cracked servers
 # Early versions of the webpanel will NOT work if this is disabled
 UseUUID: true
+
 # This will be the reason if no reason got entered
 DefaultReason: "Connection lost"
+
+# For Server-Networks [Security fix]
+# This IP will not be banable!
+BungeeCordIP: "342.123.213.423"
+
+# MySQL-Settings
 MySQL:
   enabled: false
   IP: localhost
@@ -15,6 +24,19 @@ MySQL:
   DB-Name: bans
   Username: root
   Password: lol123
+
+# Commands that get executed when a player
+# get kicked or banned | Vars: %PLAYER%
+CommandsOn:
+  Ban:
+  - "report clear %PLAYER%"
+  - "Any more commands :P"
+  Tempban:
+  - "report clear %PLAYER%"
+  Kick:
+  - "Maby a broadcast?"
+
+# Message-Settings
 ChatMessages:
   Banned: "&e&o%PLAYER% &7got banned"
   Kicked: "&e&o%PLAYER% &7got kicked"
@@ -81,13 +103,3 @@ TempbanLayout:
 - '&8Unban application in TS or forum'
 - "&eTS-Ip &8\xbb &c&ncomming soon"
 - "&eForum &8\xbb &c&ncomming soon"
-# Commands that get executed when a player
-# get kicked or banned | Vars: %PLAYER%
-CommandsOn:
-  Ban:
-  - "report clear %PLAYER%"
-  - "Any more commands :P"
-  Tempban:
-  - "report clear %PLAYER%"
-  Kick:
-  - "Maby a broadcast?"
