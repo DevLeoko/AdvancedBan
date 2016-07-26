@@ -1,7 +1,7 @@
 name: AdvancedBan
 version: 2.0.0
 author: Leoko
-main: me.leoko.advancedban.BukkitMain
+main: me.leoko.advancedban.bungee.BungeeMain
 
 commands:
   AdvancedBan:
