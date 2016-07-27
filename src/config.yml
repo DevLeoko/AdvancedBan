@@ -30,8 +30,8 @@ DateFormat: "dd.MM.yyyy-HH:mm"
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either the official MojangAPI or the InternFetcher be used!
 # To check if you can use the intern fetcher do /systemPerfs and compare your uuid
-#   to the one you can see online on http://NamesMC.com
-#   if they are simelar we recommend using the InternFetcher
+# to the one you can see online on http://NamesMC.com
+# if they are simelar we recommend using the InternFetcher
 UUID-Fetcher:
   # Disable for cracked servers
   Enabled: true

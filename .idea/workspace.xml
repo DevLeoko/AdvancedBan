@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e8f8bfe-e5de-43cd-97c6-ec8cf0885acc" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Messages.yml" afterPath="$PROJECT_DIR$/src/Messages.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/config.yml" afterPath="$PROJECT_DIR$/src/config.yml" />
     </list>
     <ignored path="AdvancedBan.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -74,11 +73,11 @@
         <option value="$PROJECT_DIR$/src/me/leoko/advancedban/utils/PunishmentType.java" />
         <option value="$PROJECT_DIR$/src/me/leoko/advancedban/manager/TimeManager.java" />
         <option value="$PROJECT_DIR$/src/me/leoko/advancedban/Universal.java" />
-        <option value="$PROJECT_DIR$/src/config.yml" />
         <option value="$PROJECT_DIR$/src/Layouts.yml" />
         <option value="$PROJECT_DIR$/src/me/leoko/advancedban/manager/UUIDManager.java" />
         <option value="$PROJECT_DIR$/src/me/leoko/advancedban/listener/CommandReceiver.java" />
         <option value="$PROJECT_DIR$/src/Messages.yml" />
+        <option value="$PROJECT_DIR$/src/config.yml" />
       </list>
     </option>
   </component>
@@ -120,9 +119,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
@@ -246,7 +243,9 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -910,15 +909,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-78">
           <caret line="3" column="40" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="59" column="42" selection-start-line="59" selection-start-column="37" selection-end-line="59" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +916,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="71" selection-start-line="5" selection-start-column="71" selection-end-line="5" selection-end-column="71" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/plugin.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="33" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -938,10 +934,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/plugin.yml">
+    <entry file="file://$PROJECT_DIR$/src/config.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="33" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
+        <state relative-caret-position="561">
+          <caret line="33" column="58" selection-start-line="33" selection-start-column="58" selection-end-line="33" selection-end-column="58" />
           <folding />
         </state>
       </provider>
