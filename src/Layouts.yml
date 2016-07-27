@@ -3,12 +3,12 @@
 # Message-Layouts can not only be used for bans but also for mutes and warns
 # Varibales: %OPERATOR%, %REASON%, %PREFIX%, %DURATION%
 # For warns you have also the variable %COUNT% which will be
-# replaced with the current amount of warns the player already resived
+# replaced with the current amount of warns the player already received
 # Example usage: /ban Leoko @ExampleLayout
 Message:
   ExampleLayout:
     - '%PREFIX% &7Banned for Hacking'
-    - '&c&oBannd by %OPERATOR%'
+    - '&c&oBanned by %OPERATOR%'
     - '&7'
     - "&cIt seems like you are using a"
     - "&chacked client please disabled it!"
