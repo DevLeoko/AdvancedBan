@@ -6,8 +6,10 @@ import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -76,7 +78,7 @@ public class BungeeMethods implements MethodInterface {
             JsonParser jp = new JsonParser();
             JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            return json.get(key).toString();
+            return json.get(key).toString().replaceAll("\"", "");
 
         }catch(Exception exc){
             return null;
@@ -228,8 +230,8 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public boolean callCMD(Object player, String cmd) {
-        Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
-        if(pnt != null && Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1))){
+        Punishment pnt;
+        if(Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) && (pnt =  PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null){
             for(String str : pnt.getLayout()) sendMessage(player, str);
             return true;
         }
@@ -261,12 +263,12 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String parseJSON(InputStreamReader json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString();
+        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
     }
 
     @Override
     public String parseJSON(String json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString();
+        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
     }
 
     @Override

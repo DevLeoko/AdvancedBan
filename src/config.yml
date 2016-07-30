@@ -1,14 +1,14 @@
 # AdvancedBan v2 - Coded by Leoko
 # For each setting there is a small description
-# please read it carefully befor changing anything
+# please read it carefully before changing anything
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
-# Do you want your own Plugin or Webside, check out our Dev-Page: http://dev.skamps.eu
+# Do you want your own Plugin or Website, check out our Dev-Page: http://dev.skamps.eu
 
 # If set to false all bans will be saved locally in the data.yml
 UseMySQL: false
 
 # Set to false if you want to have only short messages in the console
-# on startup and on the shutdown.
+# On startup and on the shutdown.
 DetailedEnableMessage: true
 DetailedDisableMessage: true
 
@@ -26,12 +26,12 @@ MuteCommands:
 # The date-format which will be used for the %DATE% variable
 DateFormat: "dd.MM.yyyy-HH:mm"
 
-# If you use extern REST-APIs they will have to respons in JSON
+# If you use extern REST-APIs they will have to respond in JSON
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either the official MojangAPI or the InternFetcher be used!
 # To check if you can use the intern fetcher do /systemPerfs and compare your uuid
 #   to the one you can see online on http://NamesMC.com
-#   if they are simelar we recommend using the InternFetcher
+#   if they are similar we recommend using the InternFetcher
 UUID-Fetcher:
   # Disable for cracked servers
   Enabled: true
@@ -45,7 +45,7 @@ UUID-Fetcher:
 
 # These are the commands that will be performed on warns
 # If you skip a number the command from before will be performed
-# You can also use not-AdvancedBan-Commands like 'broadcast' or 'clear %PLAYER%'
+# You can also use not-AdvancedBan-Commands like 'broadcast' or 'clear %PLAYER%
 # Variables: %PLAYER%, %REASON%, %COUNT%
 WarnActions:
   3: "kick %PLAYER% &c&oYou received the 3th warning!"

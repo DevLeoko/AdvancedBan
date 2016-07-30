@@ -2,7 +2,7 @@ General:
   Prefix: "&c&lAdvancedBan &8&l\xbb"
   NoPerms: "&cNo perms!"
   LayoutNotFound: "&cThere is no layout called %NAME%"
-  # This will be replaced for the %DURATION% variable
+  # This will be the replacement for the %DURATION% variable
   TimeLayoutD: "%D%day(s) %H%h %M%min and %S%sec"
   TimeLayoutH: "%H%hour(s) %M%min and %S%sec"
   TimeLayoutM: "%M%min and %S%sec"
@@ -41,7 +41,7 @@ Ipban:
   Notification:
   - "&c&o%NAME% &7got banned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  IpNotCashed: "&cThere us not saved IP for %NAME%!"
+  IpNotCashed: "&cThere is no saved IP for %NAME%!"
 
 Tempban:
   Usage: "&cUsage &8\xbb &7&o/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
@@ -59,7 +59,7 @@ Tempban:
   Notification:
   - "&c&o%NAME% &7got banned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7&oHe got banned for &e&o%DURATION%"
+  - "&7&oThis person got banned for &e&o%DURATION%" # "He" is only male "this person" is male and female
 
 Mute:
   Usage: "&cUsage &8\xbb &7&o/mute [Name] [Reason/@Layout]"
@@ -82,7 +82,7 @@ Tempmute:
   Notification:
   - "&c&o%NAME% &7got muted by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7&oHe got muted for &e&o%DURATION%"
+  - "&7&oThis person got muted for &e&o%DURATION%"
 
 Warn:
   Usage: "&cUsage &8\xbb &7&o/warn [Name] [Reason/@Layout]"
@@ -107,7 +107,7 @@ Tempwarn:
   Notification:
   - "&c&o%NAME% &7got temp-warned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7The warn will pass in &o%DURATION%"
+  - "&7This warn will pass in &o%DURATION%"
 
 Kick:
   Usage: "&cUsage &8\xbb &7&o/kick [Name] [Reason/@Layout]"

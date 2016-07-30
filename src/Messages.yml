@@ -2,7 +2,7 @@ General:
   Prefix: "&c&lAdvancedBan &8&l\xbb"
   NoPerms: "&cNo perms!"
   LayoutNotFound: "&cThere is no layout called %NAME%"
-  # This will be replaced for the %DURATION% variable
+  # This will be the replacement for the %DURATION% variable
   TimeLayoutD: "%D%day(s) %H%h %M%min and %S%sec"
   TimeLayoutH: "%H%hour(s) %M%min and %S%sec"
   TimeLayoutM: "%M%min and %S%sec"
