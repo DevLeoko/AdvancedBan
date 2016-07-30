@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class CommandReceiver implements CommandExecutor{
-// This is a receiver
+
     private static CommandReceiver instance = null;
     public static CommandReceiver get(){
         return instance == null ? instance = new CommandReceiver() : instance;
