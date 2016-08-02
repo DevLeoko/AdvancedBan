@@ -15,7 +15,7 @@ public class TimeManager {
     public static long toMilliSec(String s){
         String[] sl = s.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)"); // This is not my regex :P | From: http://stackoverflow.com/a/8270824
 
-        int i = Integer.valueOf(sl[0]);
+        long i = Long.parseLong(sl[0]);
         switch (sl[1]){
             case "s":
                 return i*1000;

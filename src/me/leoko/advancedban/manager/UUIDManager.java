@@ -29,7 +29,8 @@ public class UUIDManager {
 		try {
 			uuid = askAPI(mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"), name, mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.Key"));
 		} catch (IOException e) {
-			System.out.println("!! Failed fatching UUID of "+name);
+			e.printStackTrace();
+			System.out.println("!! Failed fetching UUID of "+name);
 			System.out.println("!! Could not connect to REST-API under "+mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"));
 		}
 
@@ -38,7 +39,7 @@ public class UUIDManager {
 			try {
 				uuid = askAPI(mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.URL"), name, mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.Key"));
 			} catch (IOException e) {
-				System.out.println("!! Failed fatching UUID of "+name);
+				System.out.println("!! Failed fetching UUID of "+name);
 				System.out.println("!! Could not connect to REST-API under "+mi.getString(mi.getConfig(),"UUID-Fetcher.BackUp-API.URL"));
 			}
 		}
@@ -74,13 +75,13 @@ public class UUIDManager {
 	}
 
 	private String askAPI(String url, String name, String key) throws IOException{
-		HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIME%", new Date().getTime()+"")).openConnection();
+		HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime()+"")).openConnection();
 		request.connect();
 
 		String uuid = mi.parseJSON(new InputStreamReader(request.getInputStream()), key);
 
 		if(uuid == null){
-			System.out.println("!! Failed fatching UUID of "+name);
+			System.out.println("!! Failed fetching UUID of "+name);
 			System.out.println("!! Could not find key '"+key+"' in the servers response");
 			System.out.println("!! Response: "+request.getResponseMessage());
 		}else{

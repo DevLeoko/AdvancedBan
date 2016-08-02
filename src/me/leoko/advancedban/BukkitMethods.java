@@ -221,8 +221,8 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public boolean callCMD(Object player, String cmd) {
-        Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
-        if(pnt != null && Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1))){
+        Punishment pnt;
+        if(Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null){
             for(String str : pnt.getLayout()) sendMessage(player, str);
             return true;
         }
@@ -253,8 +253,10 @@ public class BukkitMethods implements MethodInterface {
         try {
             return ((JSONObject) new JSONParser().parse(json)).get(key).toString();
         } catch (ParseException e) {
+            e.printStackTrace();
             return null;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
