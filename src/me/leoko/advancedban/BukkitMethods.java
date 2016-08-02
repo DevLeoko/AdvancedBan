@@ -50,6 +50,13 @@ public class BukkitMethods implements MethodInterface {
         messages = YamlConfiguration.loadConfiguration(messageFile);
         layouts = YamlConfiguration.loadConfiguration(layoutFile);
 
+        if(!config.contains("UUID-Fetcher")){
+            configFile.renameTo(new File(getDataFolder(), "oldConfig.yml"));
+            configFile = new File(getDataFolder(), "config.yml");
+            ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
+            config = YamlConfiguration.loadConfiguration(configFile);
+        }
+
         if(!dataFile.exists()) try {
             dataFile.createNewFile();
         } catch (IOException e) { e.printStackTrace(); }
