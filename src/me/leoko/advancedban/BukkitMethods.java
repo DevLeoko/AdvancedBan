@@ -253,10 +253,10 @@ public class BukkitMethods implements MethodInterface {
         try {
             return ((JSONObject) new JSONParser().parse(json)).get(key).toString();
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("Error -> "+e.getMessage());
             return null;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error -> "+e.getMessage());
             return null;
         }
     }

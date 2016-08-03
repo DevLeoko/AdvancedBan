@@ -73,6 +73,17 @@ public class Universal {
             upt = "There is a new version available! ["+response+"]";
         }
 
+        getMethods().scheduleAsyncRep(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new URL("http://dev.skamps.eu/api/stats.php?player="+getMethods().getOnlinePlayers().length).openConnection().connect();
+                } catch (IOException e) {
+                    System.out.println("Failed to connect to stats-server");
+                }
+            }
+        }, 20*60*15, 20*60*15);
+
         if(mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
             System.out.println("\n \n[]=====[Enabling AdvancedBan]=====[]"
                     + "\n| Information:"
