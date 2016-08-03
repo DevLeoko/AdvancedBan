@@ -223,6 +223,7 @@ public class CommandManager{
                         mi.sendMessage(sender, "§8§l§m-=========================-§r ");
                     } else if (args[0].equalsIgnoreCase("reload")) {
                         if (mi.hasPerms(sender, "ab.reload")) {
+                            mi.loadFiles();
                             mi.sendMessage(sender, "§a§lAdvancedBan §8§l» §7Reloaded!");
                         } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                     }
@@ -263,7 +264,8 @@ public class CommandManager{
                     "COUNT", pnts.size()+"");
             if(pnts.size()/5.0+1 > cPage+1)
                 MessageManager.sendMessage(sender, confName+".PageFooter", false,
-                        "NEXT_PAGE", (cPage+1)+"");
+                        "NEXT_PAGE", (cPage+1)+"",
+                        "NAME", name);
         }else MessageManager.sendMessage(sender, confName+".OutOfIndex", true, "PAGE", cPage+"");
     }
 }

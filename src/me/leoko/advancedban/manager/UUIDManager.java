@@ -29,7 +29,7 @@ public class UUIDManager {
 		try {
 			uuid = askAPI(mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"), name, mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.Key"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error -> "+e.getMessage());
 			System.out.println("!! Failed fetching UUID of "+name);
 			System.out.println("!! Could not connect to REST-API under "+mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"));
 		}
