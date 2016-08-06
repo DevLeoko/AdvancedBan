@@ -55,7 +55,7 @@ public class PunishmentManager {
                     Universal.get().getMysql().executeSatement(sql);
                 }
 
-                Universal.get().getMysql().executeSatement("DELETE FROM `Punishments` WHERE `end` <= '"+TimeManager.getTime()+"'");
+                Universal.get().getMysql().executeSatement("DELETE FROM `Punishments` WHERE `end` <= '"+TimeManager.getTime()+"' AND `end` != -1");
                 ResultSet rs = Universal.get().getMysql().executeRespSatemen("SELECT * FROM `Punishments`");
                 while(rs.next()) {
                     punishments.add(
