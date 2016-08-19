@@ -195,7 +195,7 @@ public class CommandManager{
 
                                 MessageManager.sendMessage(sender, "Check.Header", true, "NAME", args[0]);
                                 MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid);
-                                MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
+                                if (mi.hasPerms(sender, "ab.check.ip")) MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
                                 MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
                                 MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION", mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");
                                 MessageManager.sendMessage(sender, "Check.Ban", false, "DURATION", ban == null ? "§anone" : ban.getType().isTemp() ? "§e" + ban.getDuration(false) : "§cperma");
