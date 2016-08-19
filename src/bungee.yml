@@ -1,0 +1,41 @@
+name: AdvancedBan
+version: 2.0.0
+author: Leoko
+main: me.leoko.advancedban.bungee.BungeeMain
+
+commands:
+  AdvancedBan:
+    description: Informations about the Plugin
+  ban:
+    description: Ban a user permanently
+  tempban:
+    description: Ban a user temporary
+  ipban:
+    description: Ban a user by IP
+    aliases: [banip, ban-ip]
+  kick:
+    description: Kick a user
+  warn:
+    description: Warn a user permanently
+  tempwarn:
+    description: Warn a user temporary
+  mute:
+    description: Mute a user permanently
+  tempmute:
+    description: Mute a user temporary
+  banlist:
+    description: See all punishments
+  history:
+    description: See a users history
+  warns:
+    description: See your or a users warns
+  check:
+    description: Get all information about a user
+  systemPrefs:
+    description: Displays System-Preferences for setting up the plugin
+  unwarn:
+    description: Deletes a warn
+  unban:
+    description: Unban a user
+  unmute:
+    description: Unmute a user
