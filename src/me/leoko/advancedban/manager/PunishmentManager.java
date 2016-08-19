@@ -186,6 +186,24 @@ public class PunishmentManager {
         return punishments;
     }
 
+    public long getCalculation(String layout, String uuid){
+        long end = TimeManager.getTime();
+        MethodInterface mi = Universal.get().getMethods();
+
+        int i = 0;
+        for (Punishment pts : getHistory()) {
+            if (pts.getUuid().equals(uuid) && pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(layout))
+                i++;
+        }
+
+        List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + layout);
+        String time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
+        long toAdd = TimeManager.toMilliSec(time.toLowerCase());
+        end += toAdd;
+
+        return end;
+    }
+
     public List<Punishment> getHistory() {
         return history;
     }

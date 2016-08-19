@@ -50,6 +50,23 @@ public class CommandManager{
                                     }
                                 }
 
+                                String name = args[0];
+                                String uuid;
+                                if (pt != PunishmentType.IP_BAN) {
+                                    uuid = UUIDManager.get().getUUID(args[0]);
+                                } else {
+                                    if (args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+                                        uuid = args[0];
+                                    } else {
+                                        if (Universal.get().getIps().containsKey(args[0].toLowerCase())) {
+                                            uuid = Universal.get().getIps().get(args[0].toLowerCase());
+                                        } else {
+                                            MessageManager.sendMessage(sender, "Ipban.IpNotCashed", true, "NAME", args[0]);
+                                            return;
+                                        }
+                                    }
+                                }
+
                                 long end;
                                 if (isTemp) {
                                     end = TimeManager.getTime();
@@ -61,7 +78,7 @@ public class CommandManager{
                                         }
                                         int i = 0;
                                         for (Punishment pts : PunishmentManager.get().getHistory()) {
-                                            if (pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(args[1].substring(1)))
+                                            if (pts.getUuid().equals(uuid) && pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(args[1].substring(1)))
                                                 i++;
                                         }
                                         List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + args[1].substring(1));
@@ -94,23 +111,6 @@ public class CommandManager{
                                     if (mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) {
                                         MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
                                         return;
-                                    }
-                                }
-
-                                String name = args[0];
-                                String uuid;
-                                if (pt != PunishmentType.IP_BAN) {
-                                    uuid = UUIDManager.get().getUUID(args[0]);
-                                } else {
-                                    if (args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
-                                        uuid = args[0];
-                                    } else {
-                                        if (Universal.get().getIps().containsKey(args[0].toLowerCase())) {
-                                            uuid = Universal.get().getIps().get(args[0].toLowerCase());
-                                        } else {
-                                            MessageManager.sendMessage(sender, "Ipban.IpNotCashed", true, "NAME", args[0]);
-                                            return;
-                                        }
                                     }
                                 }
 
