@@ -1,2 +1,0 @@
-# AdvancedBan
-Bukkit-Plugin | AdvancedBan
