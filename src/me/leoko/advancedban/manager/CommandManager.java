@@ -18,7 +18,7 @@ public class CommandManager{
         return instance == null ? instance = new CommandManager() : instance;
     }
     
-    public void onCommand(Object sender, String cmd,  String[] args){
+    public void onCommand(final Object sender, final String cmd, final String[] args){
         Universal.get().getMethods().runAsync(new Runnable() {
             @Override
             public void run() {

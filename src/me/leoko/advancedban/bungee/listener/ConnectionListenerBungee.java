@@ -23,7 +23,7 @@ public class ConnectionListenerBungee implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PostLoginEvent e){
+    public void onLogin(final PostLoginEvent e){
         Universal.get().getMethods().scheduleAsync(new Runnable() {
             @Override
             public void run() {

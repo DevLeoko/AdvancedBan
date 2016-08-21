@@ -135,7 +135,7 @@ public class Punishment {
         }
 
 
-        int cWarnings =  getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid())+1) : 0;
+        final int cWarnings =  getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid())+1) : 0;
 
         System.out.println("Called!");
         if(getType().getBasic() == PunishmentType.WARNING){
@@ -144,7 +144,7 @@ public class Punishment {
                 System.out.println("Checking #"+i+" CONTAINS: "+mi.contains(mi.getConfig(), "WarnActions."+i)+" | VALUE: "+mi.getString(mi.getConfig(), "WarnActions."+i, "none"));
                 if(mi.contains(mi.getConfig(), "WarnActions."+i)) cmd = mi.getString(mi.getConfig(), "WarnActions."+i);
             }
-            String finalCmd = cmd;
+            final String finalCmd = cmd;
             mi.runSync(new Runnable() {
                 @Override
                 public void run() {
@@ -171,7 +171,7 @@ public class Punishment {
         }
 
         if(mi.isOnline(getName())){
-            Object p = mi.getPlayer(getName());
+            final Object p = mi.getPlayer(getName());
 
             if(getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK){
                 mi.runSync(new Runnable() {
