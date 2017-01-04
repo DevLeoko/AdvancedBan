@@ -89,7 +89,7 @@ Warn:
   Done: "&c&o%NAME% &7was successfully warned!"
   Exempt: "&7You are not able to warn &c&o%NAME%"
   Layout:
-  - '%PREFIX% &cYou resived a warning'
+  - '%PREFIX% &cYou received a warning'
   - "&cReason &8\xbb &7%REASON%"
   - '&7You have now &c&o%COUNT% &7warns in total!'
   Notification:
@@ -100,7 +100,7 @@ Tempwarn:
   Usage: "&cUsage &8\xbb &7&o/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to warn more than %MAX%sec"
   Layout:
-  - '%PREFIX% &cYou resived a temp-warning'
+  - '%PREFIX% &cYou received a temp-warning'
   - "&cReason &8\xbb &7%REASON%"
   - "&cIt will pass in &8\xbb &7%DURATION%"
   - '&7You have now &c&o%COUNT% &7warns in total!'
