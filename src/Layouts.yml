@@ -11,7 +11,7 @@ Message:
     - '&c&oBanned by %OPERATOR%'
     - '&7'
     - "&cIt seems like you are using a"
-    - "&chacked client please disabled it!"
+    - "&chacked client please disable it!"
     - "&cUnban in &8\xbb &7%DURATION%"
     - '&7'
     - '&8Unban application in TS or forum'
