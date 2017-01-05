@@ -1,16 +1,11 @@
 package me.leoko.advancedban.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.*;
 
 public class MySQLManager {
 	
@@ -18,9 +13,10 @@ public class MySQLManager {
 	private String dbName;
 	private String usrName;
 	private String password;
+	private int port = 3306;
 	private boolean autoRefresh;
 	private int refreshMin;
-	
+
 	private Connection connection;
 	
 	private boolean failed = false;
@@ -57,6 +53,7 @@ public class MySQLManager {
 		dbName = mi.getString(mi.getMySQLFile(), "MySQL.DB-Name", "Unknown");
 		usrName = mi.getString(mi.getMySQLFile(), "MySQL.Username", "Unknown");
 		password = mi.getString(mi.getMySQLFile(), "MySQL.Password", "Unknown");
+		port = mi.getInteger(mi.getMySQLFile(), "MySQL.Port", 3306);
 		this.autoRefresh = autoRefresh;
 		this.refreshMin = refreshMin;
 		
@@ -76,7 +73,7 @@ public class MySQLManager {
 	private void reconnect(int i){
 		try{
 			connection.close();
-			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":3306/"+dbName, usrName, password);
+			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":"+port+"/"+dbName+"?autoReconnect=true", usrName, password);
 		}catch(SQLException exc){
 			i++;
 			System.out.println("AdvancedBan <> Failed to reconnect! ["+i+"/10]");

@@ -152,7 +152,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public boolean isOnline(String name) {
         try{
-            return ProxyServer.getInstance().getPlayer(name).isConnected();
+            return ProxyServer.getInstance().getPlayer(name).getAddress() != null;
         }catch (NullPointerException exc){
             return false;
         }
@@ -253,6 +253,7 @@ public class BungeeMethods implements MethodInterface {
         mysql.set("MySQL.DB-Name", "YourDatabase");
         mysql.set("MySQL.Username", "root");
         mysql.set("MySQL.Password", "pw123");
+        mysql.set("MySQL.Port", 3306);
         try { ConfigurationProvider.getProvider(YamlConfiguration.class).save(mysql, f); } catch (IOException e) { e.printStackTrace(); }
     }
 
