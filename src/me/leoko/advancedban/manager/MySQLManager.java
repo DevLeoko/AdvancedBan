@@ -89,7 +89,7 @@ public class MySQLManager {
 	
 	private void connect(){
 		try{
-			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":3306/"+dbName, usrName, password);
+			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":"+port+"/"+dbName, usrName, password);
 		}catch(Exception exc){
 			System.out.println("AdvancedBan <> \n \n \nMySQL-Error\nCould not connect to MySQL-Server!\nDisabeling plugin!\nCheck your MySQL.yml \nSkype: Leoko33 \n \n");
 			failed = true;
