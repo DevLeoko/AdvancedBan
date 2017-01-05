@@ -135,9 +135,12 @@ UnMute:
   Done: "&a&o%NAME% &7was successfully unmuted!"
 
 UnWarn:
-  Usage: "&cUsage &8\xbb &7&o/unwarn [ID]"
+  Usage: "&cUsage &8\xbb &7&o/unwarn [ID] or /unwarn clear [Name]"
   NotFound: "&cCoud not find warning #%ID%"
   Done: "&7Warn &a&o#%ID% &7was successfully deleted!"
+  Clear:
+    Empty: "&c&o%NAME% &7has no warnings!"
+    Done: "&7Cleared &a&o%COUNT% &7warnings"
 
 
 Banlist:

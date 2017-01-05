@@ -141,7 +141,15 @@ public class CommandManager{
                                 } else
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotPunished", true, "NAME", args[0]);
                             } else {
-                                if (args[0].matches("[0-9]+")) {
+                                if(args[0].equalsIgnoreCase("clear") && args.length == 2){
+                                    List<Punishment> ptn = PunishmentManager.get().getWarns(UUIDManager.get().getUUID(args[0]));
+                                    if(!ptn.isEmpty()){
+                                        for (Punishment punishment : ptn) {
+                                            punishment.delete();
+                                        }
+                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Done", true, "COUNT", String.valueOf(ptn.size()));
+                                    }else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Empty", true, "NAME", args[1]);
+                                }else if (args[0].matches("[0-9]+")) {
                                     Punishment pnt = PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
                                     if (pnt != null) {
                                         pnt.delete();

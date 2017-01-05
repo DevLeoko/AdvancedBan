@@ -1,15 +1,15 @@
 package me.leoko.advancedban.bungee;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -263,12 +263,14 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String parseJSON(InputStreamReader json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
+        JsonElement element = new JsonParser().parse(json);
+        return element instanceof JsonNull ? null : ((JsonObject) element).get(key).toString().replaceAll("\"", "");
     }
 
     @Override
     public String parseJSON(String json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
+        JsonElement element = new JsonParser().parse(json);
+        return element instanceof JsonNull ? null : ((JsonObject) element).get(key).toString().replaceAll("\"", "");
     }
 
     @Override
