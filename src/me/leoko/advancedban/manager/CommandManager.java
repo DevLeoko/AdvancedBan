@@ -128,8 +128,8 @@ public class CommandManager{
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.toLowerCase().matches("un.+")) {
                     pt = PunishmentType.fromCommandName(cmd.toLowerCase().substring(2));
-                    if (mi.hasPerms(sender, "ab." + pt == null ? "all" : pt.getName() + ".undo")) {
-                        if (args.length == 1) {
+                    if (mi.hasPerms(sender, "ab." + (pt == null ? "all" : pt.getName()) + ".undo")) {
+                        if (args.length == 1 || (pt == PunishmentType.WARNING && args.length == 2)) {
                             if (pt != null && pt != PunishmentType.WARNING) {
                                 String uuid = args[0];
                                 if (!args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"))
@@ -143,7 +143,7 @@ public class CommandManager{
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotPunished", true, "NAME", args[0]);
                             } else {
                                 if(pt != null && args[0].equalsIgnoreCase("clear") && args.length == 2){
-                                    List<Punishment> ptn = PunishmentManager.get().getWarns(UUIDManager.get().getUUID(args[0]));
+                                    List<Punishment> ptn = PunishmentManager.get().getWarns(UUIDManager.get().getUUID(args[1]));
                                     if(!ptn.isEmpty()){
                                         for (Punishment punishment : ptn) {
                                             punishment.delete();
@@ -154,12 +154,12 @@ public class CommandManager{
                                     Punishment pnt = pt == null ? PunishmentManager.get().getPunishment(Integer.valueOf(args[0])) : PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
                                     if (pnt != null) {
                                         pnt.delete();
-                                        MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Done", true, "ID", args[0]);
+                                        MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Done", true, "ID", args[0]);
                                     } else
-                                        MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".NotFound", true, "ID", args[0]);
-                                } else MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Usage", true);
+                                        MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".NotFound", true, "ID", args[0]);
+                                } else MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
                             }
-                        } else MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Usage", true);
+                        } else MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.equalsIgnoreCase("banlist")) {
                     if (mi.hasPerms(sender, "ab.banlist")) {
@@ -234,6 +234,47 @@ public class CommandManager{
                         if (mi.hasPerms(sender, "ab.reload")) {
                             mi.loadFiles();
                             mi.sendMessage(sender, "§a§lAdvancedBan §8§l» §7Reloaded!");
+                        } else MessageManager.sendMessage(sender, "General.NoPerms", true);
+                    } else if (args[0].equalsIgnoreCase("help")) {
+                        if (mi.hasPerms(sender, "ab.help")) {
+                            mi.sendMessage(sender, "§8");
+                            mi.sendMessage(sender, "§c§lAdvancedBan §7Command-Help");
+                            mi.sendMessage(sender, "§8");
+                            mi.sendMessage(sender, "§c/ban [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user permanently");
+                            mi.sendMessage(sender, "§c/banip [Name/IP] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user by IP");
+                            mi.sendMessage(sender, "§c/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user temporary");
+                            mi.sendMessage(sender, "§c/mute [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Mute a user permanently");
+                            mi.sendMessage(sender, "§c/tempmute [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Mute a user temporary");
+                            mi.sendMessage(sender, "§c/warn [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Warn a user permanently");
+                            mi.sendMessage(sender, "§c/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Warn a user temporary");
+                            mi.sendMessage(sender, "§c/kick [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Kick a user");
+                            mi.sendMessage(sender, "§c/unban [Name/IP]");
+                            mi.sendMessage(sender, "§8» §7Unban a user");
+                            mi.sendMessage(sender, "§c/unmute [Name]");
+                            mi.sendMessage(sender, "§8» §7Unmute a user");
+                            mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
+                            mi.sendMessage(sender, "§8» §7Deletes a warn");
+                            mi.sendMessage(sender, "§c/unpunish [ID]");
+                            mi.sendMessage(sender, "§8» §7Deletes a punishment by ID");
+                            mi.sendMessage(sender, "§c/banlist <Page>");
+                            mi.sendMessage(sender, "§8» §7See all punishments");
+                            mi.sendMessage(sender, "§c/history [Name/IP] <Page>");
+                            mi.sendMessage(sender, "§8» §7See a users history");
+                            mi.sendMessage(sender, "§c/warns [Name] <Page>");
+                            mi.sendMessage(sender, "§8» §7See your or a users wa");
+                            mi.sendMessage(sender, "§c/check [Name]");
+                            mi.sendMessage(sender, "§8» §7Get all information about a user");
+                            mi.sendMessage(sender, "§c/AdvancedBan <reload/help>");
+                            mi.sendMessage(sender, "§8» §7Reloads the plugin or shows help page");
+                            mi.sendMessage(sender, "§8");
                         } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                     }
                 } else mi.sendMessage(sender, "§cHm wired :/");

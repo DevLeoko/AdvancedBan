@@ -52,7 +52,7 @@ public class Punishment {
     }
 
     public String getReason() {
-        return reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason;
+        return (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
     }
 
     public String getOperator() {
