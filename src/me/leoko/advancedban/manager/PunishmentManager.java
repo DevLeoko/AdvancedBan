@@ -145,6 +145,15 @@ public class PunishmentManager {
         return null;
     }
 
+    public Punishment getPunishment(int id){
+        for(Punishment pt : getPunishments(true)){
+            if(pt.getId() == id){
+                return pt;
+            }
+        }
+        return null;
+    }
+
     public List<Punishment> getWarns(String uuid){
         List<Punishment> ptn = new ArrayList<>();
         for(Punishment pt : getPunishments(true)){

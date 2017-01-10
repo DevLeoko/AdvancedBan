@@ -66,6 +66,7 @@ public class Universal {
         mi.setCommandExecutor("warns");
         mi.setCommandExecutor("check");
         mi.setCommandExecutor("systemprefs");
+        mi.setCommandExecutor("unpunish");
 
         String upt = "You have the newest version";
         String response = getFromURL("http://dev.skamps.eu/api/abVer.txt");

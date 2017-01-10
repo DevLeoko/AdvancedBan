@@ -67,10 +67,9 @@ public class CommandManager{
                                     }
                                 }
 
-                                long end;
+                                long end = -1;
                                 if (isTemp) {
                                     end = TimeManager.getTime();
-                                    String time = args[1];
                                     if (args[1].matches("#.+")) {
                                         if (!mi.contains(mi.getLayouts(), "Time." + args[1].substring(1))) {
                                             MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[1].substring(1));
@@ -82,12 +81,13 @@ public class CommandManager{
                                                 i++;
                                         }
                                         List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + args[1].substring(1));
-                                        time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
-                                    }
-                                    long toAdd = TimeManager.toMilliSec(time.toLowerCase());
-                                    end += toAdd;
 
-                                    if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                        String time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
+                                        end = time.equalsIgnoreCase("perma") ?  -1 : end+TimeManager.toMilliSec(time.toLowerCase());
+                                    }else if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                        long toAdd = TimeManager.toMilliSec(args[1].toLowerCase());
+                                        end += toAdd;
+
                                         long max = -1;
                                         for (int i = 10; i >= 1; i--) {
                                             if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
@@ -100,7 +100,7 @@ public class CommandManager{
                                             return;
                                         }
                                     }
-                                } else end = -1;
+                                }
 
                                 if (!mi.isOnline(args[0])) {
                                     if (pt == PunishmentType.KICK) {
@@ -121,16 +121,16 @@ public class CommandManager{
                                     return;
                                 }
 
-                                new Punishment(name, uuid, reason, mi.getName(sender), pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
+                                new Punishment(name, uuid, reason, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Done", true, "NAME", args[0]);
                             } else MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
                         } else MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.toLowerCase().matches("un.+")) {
                     pt = PunishmentType.fromCommandName(cmd.toLowerCase().substring(2));
-                    if (mi.hasPerms(sender, "ab." + pt.getName() + ".undo")) {
+                    if (mi.hasPerms(sender, "ab." + pt == null ? "all" : pt.getName() + ".undo")) {
                         if (args.length == 1) {
-                            if (pt != PunishmentType.WARNING) {
+                            if (pt != null && pt != PunishmentType.WARNING) {
                                 String uuid = args[0];
                                 if (!args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"))
                                     uuid = UUIDManager.get().getUUID(args[0]);
@@ -142,7 +142,7 @@ public class CommandManager{
                                 } else
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotPunished", true, "NAME", args[0]);
                             } else {
-                                if(args[0].equalsIgnoreCase("clear") && args.length == 2){
+                                if(pt != null && args[0].equalsIgnoreCase("clear") && args.length == 2){
                                     List<Punishment> ptn = PunishmentManager.get().getWarns(UUIDManager.get().getUUID(args[0]));
                                     if(!ptn.isEmpty()){
                                         for (Punishment punishment : ptn) {
@@ -151,15 +151,15 @@ public class CommandManager{
                                         MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Done", true, "COUNT", String.valueOf(ptn.size()));
                                     }else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Empty", true, "NAME", args[1]);
                                 }else if (args[0].matches("[0-9]+")) {
-                                    Punishment pnt = PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
+                                    Punishment pnt = pt == null ? PunishmentManager.get().getPunishment(Integer.valueOf(args[0])) : PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
                                     if (pnt != null) {
                                         pnt.delete();
-                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Done", true, "ID", args[0]);
+                                        MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Done", true, "ID", args[0]);
                                     } else
-                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotFound", true, "ID", args[0]);
-                                } else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Usage", true);
+                                        MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".NotFound", true, "ID", args[0]);
+                                } else MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Usage", true);
                             }
-                        } else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Usage", true);
+                        } else MessageManager.sendMessage(sender, "Un" + pt == null ? "Punish" : pt.getConfSection() + ".Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.equalsIgnoreCase("banlist")) {
                     if (mi.hasPerms(sender, "ab.banlist")) {

@@ -35,6 +35,8 @@ commands:
     description: Displays System-Preferences for setting up the plugin
   unwarn:
     description: Deletes a warn
+  unpunish:
+    description: Deletes a punishment by ID
   unban:
     description: Unban a user
   unmute:
