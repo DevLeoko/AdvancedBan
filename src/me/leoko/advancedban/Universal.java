@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -156,6 +157,13 @@ public class Universal {
     public boolean isMuteCommand(String cmd){
         cmd = cmd.contains(":") ? cmd.split(":", 2)[1] : cmd;
         for(String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) if(cmd.equalsIgnoreCase(str)) return true;
+        return false;
+    }
+
+
+    public boolean isExemptPlayer(String name){
+        List<String> exempt = getMethods().getStringList(getMethods().getConfig(), "ExemptPlayers");
+        if(exempt != null) for(String str : exempt) if(name.equalsIgnoreCase(str)) return true;
         return false;
     }
 

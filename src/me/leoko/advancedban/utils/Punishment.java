@@ -8,7 +8,6 @@ import me.leoko.advancedban.manager.TimeManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,7 +52,7 @@ public class Punishment {
     }
 
     public String getReason() {
-        return reason == null ? "none" : reason;
+        return reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason;
     }
 
     public String getOperator() {

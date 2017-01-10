@@ -107,11 +107,12 @@ public class CommandManager{
                                         MessageManager.sendMessage(sender, "Kick.NotOnline", true, "NAME", args[0]);
                                         return;
                                     }
-                                } else {
-                                    if (mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) {
-                                        MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
-                                        return;
-                                    }
+                                }
+
+                                if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
+                                        Universal.get().isExemptPlayer(args[0])) {
+                                    MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
+                                    return;
                                 }
 
                                 if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid)) ||
