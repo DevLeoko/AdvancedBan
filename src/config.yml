@@ -48,12 +48,12 @@ UUID-Fetcher:
 # You can also use not-AdvancedBan-Commands like 'broadcast' or 'clear %PLAYER%
 # Variables: %PLAYER%, %REASON%, %COUNT%
 WarnActions:
-  3: "kick %PLAYER% &c&oYou received the 3th warning!"
-  4: "tempban %PLAYER% 30m &c&oYou received the 4th warning!"
-  5: "tempban %PLAYER% 5h &c&oYou received the 5th warning!"
-  6: "tempban %PLAYER% 7d &c&oYou resived the 6th warning!"
-  7: "tempban %PLAYER% 1mo &c&oYou received the %COUNT%th warning!"
-  10: "ban %PLAYER% &c&oYou received the 10th warning!"
+  3: "kick %PLAYER% &c&oYou have received your 3rd warning!"
+  4: "tempban %PLAYER% 30m &c&oYou have received your 4th warning!"
+  5: "tempban %PLAYER% 5h &c&oYou have received your 5th warning!"
+  6: "tempban %PLAYER% 7d &c&oYou have received your 6th warning!"
+  7: "tempban %PLAYER% 1mo &c&oYou have received your %COUNT%th warning!"
+  10: "ban %PLAYER% &c&oYou have received your 10th warning!"
 
 # Here you can create permission-nodes for max-punishment-duration.
 # The permission "ab.tempban.dur.1" would allow the player to ban max. for 600sec = 10min
