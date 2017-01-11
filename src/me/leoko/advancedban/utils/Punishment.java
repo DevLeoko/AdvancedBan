@@ -136,21 +136,19 @@ public class Punishment {
 
         final int cWarnings =  getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid())+1) : 0;
 
-        System.out.println("Called!");
         if(getType().getBasic() == PunishmentType.WARNING){
             String cmd = "";
             for (int i = 1; i <= cWarnings; i++) {
-                System.out.println("Checking #"+i+" CONTAINS: "+mi.contains(mi.getConfig(), "WarnActions."+i)+" | VALUE: "+mi.getString(mi.getConfig(), "WarnActions."+i, "none"));
                 if(mi.contains(mi.getConfig(), "WarnActions."+i)) cmd = mi.getString(mi.getConfig(), "WarnActions."+i);
             }
-            final String finalCmd = cmd;
+            final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+"");
             mi.runSync(new Runnable() {
                 @Override
                 public void run() {
-                    mi.executeCommand(finalCmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+""));
+                    mi.executeCommand(finalCmd);
+                    System.out.println("Executing ... "+finalCmd);
                 }
             });
-            System.out.println("Executing ... "+cmd);
         }
 
         List<String> notification = MessageManager.getLayout( mi.getMessages(),

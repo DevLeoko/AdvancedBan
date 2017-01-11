@@ -181,6 +181,7 @@ public class Universal {
     public String callConnection(String name, String ip) {
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
+        if(uuid == null) return "[AdvancedBan] Failed to fetch your UUID";
         Punishment pt = PunishmentManager.get().getBan(uuid);
         if(pt == null) pt = PunishmentManager.get().getBan(ip);
         if(pt != null){

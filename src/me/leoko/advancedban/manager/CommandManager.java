@@ -84,20 +84,21 @@ public class CommandManager{
 
                                         String time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
                                         end = time.equalsIgnoreCase("perma") ?  -1 : end+TimeManager.toMilliSec(time.toLowerCase());
-                                    }else if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                    }else{
                                         long toAdd = TimeManager.toMilliSec(args[1].toLowerCase());
                                         end += toAdd;
-
-                                        long max = -1;
-                                        for (int i = 10; i >= 1; i--) {
-                                            if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
-                                                max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
-                                                break;
+                                        if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                            long max = -1;
+                                            for (int i = 10; i >= 1; i--) {
+                                                if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
+                                                    max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if (max != -1 && toAdd > max) {
-                                            MessageManager.sendMessage(sender, pt.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
-                                            return;
+                                            if (max != -1 && toAdd > max) {
+                                                MessageManager.sendMessage(sender, pt.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
+                                                return;
+                                            }
                                         }
                                     }
                                 }
