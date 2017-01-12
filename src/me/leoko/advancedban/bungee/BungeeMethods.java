@@ -265,15 +265,17 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public String parseJSON(InputStreamReader json, String key) {
         JsonElement element = new JsonParser().parse(json);
-        if(element != null) return element instanceof JsonNull ? null : ((JsonObject) element).get(key).toString().replaceAll("\"", "");
-        return null;
+        if(element instanceof JsonNull) return null;
+        JsonElement obj = ((JsonObject) element).get(key);
+        return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
     public String parseJSON(String json, String key) {
         JsonElement element = new JsonParser().parse(json);
-        if(element != null) return element instanceof JsonNull ? null : ((JsonObject) element).get(key).toString().replaceAll("\"", "");
-        return null;
+        if(element instanceof JsonNull) return null;
+        JsonElement obj = ((JsonObject) element).get(key);
+        return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
