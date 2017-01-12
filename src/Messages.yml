@@ -1,6 +1,6 @@
 General:
   Prefix: "&c&lAdvancedBan &8&l\xbb"
-  NoPerms: "&cNo perms!"
+  NoPerms: "&cYou have no perms!"
   LayoutNotFound: "&cThere is no layout called %NAME%"
   # This will be the replacement for the %DURATION% variable
   TimeLayoutD: "%D%day(s) %H%h %M%min and %S%sec"
@@ -60,7 +60,7 @@ Tempban:
   Notification:
   - "&c&o%NAME% &7got banned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7&oThis person got banned for &e&o%DURATION%" # "He" is only male "this person" is male and female
+  - "&7&oThis player got banned for &e&o%DURATION%"
 
 Mute:
   Usage: "&cUsage &8\xbb &7&o/mute [Name] [Reason/@Layout]"
@@ -83,7 +83,7 @@ Tempmute:
   Notification:
   - "&c&o%NAME% &7got muted by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7&oThis person got muted for &e&o%DURATION%"
+  - "&7&oThis player got muted for &e&o%DURATION%"
 
 Warn:
   Usage: "&cUsage &8\xbb &7&o/warn [Name] [Reason/@Layout]"
@@ -92,7 +92,7 @@ Warn:
   Layout:
   - '%PREFIX% &cYou received a warning'
   - "&cReason &8\xbb &7%REASON%"
-  - '&7You have now &c&o%COUNT% &7warns in total!'
+  - '&7You have now &c&o%COUNT% &7warning(s) in total!'
   Notification:
   - "&c&o%NAME% &7got warned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
@@ -104,11 +104,11 @@ Tempwarn:
   - '%PREFIX% &cYou received a temp-warning'
   - "&cReason &8\xbb &7%REASON%"
   - "&cIt will pass in &8\xbb &7%DURATION%"
-  - '&7You have now &c&o%COUNT% &7warns in total!'
+  - '&7You have now &c&o%COUNT% &7warning(s) in total!'
   Notification:
   - "&c&o%NAME% &7got temp-warned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
-  - "&7This warn will pass in &o%DURATION%"
+  - "&7This warning will pass in &o%DURATION%"
 
 Kick:
   Usage: "&cUsage &8\xbb &7&o/kick [Name] [Reason/@Layout]"
@@ -151,7 +151,7 @@ UnPunish:
 
 Banlist:
   Usage: "&cUsage &8\xbb &7&o/banlist <Page>"
-  OutOfIndex: "&cThere is no %PAGE%th page!"
+  OutOfIndex: "&cThere is no page %PAGE%!"
   NoEntries: "&c&oThere are no entries yet :("
   Header:
   - "%PREFIX% &7Banlist:"
@@ -168,8 +168,8 @@ Banlist:
 
 History:
   Usage: "&cUsage &8\xbb &7&o/history [Name/IP] <Page>"
-  OutOfIndex: "&cThere is no %PAGE%th page!"
-  NoEntries: "&c&oCould not find history of %NAME% :("
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&oCould not find the history of %NAME% :("
   Header:
   - "%PREFIX% &7History for %NAME%:"
   - "&c&oName &8| &e&oDuration &8| &7&oOperator"
@@ -185,10 +185,10 @@ History:
 
 Warns:
   Usage: "&cUsage &8\xbb &7&o/warns [Name] <Page>"
-  OutOfIndex: "&cThere is no %PAGE%th page!"
-  NoEntries: "&c&o%NAME% has no warns yet"
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&o%NAME% has no warnings yet"
   Header:
-  - "%PREFIX% &7Warns for %NAME%:"
+  - "%PREFIX% &7Warnings for %NAME%:"
   - "&c&oName &8| &e&oDuration &8| &7&oWarned by"
   - "&c&o#ID &8> &7&oReason"
   - "&7"
@@ -197,7 +197,7 @@ Warns:
   - "&c%NAME% &8| &e%DURATION% &8| &7%OPERATOR%"
   - "&c&l#%ID% &8> &7&o%REASON%"
   - "&7"
-  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Active warns: &e&o%COUNT%"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Active warnings: &e&o%COUNT%"
   PageFooter: "&7Use &e&o/warns %NAME% %NEXT_PAGE% &7to see the next page"
 
 
