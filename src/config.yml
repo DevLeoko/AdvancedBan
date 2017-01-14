@@ -12,6 +12,9 @@ UseMySQL: false
 DetailedEnableMessage: true
 DetailedDisableMessage: true
 
+# This will be the default reason to be displayed if none is given
+DefaultReason: "none"
+
 # Change this if your server has a diffrent time that your users.
 # eg.: ServerTime: 16:43 | Your Time: 13:43 | TimeDiff has to be set to -3
 # You can check the server time with /systemPerfs
@@ -22,6 +25,13 @@ TimeDiff: 0
 MuteCommands:
 - 'me'
 - 'say'
+
+# This players will not be able to get punished in any way
+# this also works if the player is offline
+ExemptPlayers:
+- 'Leoko'
+- 'md5'
+- 'dutchy1001'
 
 # The date-format which will be used for the %DATE% variable
 DateFormat: "dd.MM.yyyy-HH:mm"

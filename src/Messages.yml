@@ -7,6 +7,7 @@ General:
   TimeLayoutH: "%H%hour(s) %M%min and %S%sec"
   TimeLayoutM: "%M%min and %S%sec"
   TimeLayoutS: "%S% seconds"
+  FailedFetch: "&cCloud not fetch the UUID of %NAME%! See console for details."
 
 
 Ban:
@@ -135,12 +136,17 @@ UnMute:
   Done: "&a&o%NAME% &7was successfully unmuted!"
 
 UnWarn:
-  Usage: "&cUsage &8\xbb &7&o/unwarn [ID]"
-  NotFound: "&cCould not find warning #%ID%"
-  Done: "&7Warning &a&o#%ID% &7was successfully deleted!"
+  Usage: "&cUsage &8\xbb &7&o/unwarn [ID] or /unwarn clear [Name]"
+  NotFound: "&cCoud not find warning #%ID%"
+  Done: "&7Warn &a&o#%ID% &7was successfully deleted!"
   Clear:
     Empty: "&c&o%NAME% &7has no warnings!"
     Done: "&7Cleared &a&o%COUNT% &7warnings"
+
+UnPunish:
+  Usage: "&cUsage &8\xbb &7&o/unpunish [ID]"
+  NotFound: "&cCoud not find punishment #%ID%"
+  Done: "&7Punishment &a&o#%ID% &7was successfully deleted!"
 
 
 Banlist:

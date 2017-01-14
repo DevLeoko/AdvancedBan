@@ -8,7 +8,6 @@ import me.leoko.advancedban.manager.TimeManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,7 +52,7 @@ public class Punishment {
     }
 
     public String getReason() {
-        return reason == null ? "none" : reason;
+        return (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
     }
 
     public String getOperator() {
@@ -137,21 +136,19 @@ public class Punishment {
 
         final int cWarnings =  getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid())+1) : 0;
 
-        System.out.println("Called!");
         if(getType().getBasic() == PunishmentType.WARNING){
             String cmd = "";
             for (int i = 1; i <= cWarnings; i++) {
-                System.out.println("Checking #"+i+" CONTAINS: "+mi.contains(mi.getConfig(), "WarnActions."+i)+" | VALUE: "+mi.getString(mi.getConfig(), "WarnActions."+i, "none"));
                 if(mi.contains(mi.getConfig(), "WarnActions."+i)) cmd = mi.getString(mi.getConfig(), "WarnActions."+i);
             }
-            final String finalCmd = cmd;
+            final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+"").replaceAll("%REASON%", getReason());
             mi.runSync(new Runnable() {
                 @Override
                 public void run() {
-                    mi.executeCommand(finalCmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+""));
+                    mi.executeCommand(finalCmd);
+                    System.out.println("[AdvancedBan] Executing command: "+finalCmd);
                 }
             });
-            System.out.println("Executing ... "+cmd);
         }
 
         List<String> notification = MessageManager.getLayout( mi.getMessages(),

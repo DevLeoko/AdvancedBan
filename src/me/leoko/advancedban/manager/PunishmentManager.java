@@ -7,7 +7,9 @@ import me.leoko.advancedban.utils.PunishmentType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -141,6 +143,25 @@ public class PunishmentManager {
             }
         }
         return null;
+    }
+
+    public Punishment getPunishment(int id){
+        for(Punishment pt : getPunishments(true)){
+            if(pt.getId() == id){
+                return pt;
+            }
+        }
+        return null;
+    }
+
+    public List<Punishment> getWarns(String uuid){
+        List<Punishment> ptn = new ArrayList<>();
+        for(Punishment pt : getPunishments(true)){
+            if(pt.getType().getBasic() == PunishmentType.WARNING && pt.getUuid().equals(uuid)){
+                ptn.add(pt);
+            }
+        }
+        return ptn;
     }
 
     public Punishment getBan(String uuid){

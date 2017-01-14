@@ -1,15 +1,15 @@
 package me.leoko.advancedban.bungee;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -152,7 +152,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public boolean isOnline(String name) {
         try{
-            return ProxyServer.getInstance().getPlayer(name).isConnected();
+            return ProxyServer.getInstance().getPlayer(name).getAddress() != null;
         }catch (NullPointerException exc){
             return false;
         }
@@ -253,6 +253,7 @@ public class BungeeMethods implements MethodInterface {
         mysql.set("MySQL.DB-Name", "YourDatabase");
         mysql.set("MySQL.Username", "root");
         mysql.set("MySQL.Password", "pw123");
+        mysql.set("MySQL.Port", 3306);
         try { ConfigurationProvider.getProvider(YamlConfiguration.class).save(mysql, f); } catch (IOException e) { e.printStackTrace(); }
     }
 
@@ -263,12 +264,18 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String parseJSON(InputStreamReader json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
+        JsonElement element = new JsonParser().parse(json);
+        if(element instanceof JsonNull) return null;
+        JsonElement obj = ((JsonObject) element).get(key);
+        return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
     public String parseJSON(String json, String key) {
-        return ((JsonObject) new JsonParser().parse(json)).get(key).toString().replaceAll("\"", "");
+        JsonElement element = new JsonParser().parse(json);
+        if(element instanceof JsonNull) return null;
+        JsonElement obj = ((JsonObject) element).get(key);
+        return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override

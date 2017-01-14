@@ -54,6 +54,10 @@ public class CommandManager{
                                 String uuid;
                                 if (pt != PunishmentType.IP_BAN) {
                                     uuid = UUIDManager.get().getUUID(args[0]);
+                                    if(uuid == null){
+                                        MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                                        return;
+                                    }
                                 } else {
                                     if (args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
                                         uuid = args[0];
@@ -67,10 +71,9 @@ public class CommandManager{
                                     }
                                 }
 
-                                long end;
+                                long end = -1;
                                 if (isTemp) {
                                     end = TimeManager.getTime();
-                                    String time = args[1];
                                     if (args[1].matches("#.+")) {
                                         if (!mi.contains(mi.getLayouts(), "Time." + args[1].substring(1))) {
                                             MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[1].substring(1));
@@ -82,36 +85,39 @@ public class CommandManager{
                                                 i++;
                                         }
                                         List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + args[1].substring(1));
-                                        time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
-                                    }
-                                    long toAdd = TimeManager.toMilliSec(time.toLowerCase());
-                                    end += toAdd;
 
-                                    if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
-                                        long max = -1;
-                                        for (int i = 10; i >= 1; i--) {
-                                            if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
-                                                max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
-                                                break;
+                                        String time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
+                                        end = time.equalsIgnoreCase("perma") ?  -1 : end+TimeManager.toMilliSec(time.toLowerCase());
+                                    }else{
+                                        long toAdd = TimeManager.toMilliSec(args[1].toLowerCase());
+                                        end += toAdd;
+                                        if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                            long max = -1;
+                                            for (int i = 10; i >= 1; i--) {
+                                                if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
+                                                    max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
+                                                    break;
+                                                }
+                                            }
+                                            if (max != -1 && toAdd > max) {
+                                                MessageManager.sendMessage(sender, pt.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
+                                                return;
                                             }
                                         }
-                                        if (max != -1 && toAdd > max) {
-                                            MessageManager.sendMessage(sender, pt.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
-                                            return;
-                                        }
                                     }
-                                } else end = -1;
+                                }
 
                                 if (!mi.isOnline(args[0])) {
                                     if (pt == PunishmentType.KICK) {
                                         MessageManager.sendMessage(sender, "Kick.NotOnline", true, "NAME", args[0]);
                                         return;
                                     }
-                                } else {
-                                    if (mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) {
-                                        MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
-                                        return;
-                                    }
+                                }
+
+                                if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
+                                        Universal.get().isExemptPlayer(args[0])) {
+                                    MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
+                                    return;
                                 }
 
                                 if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid)) ||
@@ -120,19 +126,24 @@ public class CommandManager{
                                     return;
                                 }
 
-                                new Punishment(name, uuid, reason, mi.getName(sender), pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
+                                new Punishment(name, uuid, reason, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Done", true, "NAME", args[0]);
                             } else MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
                         } else MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.toLowerCase().matches("un.+")) {
                     pt = PunishmentType.fromCommandName(cmd.toLowerCase().substring(2));
-                    if (mi.hasPerms(sender, "ab." + pt.getName() + ".undo")) {
-                        if (args.length == 1) {
-                            if (pt != PunishmentType.WARNING) {
+                    if (mi.hasPerms(sender, "ab." + (pt == null ? "all" : pt.getName()) + ".undo")) {
+                        if (args.length == 1 || (pt == PunishmentType.WARNING && args.length == 2)) {
+                            if (pt != null && pt != PunishmentType.WARNING) {
                                 String uuid = args[0];
-                                if (!args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"))
+                                if (!args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
                                     uuid = UUIDManager.get().getUUID(args[0]);
+                                    if(uuid == null){
+                                        MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                                        return;
+                                    }
+                                }
 
                                 Punishment pnt = pt == PunishmentType.MUTE ? PunishmentManager.get().getMute(uuid) : PunishmentManager.get().getBan(uuid);
                                 if (pnt != null) {
@@ -141,16 +152,29 @@ public class CommandManager{
                                 } else
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotPunished", true, "NAME", args[0]);
                             } else {
-                                if (args[0].matches("[0-9]+")) {
-                                    Punishment pnt = PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
+                                if(pt != null && args[0].equalsIgnoreCase("clear") && args.length == 2){
+                                    String uuid = UUIDManager.get().getUUID(args[1]);
+                                    if(uuid == null){
+                                        MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                                        return;
+                                    }
+                                    List<Punishment> ptn = PunishmentManager.get().getWarns(uuid);
+                                    if(!ptn.isEmpty()){
+                                        for (Punishment punishment : ptn) {
+                                            punishment.delete();
+                                        }
+                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Done", true, "COUNT", String.valueOf(ptn.size()));
+                                    }else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Empty", true, "NAME", args[1]);
+                                }else if (args[0].matches("[0-9]+")) {
+                                    Punishment pnt = pt == null ? PunishmentManager.get().getPunishment(Integer.valueOf(args[0])) : PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
                                     if (pnt != null) {
                                         pnt.delete();
-                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Done", true, "ID", args[0]);
+                                        MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Done", true, "ID", args[0]);
                                     } else
-                                        MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotFound", true, "ID", args[0]);
-                                } else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Usage", true);
+                                        MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".NotFound", true, "ID", args[0]);
+                                } else MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
                             }
-                        } else MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Usage", true);
+                        } else MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.equalsIgnoreCase("banlist")) {
                     if (mi.hasPerms(sender, "ab.banlist")) {
@@ -161,7 +185,12 @@ public class CommandManager{
                 } else if (cmd.equalsIgnoreCase("history")) {
                     if (mi.hasPerms(sender, "ab.history")) {
                         if (args.length == 1 || (args.length == 2 && args[1].matches("[1-9][0-9]*"))) {
-                            performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(UUIDManager.get().getUUID(args[0]), null, false), args[0], true);
+                            String uuid = UUIDManager.get().getUUID(args[0]);
+                            if(uuid == null){
+                                MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                                return;
+                            }
+                            performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(uuid, null, false), args[0], true);
                         } else MessageManager.sendMessage(sender, "History.Usage", true);
                     } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                 } else if (cmd.equalsIgnoreCase("warns")) {
@@ -182,12 +211,21 @@ public class CommandManager{
                         MessageManager.sendMessage(sender, "Warns.Usage", true);
                         return;
                     }
-                    performList(sender, page, "Warns", PunishmentManager.get().getPunishments(UUIDManager.get().getUUID(name), PunishmentType.WARNING, true), name, false);
+                    String uuid = UUIDManager.get().getUUID(name);
+                    if(uuid == null){
+                        MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                        return;
+                    }
+                    performList(sender, page, "Warns", PunishmentManager.get().getPunishments(uuid, PunishmentType.WARNING, true), name, false);
                 } else if (cmd.equalsIgnoreCase("check")) {
                     if (mi.hasPerms(sender, "ab.check")) {
                         if (args.length == 1) {
                             try {
                                 String uuid = UUIDManager.get().getUUID(args[0].toLowerCase());
+                                if(uuid == null){
+                                    MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
+                                    return;
+                                }
                                 String ip = Universal.get().getIps().containsKey(args[0].toLowerCase()) ? Universal.get().getIps().get(args[0]).toLowerCase() : "none cashed";
                                 String loc = mi.getFromURL_JSON("http://freegeoip.net/json/" + ip, "country_name");
                                 Punishment mute = PunishmentManager.get().getMute(uuid);
@@ -225,6 +263,47 @@ public class CommandManager{
                         if (mi.hasPerms(sender, "ab.reload")) {
                             mi.loadFiles();
                             mi.sendMessage(sender, "§a§lAdvancedBan §8§l» §7Reloaded!");
+                        } else MessageManager.sendMessage(sender, "General.NoPerms", true);
+                    } else if (args[0].equalsIgnoreCase("help")) {
+                        if (mi.hasPerms(sender, "ab.help")) {
+                            mi.sendMessage(sender, "§8");
+                            mi.sendMessage(sender, "§c§lAdvancedBan §7Command-Help");
+                            mi.sendMessage(sender, "§8");
+                            mi.sendMessage(sender, "§c/ban [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user permanently");
+                            mi.sendMessage(sender, "§c/banip [Name/IP] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user by IP");
+                            mi.sendMessage(sender, "§c/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Ban a user temporary");
+                            mi.sendMessage(sender, "§c/mute [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Mute a user permanently");
+                            mi.sendMessage(sender, "§c/tempmute [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Mute a user temporary");
+                            mi.sendMessage(sender, "§c/warn [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Warn a user permanently");
+                            mi.sendMessage(sender, "§c/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Warn a user temporary");
+                            mi.sendMessage(sender, "§c/kick [Name] [Reason/@Layout]");
+                            mi.sendMessage(sender, "§8» §7Kick a user");
+                            mi.sendMessage(sender, "§c/unban [Name/IP]");
+                            mi.sendMessage(sender, "§8» §7Unban a user");
+                            mi.sendMessage(sender, "§c/unmute [Name]");
+                            mi.sendMessage(sender, "§8» §7Unmute a user");
+                            mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
+                            mi.sendMessage(sender, "§8» §7Deletes a warn");
+                            mi.sendMessage(sender, "§c/unpunish [ID]");
+                            mi.sendMessage(sender, "§8» §7Deletes a punishment by ID");
+                            mi.sendMessage(sender, "§c/banlist <Page>");
+                            mi.sendMessage(sender, "§8» §7See all punishments");
+                            mi.sendMessage(sender, "§c/history [Name/IP] <Page>");
+                            mi.sendMessage(sender, "§8» §7See a users history");
+                            mi.sendMessage(sender, "§c/warns [Name] <Page>");
+                            mi.sendMessage(sender, "§8» §7See your or a users wa");
+                            mi.sendMessage(sender, "§c/check [Name]");
+                            mi.sendMessage(sender, "§8» §7Get all information about a user");
+                            mi.sendMessage(sender, "§c/AdvancedBan <reload/help>");
+                            mi.sendMessage(sender, "§8» §7Reloads the plugin or shows help page");
+                            mi.sendMessage(sender, "§8");
                         } else MessageManager.sendMessage(sender, "General.NoPerms", true);
                     }
                 } else mi.sendMessage(sender, "§cHm wired :/");

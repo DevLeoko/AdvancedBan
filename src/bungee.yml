@@ -1,5 +1,5 @@
 name: AdvancedBan
-version: 2.0.5
+version: 2.0.6
 author: Leoko
 main: me.leoko.advancedban.bungee.BungeeMain
 
@@ -35,6 +35,8 @@ commands:
     description: Displays System-Preferences for setting up the plugin
   unwarn:
     description: Deletes a warn
+  unpunish:
+    description: Deletes a punishment by ID
   unban:
     description: Unban a user
   unmute:
