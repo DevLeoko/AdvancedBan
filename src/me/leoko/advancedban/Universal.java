@@ -117,8 +117,6 @@ public class Universal {
                     + "\n| Support:"
                     + "\n|   Skype: Leoko33"
                     + "\n|   Mail: Leoko4433@gmail.com"
-                    + "\n| Update:"
-                    + "\n|   You have the newest version"
                     + "\n[]================================[]\n ");
         }else {
             System.out.println("Disabling AdvancedBan on Version " + getMethods().getVersion());

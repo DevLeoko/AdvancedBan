@@ -141,12 +141,12 @@ public class Punishment {
             for (int i = 1; i <= cWarnings; i++) {
                 if(mi.contains(mi.getConfig(), "WarnActions."+i)) cmd = mi.getString(mi.getConfig(), "WarnActions."+i);
             }
-            final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+"");
+            final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings+"").replaceAll("%REASON%", getReason());
             mi.runSync(new Runnable() {
                 @Override
                 public void run() {
                     mi.executeCommand(finalCmd);
-                    System.out.println("Executing ... "+finalCmd);
+                    System.out.println("[AdvancedBan] Executing command: "+finalCmd);
                 }
             });
         }
