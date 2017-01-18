@@ -19,7 +19,7 @@ Message:
     - "&eForum &8\xbb &c&ncoming soon"
 
 # You would use this time-layout for example like this: "/tempban Leoko #ExampleLayout Hacking in FFA"
-# Or with "/tempwarn Leoko #ExampleLayout Advertising" or with "/tempwarn Leoko #ExampleLayout No capslock please"
+# Or with "/tempwarn Leoko #ExampleLayout Advertising" or even "/tempwarn Leoko #ExampleLayout No capslock please"
 # You can also combine this with MessageLayouts like "/tempban Leoko #ExampleLayout @Hacking"
 Time:
   ExampleLayout:
