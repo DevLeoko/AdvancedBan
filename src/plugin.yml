@@ -26,9 +26,9 @@ commands:
   banlist:
     description: See all punishments
   history:
-    description: See a users history
+    description: See a user''s history
   warns:
-    description: See your or a users warns
+    description: See your or a user''s warns
   check:
     description: Get all information about a user
   systemPrefs:
