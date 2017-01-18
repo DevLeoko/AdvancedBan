@@ -16,7 +16,7 @@ Ban:
   AlreadyDone: "&c&o%NAME% &7has already been banned!"
   Exempt: "&7You are not able to ban &c&o%NAME%"
   Layout:
-  - '%PREFIX% &7Permenently banned'
+  - '%PREFIX% &7Permanently banned'
   - '&7'
   - '&7'
   - "&cReason &8\xbb &7%REASON%"
@@ -31,7 +31,7 @@ Ban:
 Ipban:
   Usage: "&cUsage &8\xbb &7&o/banip [Name/IP] [Reason/@Layout]"
   Layout:
-  - '%PREFIX% &7Permenently banned'
+  - '%PREFIX% &7Permanently banned'
   - '&7'
   - '&7'
   - "&cReason &8\xbb &7%REASON%"
@@ -48,7 +48,7 @@ Tempban:
   Usage: "&cUsage &8\xbb &7&o/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to ban more than %MAX%sec"
   Layout:
-  - '%PREFIX% &7Temporary banned'
+  - '%PREFIX% &7Temporarily banned'
   - '&7'
   - '&7'
   - "&cReason &8\xbb &7%REASON%"
