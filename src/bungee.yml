@@ -9,7 +9,7 @@ commands:
   ban:
     description: Ban a user permanently
   tempban:
-    description: Ban a user temporary
+    description: Ban a user temporarily
   ipban:
     description: Ban a user by IP
     aliases: [banip, ban-ip]
@@ -18,11 +18,11 @@ commands:
   warn:
     description: Warn a user permanently
   tempwarn:
-    description: Warn a user temporary
+    description: Warn a user temporarily
   mute:
     description: Mute a user permanently
   tempmute:
-    description: Mute a user temporary
+    description: Mute a user temporarily
   banlist:
     description: See all punishments
   history:
