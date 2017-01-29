@@ -22,6 +22,18 @@ public class CommandReceiverBungee extends Command implements TabExecutor{
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        return BungeeMain.get().getOnlinePlayers();
+        Set<String> matches = new HashSet<>();
++        if ( args.length == 1 )
++        {
++            String search = args[0].toLowerCase();
++            for ( String player : BungeeMain.getOnlinePlayers() )
++            {
++                if ( player.toLowerCase().startsWith( search ) )
++                {
++                    matches.add( player );
++                }
++            }
++        }
+        return matches;
     }
 }
