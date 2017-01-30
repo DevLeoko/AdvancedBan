@@ -6,6 +6,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Leoko @ dev.skamps.eu on 24.07.2016.
  */
@@ -22,6 +25,15 @@ public class CommandReceiverBungee extends Command implements TabExecutor{
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        return BungeeMain.get().getOnlinePlayers();
+        Set<String> matches = new HashSet<>();
+        if (strings.length == 1) {
+            String search = strings[0].toLowerCase();
+            for (String player : BungeeMain.get().getOnlinePlayers()) {
+                if (player.toLowerCase().startsWith(search)){
+                    matches.add(player);
+                }
+            }
+        }
+        return matches;
     }
 }
