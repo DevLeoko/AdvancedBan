@@ -1,7 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
 import me.leoko.advancedban.Universal;
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
