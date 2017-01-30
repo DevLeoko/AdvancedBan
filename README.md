@@ -1,5 +1,5 @@
 # AdvancedBan
-Bukkit-Plugin | AdvancedBan <br>
+Bukkit- & BungeeCord-Plugin at once <br>
 Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/) for more  information!
 
 _Coded by Leoko_ 
