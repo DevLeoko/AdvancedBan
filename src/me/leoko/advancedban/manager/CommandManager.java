@@ -253,7 +253,7 @@ public class CommandManager{
                     if (args.length == 0) {
                         mi.sendMessage(sender, "§8§l§m-=====§r §c§lAdvancedBan v2 §8§l§m=====-§r ");
                         mi.sendMessage(sender, "  §cDev §8• §7Leoko");
-                        mi.sendMessage(sender, "  §cStatus §8• §a§oStabel");
+                        mi.sendMessage(sender, "  §cStatus §8• §a§oStable");
                         mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
                         mi.sendMessage(sender, "  §cLicense §8• §7Public");
                         mi.sendMessage(sender, "  §cMySQL §8• §7" + Universal.get().isUseMySQL());
