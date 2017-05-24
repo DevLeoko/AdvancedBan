@@ -1,8 +1,8 @@
-# AdvancedBan v2 - Coded by Leoko
-# For each setting there is a small description
-# please read it carefully before changing anything
+# AdvancedBan v2 - Coded by Leoko.
+# For each setting, there is a small description.
+# Please read each description carefully before changing anything.
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
-# Do you want your own Plugin or Website, check out our Dev-Page: http://dev.skamps.eu
+# Do you want your own Plugin or Website? Check out our Dev-Page: http://dev.skamps.eu
 
 # If set to false all bans will be saved locally in the data.yml
 UseMySQL: false
@@ -13,11 +13,11 @@ DetailedEnableMessage: true
 DetailedDisableMessage: true
 
 # This will be the default reason to be displayed if none is given
-DefaultReason: "none"
+DefaultReason: "Rule breaking"
 
 # Change this if your server has a diffrent time that your users.
-# eg.: ServerTime: 16:43 | Your Time: 13:43 | TimeDiff has to be set to -3
-# You can check the server time with /systemPerfs
+# e.g.: ServerTime: 16:43 | Your Time: 13:43 | TimeDiff has to be set to -3
+# You can check the server time with /systemPrefs
 TimeDiff: 0
 
 # This commands will be disabled for muted players
@@ -25,6 +25,29 @@ TimeDiff: 0
 MuteCommands:
 - 'me'
 - 'say'
+- 'action'
+- 'eaction'
+- 'describe'
+- 'edescribe'
+- 'eme'
+- 'w'
+- 'm'
+- 'pm'
+- 'whisper'
+- 'ewhisper'
+- 'emsg'
+- 'msg'
+- 'etell'
+- 'tell'
+- 'er'
+- 'r'
+- 'reply'
+- 'ereply'
+- 'ac'
+- 'eac'
+- 'amsg'
+- 'eamsg'
+- 'ehelpop'
 
 # This players will not be able to get punished in any way
 # this also works if the player is offline
@@ -32,6 +55,7 @@ ExemptPlayers:
 - 'Leoko'
 - 'md5'
 - 'dutchy1001'
+- 'ItzSomebody'
 
 # The date-format which will be used for the %DATE% variable
 DateFormat: "dd.MM.yyyy-HH:mm"
@@ -39,7 +63,7 @@ DateFormat: "dd.MM.yyyy-HH:mm"
 # If you use extern REST-APIs they will have to respond in JSON
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either the official MojangAPI or the InternFetcher be used!
-# To check if you can use the intern fetcher do /systemPerfs and compare your uuid
+# To check if you can use the intern fetcher do /systemPrefs and compare your uuid
 #   to the one you can see online on http://NamesMC.com
 #   if they are similar we recommend using the InternFetcher
 UUID-Fetcher:
