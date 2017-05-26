@@ -1,4 +1,4 @@
-# AdvancedBan v2 - Coded by Leoko.
+# AdvancedBan v2 - Coded by Leoko
 # For each setting, there is a small description.
 # Please read each description carefully before changing anything.
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
@@ -13,7 +13,7 @@ DetailedEnableMessage: true
 DetailedDisableMessage: true
 
 # This will be the default reason to be displayed if none is given
-DefaultReason: "Rule breaking"
+DefaultReason: "none"
 
 # Change this if your server has a diffrent time that your users.
 # e.g.: ServerTime: 16:43 | Your Time: 13:43 | TimeDiff has to be set to -3
