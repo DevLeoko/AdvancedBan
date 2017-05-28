@@ -50,7 +50,7 @@ PunishmentManager.get().getCurrentWarns(uuid);
 // Returns the count of a players current warnings
 
 //Create a new Punishment:
-new Punishment(name, uuid, reason, operator, type, start, end, clculation, id).create();
+new Punishment(name, uuid, reason, operator, type, start, end, calculation, id).create();
 // name - The users name
 // uuid - The users uuid
 // reason - The punishment reason | Can be null or a layout like "#LayoutName" or a basic reason "Hacking in FFA"
