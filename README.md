@@ -12,10 +12,10 @@ AdvancedBan provides also a full Message-File so you can change and translate al
 This is a BungeeCord & Bukkit/Spigot-Plugin in one and it supports MySQL and Local-File-Storage.
 
 ## API
-To use the API just add the AdvnacedBan.jar to your BuildPath and as a depency in your Plugin.yml
+To use the API just add the AdvancedBan.jar to your BuildPath and as a dependency in your Plugin.yml
 You can use this API in Bukkit/Spigot-Plugins but also in Bungee-Plugins.
 The API-Methods can be accessed trough PuishmentManager.get()
-Here are the correnty availbable methods:
+Here are the currently available methods:
 
 ``` Java
 //To get a PlayerUUID use:
@@ -28,8 +28,8 @@ PunishmentManager.get().getPunishments(checkExpired);
 PunishmentManager.get().getPunishments(uuid, type, current);
 // Returns a list of Punishments
 // uuid - Players uuid | null = all players
-// type - Type of the punishemtn PunishmentType-Enum | null = all types
-// current - If only currently active punishemnts should be displaid | true = currently active | false = all
+// type - Type of the punishments PunishmentType-Enum | null = all types
+// current - If only currently active punishments should be displayed | true = currently active | false = all
 // Example:
 PunishmentManager.get().getPunishments(UUIDManager.get().getUUID("Leoko"), PunishmentType.WARNING, true);
 // Would return all active Warnings for the player Leoko
