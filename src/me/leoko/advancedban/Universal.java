@@ -21,9 +21,6 @@ import java.util.Scanner;
  */
 public class Universal {
     private static Universal instance = null;
-    public static Universal get(){
-        return instance == null ? instance = new Universal() : instance;
-    }
 
     private MethodInterface mi;
 
@@ -36,6 +33,17 @@ public class Universal {
     // -> Improve performance by adding player-data
     // -> Offline-Exempt
     // -> DoubleIP
+    
+    private Universal(){
+        // private constructor for a singleton
+    }
+    
+    public static Universal get(){
+        if( instance == null ){
+            instance = new Universal();
+        }
+        return instance;
+    }
 
     public void setup(MethodInterface mi){
         this.mi = mi;
