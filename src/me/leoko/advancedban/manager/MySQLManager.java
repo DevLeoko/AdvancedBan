@@ -37,8 +37,14 @@ public class MySQLManager {
 		
 		boolean createFile = !f.exists();
 		
-		if(createFile)
-			try { f.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+		if(createFile){
+			try { 
+				f.createNewFile(); 
+			} 
+			catch (IOException e) { 
+				e.printStackTrace(); 
+			}
+		}
 
 		MethodInterface mi = Universal.get().getMethods();
 		
@@ -89,7 +95,7 @@ public class MySQLManager {
 	
 	private void connect(){
 		try{
-			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":3306/"+dbName+"?verifyServerCertificate=false&useSSL=false", usrName, password);
+			connection = DriverManager.getConnection("jdbc:mysql://"+ip+":"+port+"/"+dbName+"?verifyServerCertificate=false&useSSL=false", usrName, password);
 		}catch(Exception exc){
 			System.out.println("AdvancedBan <> \n \n \nMySQL-Error\nCould not connect to MySQL-Server!\nDisabeling plugin!\nCheck your MySQL.yml \nSkype: Leoko33 \n \n");
 			failed = true;

@@ -21,7 +21,10 @@ public class MessageManager {
                     "\n  - Check the Message.yml-File for any missing or double \" or '" +
                     "\n  - Visit yamllint.com to  validate your Message.yml" +
                     "\n  - Delete the message file and restart the server");
-        }else str = replace(str, parameters).replace('&', '§');
+        }
+        else{
+            str = replace(str, parameters).replace('&', '§');
+        }
         return str;
     }
 
@@ -47,11 +50,14 @@ public class MessageManager {
     }
 
     public static void sendMessage(Object sender, String path, boolean prefix, String... parameters){
-        mi.sendMessage(sender, (prefix ? getMessage("General.Prefix")+" " : "")+getMessage(path, parameters));
+        mi.sendMessage(sender, (prefix ? getMessage("General.Prefix")+" " : "") + getMessage(path, parameters));
     }
 
     private static String replace(String str, String... parameters){
-        for(int i = 0; i < parameters.length-1; i = i+2) str = str.replaceAll("%"+parameters[i]+"%", parameters[i+1]);
+        for(int i = 0; i < parameters.length-1; i = i+2){
+            str = str.replaceAll("%"+parameters[i]+"%", parameters[i+1]);
+        }
+        
         return str;
     }
 }
