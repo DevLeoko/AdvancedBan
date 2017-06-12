@@ -17,8 +17,17 @@ import java.util.List;
 public class PunishmentManager {
 
     private static PunishmentManager instance = null;
+    
+    private PunishmentManager (){
+        // private constructor for a singleton
+    }
+    
     public static PunishmentManager get(){
-        return instance == null ? instance = new PunishmentManager() : instance;
+        if( instance == null ){
+            instance = new PunishmentManager();
+        }
+        
+        return  instance;
     }
 
     private List<Punishment> punishments = Collections.synchronizedList(new ArrayList<Punishment>());
