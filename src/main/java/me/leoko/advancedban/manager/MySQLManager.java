@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MySQLManager {
-
     private final String ip;
     private final String dbName;
     private final String usrName;
@@ -22,11 +21,9 @@ public class MySQLManager {
     private final int refreshMin;
     private int port = 3306;
     private Connection connection;
-
     private boolean failed = false;
 
-    public MySQLManager(String ip, String dbName, String usrName, String password,
-                        boolean autoRefresh, int refreshMin) {
+    public MySQLManager(String ip, String dbName, String usrName, String password, boolean autoRefresh, int refreshMin) {
         this.ip = ip;
         this.dbName = dbName;
         this.usrName = usrName;
@@ -38,19 +35,18 @@ public class MySQLManager {
     }
 
     public MySQLManager(File f, boolean autoRefresh, int refreshMin) {
-
         boolean createFile = !f.exists();
 
-        if (createFile)
+        if (createFile) {
             try {
                 //noinspection ResultOfMethodCallIgnored
                 f.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
 
         MethodInterface mi = Universal.get().getMethods();
-
         mi.loadMySQLFile(f);
 
         if (createFile) {
@@ -67,12 +63,12 @@ public class MySQLManager {
         this.refreshMin = refreshMin;
 
         connect();
-
     }
 
     private boolean hasFailed() {
-        if (failed)
+        if (failed) {
             System.out.println("AdvancedBan <> Skipped executing SQL because there is no connection to the MySQL-Server please restart the server!");
+        }
         return failed;
     }
 
@@ -106,8 +102,9 @@ public class MySQLManager {
             return;
         }
 
-        if (autoRefresh)
+        if (autoRefresh) {
             Universal.get().getMethods().scheduleAsyncRep(this::reconnect, 20 * 60 * refreshMin, 20 * 60 * refreshMin);
+        }
     }
 
     public boolean isFailed() {
@@ -115,7 +112,9 @@ public class MySQLManager {
     }
 
     public void checkDB(String db, String createSQL) throws SQLException {
-        if (hasFailed()) return;
+        if (hasFailed()) {
+            return;
+        }
         DatabaseMetaData md = connection.getMetaData();
         ResultSet rs = md.getTables(null, null, db, null);
 
@@ -126,7 +125,9 @@ public class MySQLManager {
     }
 
     public void executeStatement(String sql) {
-        if (hasFailed()) return;
+        if (hasFailed()) {
+            return;
+        }
         try {
             connection.prepareStatement(sql).execute();
         } catch (SQLException e) {
@@ -137,7 +138,9 @@ public class MySQLManager {
     }
 
     public ResultSet executeRespStatement(String sql) {
-        if (hasFailed()) return null;
+        if (hasFailed()) {
+            return null;
+        }
         try {
             return connection.prepareStatement(sql).executeQuery();
         } catch (SQLException e) {

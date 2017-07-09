@@ -152,24 +152,36 @@ public class Universal {
 
     public boolean isMuteCommand(String cmd) {
         cmd = cmd.contains(":") ? cmd.split(":", 2)[1] : cmd;
-        for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands"))
-            if (cmd.equalsIgnoreCase(str)) return true;
+        for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) {
+            if (cmd.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
         return false;
     }
 
 
     public boolean isExemptPlayer(String name) {
         List<String> exempt = getMethods().getStringList(getMethods().getConfig(), "ExemptPlayers");
-        if (exempt != null) for (String str : exempt) if (name.equalsIgnoreCase(str)) return true;
+        if (exempt != null) {
+            for (String str : exempt) {
+                if (name.equalsIgnoreCase(str)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     public boolean broadcastLeoko() {
         File readme = new File(getMethods().getDataFolder(), "readme.txt");
-        if (!readme.exists()) return true;
+        if (!readme.exists()) {
+            return true;
+        }
         try {
-            if (Files.readAllLines(Paths.get(readme.getPath()), Charset.defaultCharset()).get(0).equalsIgnoreCase("I don't want that there will be any message when the dev of this plugin joins the server! I want this even though the plugin is 100% free and the join-message is the only reward for the Dev :("))
+            if (Files.readAllLines(Paths.get(readme.getPath()), Charset.defaultCharset()).get(0).equalsIgnoreCase("I don't want that there will be any message when the dev of this plugin joins the server! I want this even though the plugin is 100% free and the join-message is the only reward for the Dev :(")) {
                 return false;
+            }
         } catch (IOException ignore) {
         }
         return true;
@@ -178,9 +190,13 @@ public class Universal {
     public String callConnection(String name, String ip) {
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
-        if (uuid == null) return "[AdvancedBan] Failed to fetch your UUID";
+        if (uuid == null) {
+            return "[AdvancedBan] Failed to fetch your UUID";
+        }
         Punishment pt = PunishmentManager.get().getBan(uuid);
-        if (pt == null) pt = PunishmentManager.get().getBan(ip);
+        if (pt == null) {
+            pt = PunishmentManager.get().getBan(ip);
+        }
         if (pt != null) {
             return pt.getLayoutBSN();
         }

@@ -12,19 +12,19 @@ import net.md_5.bungee.event.EventHandler;
  */
 public class ConnectionListenerBungee implements Listener {
     @EventHandler
-    public void onConnection(PreLoginEvent e) {
-        String result = Universal.get().callConnection(e.getConnection().getName(), e.getConnection().getAddress().getAddress().getHostAddress());
+    public void onConnection(PreLoginEvent event) {
+        String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
         if (result != null) {
-            e.setCancelled(true);
+            event.setCancelled(true);
             //noinspection deprecation
-            e.setCancelReason(result);
+            event.setCancelReason(result);
         }
     }
 
     @EventHandler
-    public void onLogin(final PostLoginEvent e) {
+    public void onLogin(final PostLoginEvent event) {
         Universal.get().getMethods().scheduleAsync(() -> {
-            if (e.getPlayer().getName().equalsIgnoreCase("Leoko")) {
+            if (event.getPlayer().getName().equalsIgnoreCase("Leoko")) {
                 if (Universal.get().broadcastLeoko()) {
                     //noinspection deprecation
                     ProxyServer.getInstance().broadcast("");
@@ -32,9 +32,10 @@ public class ConnectionListenerBungee implements Listener {
                     ProxyServer.getInstance().broadcast("§c§lAdvancedBan §8§l» §7My creator §c§oLeoko §7just joined the game ^^");
                     //noinspection deprecation
                     ProxyServer.getInstance().broadcast("");
-                } else
+                } else {
                     //noinspection deprecation
-                    e.getPlayer().sendMessage("§c§lAdvancedBan v2 §8§l» §cHey Leoko we are using your Plugin (NO-BC)");
+                    event.getPlayer().sendMessage("§c§lAdvancedBan v2 §8§l» §cHey Leoko we are using your Plugin (NO-BC)");
+                }
             }
         }, 20);
     }

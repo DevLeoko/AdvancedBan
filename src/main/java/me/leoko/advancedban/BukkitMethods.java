@@ -38,9 +38,15 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void loadFiles() {
-        if (!configFile.exists()) ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
-        if (!messageFile.exists()) ((JavaPlugin) getPlugin()).saveResource("Messages.yml", true);
-        if (!layoutFile.exists()) ((JavaPlugin) getPlugin()).saveResource("Layouts.yml", true);
+        if (!configFile.exists()) {
+            ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
+        }
+        if (!messageFile.exists()) {
+            ((JavaPlugin) getPlugin()).saveResource("Messages.yml", true);
+        }
+        if (!layoutFile.exists()) {
+            ((JavaPlugin) getPlugin()).saveResource("Layouts.yml", true);
+        }
 
         config = YamlConfiguration.loadConfiguration(configFile);
         messages = YamlConfiguration.loadConfiguration(messageFile);
@@ -54,11 +60,13 @@ public class BukkitMethods implements MethodInterface {
             config = YamlConfiguration.loadConfiguration(configFile);
         }
 
-        if (!dataFile.exists()) try {
-            //noinspection ResultOfMethodCallIgnored
-            dataFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!dataFile.exists()) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                dataFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         data = YamlConfiguration.loadConfiguration(dataFile);
     }
@@ -73,7 +81,6 @@ public class BukkitMethods implements MethodInterface {
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
             return json.get(key).toString();
-
         } catch (Exception exc) {
             return null;
         }
@@ -216,7 +223,9 @@ public class BukkitMethods implements MethodInterface {
     public boolean callChat(Object player) {
         Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
         if (pnt != null) {
-            for (String str : pnt.getLayout()) sendMessage(player, str);
+            for (String str : pnt.getLayout()) {
+                sendMessage(player, str);
+            }
             return true;
         }
         return false;
@@ -226,7 +235,9 @@ public class BukkitMethods implements MethodInterface {
     public boolean callCMD(Object player, String cmd) {
         Punishment pnt;
         if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
-            for (String str : pnt.getLayout()) sendMessage(player, str);
+            for (String str : pnt.getLayout()) {
+                sendMessage(player, str);
+            }
             return true;
         }
         return false;

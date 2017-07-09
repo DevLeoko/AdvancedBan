@@ -19,14 +19,17 @@ public class UUIDManager {
     private final MethodInterface mi = Universal.get().getMethods();
 
     public static UUIDManager get() {
-        if (instance == null) instance = new UUIDManager();
-        return instance;
+        return instance == null ? instance = new UUIDManager() : instance;
     }
 
     public String getInitialUUID(String name) {
         name = name.toLowerCase();
-        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) return name;
-        if (mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)) return mi.getInternUUID(name);
+        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) {
+            return name;
+        }
+        if (mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)) {
+            return mi.getInternUUID(name);
+        }
 
         String uuid = null;
         try {
@@ -56,18 +59,28 @@ public class UUIDManager {
     }
 
     public String getUUID(String name) {
-        if (activeUUIDs.containsKey(name)) return activeUUIDs.get(name);
+        if (activeUUIDs.containsKey(name)) {
+            return activeUUIDs.get(name);
+        }
         return getInitialUUID(name);
     }
 
     @SuppressWarnings("resource")
     public String getNameFromUUID(String uuid, boolean forceInitial) {
-        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) return uuid;
-        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)) return mi.getName(uuid);
+        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) {
+            return uuid;
+        }
+        if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)) {
+            return mi.getName(uuid);
+        }
 
-        if (!forceInitial)
-            for (Entry<String, String> rs : activeUUIDs.entrySet())
-                if (rs.getValue().equalsIgnoreCase(uuid)) return rs.getKey();
+        if (!forceInitial) {
+            for (Entry<String, String> rs : activeUUIDs.entrySet()) {
+                if (rs.getValue().equalsIgnoreCase(uuid)) {
+                    return rs.getKey();
+                }
+            }
+        }
 
         try {
             String s = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8").useDelimiter("\\A").next();
@@ -89,7 +102,9 @@ public class UUIDManager {
             System.out.println("!! Could not find key '" + key + "' in the servers response");
             System.out.println("!! Response: " + request.getResponseMessage());
         } else {
-            if (activeUUIDs.containsKey(name)) activeUUIDs.remove(name);
+            if (activeUUIDs.containsKey(name)) {
+                activeUUIDs.remove(name);
+            }
             activeUUIDs.put(name, uuid);
         }
         return uuid;

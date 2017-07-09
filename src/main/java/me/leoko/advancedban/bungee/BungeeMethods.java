@@ -45,22 +45,28 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void loadFiles() {
         try {
-            if (!getDataFolder().exists()) //noinspection ResultOfMethodCallIgnored
+            if (!getDataFolder().exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 getDataFolder().mkdirs();
-            if (!configFile.exists())
+            }
+            if (!configFile.exists()) {
                 Files.copy(((Plugin) getPlugin()).getResourceAsStream("config.yml"), configFile.toPath());
-            if (!messageFile.exists())
+            }
+            if (!messageFile.exists()) {
                 Files.copy(((Plugin) getPlugin()).getResourceAsStream("Messages.yml"), messageFile.toPath());
-            if (!layoutFile.exists())
+            }
+            if (!layoutFile.exists()) {
                 Files.copy(((Plugin) getPlugin()).getResourceAsStream("Layouts.yml"), layoutFile.toPath());
+            }
 
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
             messages = ConfigurationProvider.getProvider(YamlConfiguration.class).load(messageFile);
             layouts = ConfigurationProvider.getProvider(YamlConfiguration.class).load(layoutFile);
 
-            if (!dataFile.exists())
+            if (!dataFile.exists()) {
                 //noinspection ResultOfMethodCallIgnored
                 dataFile.createNewFile();
+            }
             data = ConfigurationProvider.getProvider(YamlConfiguration.class).load(dataFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,7 +97,8 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String[] getKeys(Object file, String path) {
-        return ((Configuration) file).getSection(path).getKeys().toArray(new String[0]); //TODO not sure if it returns all keys or just the first :/
+        //TODO not sure if it returns all keys or just the first :/
+        return ((Configuration) file).getSection(path).getKeys().toArray(new String[0]);
     }
 
     @Override
@@ -223,7 +230,9 @@ public class BungeeMethods implements MethodInterface {
     public boolean callChat(Object player) {
         Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
         if (pnt != null) {
-            for (String str : pnt.getLayout()) sendMessage(player, str);
+            for (String str : pnt.getLayout()) {
+                sendMessage(player, str);
+            }
             return true;
         }
         return false;
@@ -232,31 +241,34 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public boolean callCMD(Object player, String cmd) {
         Punishment pnt;
-        if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
-            for (String str : pnt.getLayout()) sendMessage(player, str);
+        if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) &&
+                (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
+            for (String str : pnt.getLayout()) {
+                sendMessage(player, str);
+            }
             return true;
         }
         return false;
     }
 
     @Override
-    public void loadMySQLFile(File f) {
+    public void loadMySQLFile(File file) {
         try {
-            mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(f);
+            mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void createMySQLFile(File f) {
+    public void createMySQLFile(File file) {
         mysql.set("MySQL.IP", "localhost");
         mysql.set("MySQL.DB-Name", "YourDatabase");
         mysql.set("MySQL.Username", "root");
         mysql.set("MySQL.Password", "pw123");
         mysql.set("MySQL.Port", 3306);
         try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(mysql, f);
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(mysql, file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -270,7 +282,9 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public String parseJSON(InputStreamReader json, String key) {
         JsonElement element = new JsonParser().parse(json);
-        if (element instanceof JsonNull) return null;
+        if (element instanceof JsonNull) {
+            return null;
+        }
         JsonElement obj = ((JsonObject) element).get(key);
         return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
@@ -278,7 +292,9 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public String parseJSON(String json, String key) {
         JsonElement element = new JsonParser().parse(json);
-        if (element instanceof JsonNull) return null;
+        if (element instanceof JsonNull) {
+            return null;
+        }
         JsonElement obj = ((JsonObject) element).get(key);
         return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }

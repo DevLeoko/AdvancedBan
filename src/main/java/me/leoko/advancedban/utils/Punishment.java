@@ -87,8 +87,9 @@ public class Punishment {
         }
 
         if (Universal.get().isUseMySQL()) {
-            if (getType() != PunishmentType.KICK)
+            if (getType() != PunishmentType.KICK) {
                 Universal.get().getMysql().executeStatement("INSERT INTO `Punishments` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
+            }
             Universal.get().getMysql().executeStatement("INSERT INTO `PunishmentHistory` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
             ResultSet rs = Universal.get().getMysql().executeRespStatement("SELECT * FROM `Punishments` WHERE `uuid` = '" + getUuid() + "' AND `start` = '" + getStart() + "'");
 
@@ -105,9 +106,10 @@ public class Punishment {
                 }
             }
         } else { //TODO improve performance!
-
             int i = 1;
-            while (mi.contains(mi.getData(), "Punishments." + i)) i++;
+            while (mi.contains(mi.getData(), "Punishments." + i)) {
+                i++;
+            }
             id = i;
 
             String pathT = "Punishments.";
@@ -128,14 +130,14 @@ public class Punishment {
             mi.saveData();
         }
 
-
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
 
         if (getType().getBasic() == PunishmentType.WARNING) {
             String cmd = "";
             for (int i = 1; i <= cWarnings; i++) {
-                if (mi.contains(mi.getConfig(), "WarnActions." + i))
+                if (mi.contains(mi.getConfig(), "WarnActions." + i)) {
                     cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
+                }
             }
             final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
             mi.runSync(() -> {
@@ -151,13 +153,14 @@ public class Punishment {
                 "DURATION", getDuration(true),
                 "REASON", getReason(),
                 "NAME", getName(),
-                "COUNT", cWarnings + ""
-        );
+                "COUNT", cWarnings + "");
 
         for (Object op : mi.getOnlinePlayers()) {
-            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify"))
-                for (String str : notification)
+            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify")) {
+                for (String str : notification) {
                     mi.sendMessage(op, str);
+                }
+            }
         }
 
         if (mi.isOnline(getName())) {
@@ -166,11 +169,15 @@ public class Punishment {
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
                 mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
             } else {
-                for (String str : getLayout()) mi.sendMessage(p, str);
+                for (String str : getLayout()) {
+                    mi.sendMessage(p, str);
+                }
             }
         }
 
-        if (getType() != PunishmentType.KICK) PunishmentManager.get().getPunishments(false).add(this);
+        if (getType() != PunishmentType.KICK) {
+            PunishmentManager.get().getPunishments(false).add(this);
+        }
         PunishmentManager.get().getHistory().add(this);
     }
 
@@ -193,7 +200,6 @@ public class Punishment {
             mi.saveData();
         }
 
-//        if(PunishmentManager.get().getPunishments().contains(this))
         PunishmentManager.get().getPunishments(false).remove(this);
     }
 
@@ -207,28 +213,31 @@ public class Punishment {
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
                 "REASON", getReason(),
-                "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) + "" : "0"
-        );
+                "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) + "" : "0");
     }
 
     public String getDuration(boolean fromStart) {
         String duration = "permanent";
         if (getType().isTemp()) {
             long diff = (getEnd() - (fromStart ? start : TimeManager.getTime())) / 1000;
-            if (diff > 60 * 60 * 24)
+            if (diff > 60 * 60 * 24) {
                 duration = MessageManager.getMessage("General.TimeLayoutD", "D", diff / 60 / 60 / 24 + "", "H", diff / 60 / 60 % 24 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + "");
-            else if (diff > 60 * 60)
+            } else if (diff > 60 * 60) {
                 duration = MessageManager.getMessage("General.TimeLayoutH", "H", diff / 60 / 60 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + "");
-            else if (diff > 60)
+            } else if (diff > 60) {
                 duration = MessageManager.getMessage("General.TimeLayoutM", "M", diff / 60 + "", "S", diff % 60 + "");
-            else duration = MessageManager.getMessage("General.TimeLayoutS", "S", diff + "");
+            } else {
+                duration = MessageManager.getMessage("General.TimeLayoutS", "S", diff + "");
+            }
         }
         return duration;
     }
 
     public String getLayoutBSN() {
         StringBuilder msg = new StringBuilder();
-        for (String str : getLayout()) msg.append("\n").append(str);
+        for (String str : getLayout()) {
+            msg.append("\n").append(str);
+        }
         return msg.substring(1);
     }
 

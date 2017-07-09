@@ -38,8 +38,9 @@ public class BukkitMain extends JavaPlugin {
         for (Player op : Bukkit.getOnlinePlayers()) {
             AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(op.getName(), op.getAddress().getAddress(), op.getUniqueId());
             connListener.onConnect(apple);
-            if (apple.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_BANNED)
+            if (apple.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_BANNED) {
                 op.kickPlayer(apple.getKickMessage());
+            }
         }
     }
 

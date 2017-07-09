@@ -13,7 +13,8 @@ public class TimeManager {
     }
 
     public static long toMilliSec(String s) {
-        String[] sl = s.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)"); // This is not my regex :P | From: http://stackoverflow.com/a/8270824
+        // This is not my regex :P | From: http://stackoverflow.com/a/8270824
+        String[] sl = s.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
 
         long i = Long.parseLong(sl[0]);
         switch (sl[1]) {
