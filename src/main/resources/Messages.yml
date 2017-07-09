@@ -137,7 +137,7 @@ UnMute:
 
 UnWarn:
   Usage: "&cUsage &8\xbb &7&o/unwarn [ID] or /unwarn clear [Name]"
-  NotFound: "&cCoud not find warning #%ID%"
+  NotFound: "&cCould not find warning #%ID%"
   Done: "&7Warn &a&o#%ID% &7was successfully deleted!"
   Clear:
     Empty: "&c&o%NAME% &7has no warnings!"
@@ -145,7 +145,7 @@ UnWarn:
 
 UnPunish:
   Usage: "&cUsage &8\xbb &7&o/unpunish [ID]"
-  NotFound: "&cCoud not find punishment #%ID%"
+  NotFound: "&cCould not find punishment #%ID%"
   Done: "&7Punishment &a&o#%ID% &7was successfully deleted!"
 
 

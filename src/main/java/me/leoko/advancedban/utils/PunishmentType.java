@@ -13,10 +13,10 @@ public enum PunishmentType {
     TEMP_WARNING("Tempwarn", PunishmentType.WARNING, true, "ab.warn.temp"),
     KICK("Kick", null, false, "ab.kick.use");
 
-    private String name;
-    private String perms;
-    private PunishmentType basic;
-    private boolean temp;
+    private final String name;
+    private final String perms;
+    private final PunishmentType basic;
+    private final boolean temp;
 
     PunishmentType(String name, PunishmentType basic, boolean temp, String perms) {
         this.name = name;
@@ -25,27 +25,7 @@ public enum PunishmentType {
         this.perms = perms;
     }
 
-    public String getName() {
-        return name.toLowerCase();
-    }
-
-    public String getPerms() {
-        return perms;
-    }
-
-    public String getConfSection() {
-        return name;
-    }
-
-    public PunishmentType getBasic() {
-        return basic == null ? this : basic;
-    }
-
-    public boolean isTemp() {
-        return temp;
-    }
-
-    public static PunishmentType fromCommandName(String cmd){
+    public static PunishmentType fromCommandName(String cmd) {
         switch (cmd) {
             case "ban":
                 return PunishmentType.BAN;
@@ -66,5 +46,25 @@ public enum PunishmentType {
             default:
                 return null;
         }
+    }
+
+    public String getName() {
+        return name.toLowerCase();
+    }
+
+    public String getPerms() {
+        return perms;
+    }
+
+    public String getConfSection() {
+        return name;
+    }
+
+    public PunishmentType getBasic() {
+        return basic == null ? this : basic;
+    }
+
+    public boolean isTemp() {
+        return temp;
     }
 }

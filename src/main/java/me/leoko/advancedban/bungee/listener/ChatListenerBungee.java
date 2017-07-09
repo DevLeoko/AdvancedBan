@@ -11,12 +11,12 @@ import net.md_5.bungee.event.EventHandler;
  */
 public class ChatListenerBungee implements Listener {
     @EventHandler
-    public void onChat(ChatEvent e){
-        if(e.getSender() instanceof ProxiedPlayer) {
+    public void onChat(ChatEvent e) {
+        if (e.getSender() instanceof ProxiedPlayer) {
             if (!e.isCommand()) {
-                if(Universal.get().getMethods().callChat(e.getSender())) e.setCancelled(true);
-            }else{
-                if(Universal.get().getMethods().callCMD(e.getSender(), e.getMessage())) e.setCancelled(true);
+                if (Universal.get().getMethods().callChat(e.getSender())) e.setCancelled(true);
+            } else {
+                if (Universal.get().getMethods().callCMD(e.getSender(), e.getMessage())) e.setCancelled(true);
             }
         }
     }

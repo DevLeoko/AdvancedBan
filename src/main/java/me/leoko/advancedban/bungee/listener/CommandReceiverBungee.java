@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 /**
  * Created by Leoko @ dev.skamps.eu on 24.07.2016.
  */
-public class CommandReceiverBungee extends Command implements TabExecutor{
+public class CommandReceiverBungee extends Command implements TabExecutor {
 
     public CommandReceiverBungee(String name) {
         super(name);
