@@ -1,7 +1,7 @@
-name: AdvancedBan
-version: 2.0.6
+name: ${project.artifactId}
+version: ${project.version}
+main: ${project.groupId}.BukkitMain
 author: Leoko
-main: me.leoko.advancedban.BukkitMain
 
 commands:
   AdvancedBan:
