@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bungee.event.PunishmentEvent;
+import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -357,5 +359,15 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public String getFileName(Object file) {
         return "[Only available on Bukkit-Version!]";
+    }
+
+    @Override
+    public void callPunishmentEvent(Punishment punishment) {
+        ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new PunishmentEvent(punishment));
+    }
+
+    @Override
+    public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
+        ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
     }
 }

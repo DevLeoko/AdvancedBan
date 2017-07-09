@@ -1,5 +1,7 @@
 package me.leoko.advancedban;
 
+import me.leoko.advancedban.utils.Punishment;
+
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -99,4 +101,8 @@ public interface MethodInterface {
     boolean contains(Object file, String path);
 
     String getFileName(Object file);
+
+    void callPunishmentEvent(Punishment punishment);
+
+    void callRevokePunishmentEvent(Punishment punishment, boolean massClear);
 }

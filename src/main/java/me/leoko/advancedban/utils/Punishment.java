@@ -179,9 +179,15 @@ public class Punishment {
             PunishmentManager.get().getPunishments(false).add(this);
         }
         PunishmentManager.get().getHistory().add(this);
+
+        mi.callPunishmentEvent(this);
     }
 
     public void delete() {
+        delete(false);
+    }
+
+    public void delete(boolean massClear) {
         if (getType() == PunishmentType.KICK) {
             System.out.println("!! Failed deleting! You are not able to delete Kicks!");
         }
@@ -201,6 +207,8 @@ public class Punishment {
         }
 
         PunishmentManager.get().getPunishments(false).remove(this);
+
+        mi.callRevokePunishmentEvent(this, massClear);
     }
 
     public List<String> getLayout() {

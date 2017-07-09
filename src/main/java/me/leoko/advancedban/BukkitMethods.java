@@ -1,5 +1,7 @@
 package me.leoko.advancedban;
 
+import me.leoko.advancedban.event.PunishmentEvent;
+import me.leoko.advancedban.event.RevokePunishmentEvent;
 import me.leoko.advancedban.listener.CommandReceiver;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -344,5 +346,15 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public String getFileName(Object file) {
         return ((YamlConfiguration) file).getName();
+    }
+
+    @Override
+    public void callPunishmentEvent(Punishment punishment) {
+        Bukkit.getPluginManager().callEvent(new PunishmentEvent(punishment));
+    }
+
+    @Override
+    public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
+        Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
     }
 }
