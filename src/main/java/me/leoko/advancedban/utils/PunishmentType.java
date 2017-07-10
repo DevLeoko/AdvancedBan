@@ -31,6 +31,7 @@ public enum PunishmentType {
                 return PunishmentType.BAN;
             case "tempban":
                 return PunishmentType.TEMP_BAN;
+            case "banip":
             case "ipban":
                 return PunishmentType.IP_BAN;
             case "mute":
