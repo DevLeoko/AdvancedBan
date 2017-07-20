@@ -15,4 +15,4 @@ _Please provide the EXACT steps required to reproduce the problem..._
 _Any error/log post it through [pastebin.com](http://pastebin.com) and link it here._
 
 
-_Add any aditional information below._
+_Add any additional information below._
