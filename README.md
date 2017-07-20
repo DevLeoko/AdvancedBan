@@ -14,7 +14,7 @@ This is a BungeeCord & Bukkit/Spigot-Plugin in one and it supports MySQL and Loc
 ## API
 To use the API just add the AdvancedBan.jar to your BuildPath and as a dependency in your Plugin.yml
 You can use this API in Bukkit/Spigot-Plugins but also in Bungee-Plugins.
-The API-Methods can be accessed trough PuishmentManager.get()
+The API-Methods can be accessed trough PunishmentManager.get()
 Here are the currently available methods:
 
 ``` Java
@@ -44,7 +44,7 @@ PunishmentManager.get().getMute(id);
 // Returns a Punishment of the type Warn or Tempwarn | returns null if there is no warn with that id
 
 PunishmentManager.get().isBanned/isMuted(uuid);
-// Returns wether a player is banned or muted
+// Returns whether a player is banned or muted
 
 PunishmentManager.get().getCurrentWarns(uuid);
 // Returns the count of a players current warnings
