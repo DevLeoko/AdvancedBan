@@ -75,7 +75,14 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>${project.groupId]</shadedPattern>
+                            <shadedPattern>${project.groupId}</shadedPattern>
+                            <excludes>
+                                <exclude>org.bstats.bungeecord.Metrics</exclude>
+                            </excludes>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats.bungeecord</pattern>
+                            <shadedPattern>${project.groupId}.bungee</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
