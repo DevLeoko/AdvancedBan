@@ -1,11 +1,14 @@
-package me.leoko.advancedban;
+package me.leoko.advancedban.bukkit;
 
-import me.leoko.advancedban.event.PunishmentEvent;
-import me.leoko.advancedban.event.RevokePunishmentEvent;
-import me.leoko.advancedban.listener.CommandReceiver;
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bukkit.event.PunishmentEvent;
+import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
+import me.leoko.advancedban.bukkit.listener.CommandReceiver;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -117,6 +120,12 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public Object getLayouts() {
         return layouts;
+    }
+
+    @Override
+    public void setupMetrics() {
+        Metrics metrics = new Metrics((JavaPlugin) getPlugin());
+        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> Universal.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override

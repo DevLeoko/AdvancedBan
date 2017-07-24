@@ -1,4 +1,4 @@
-package me.leoko.advancedban.event;
+package me.leoko.advancedban.bukkit.event;
 
 import me.leoko.advancedban.utils.Punishment;
 import org.bukkit.event.Event;

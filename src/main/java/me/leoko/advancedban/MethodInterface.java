@@ -26,6 +26,8 @@ public interface MethodInterface {
 
     Object getLayouts();
 
+    void setupMetrics();
+
     void saveData();
 
     Object getPlugin();

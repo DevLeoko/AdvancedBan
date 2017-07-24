@@ -44,6 +44,7 @@ public class Universal {
             useMySQL = !mysql.isFailed();
         }
 
+        mi.setupMetrics();
         PunishmentManager.get().setup();
 
         mi.setCommandExecutor("advancedban");
@@ -74,14 +75,6 @@ public class Universal {
         } else if (!response.equalsIgnoreCase(mi.getVersion())) {
             upt = "There is a new version available! [" + response + "]";
         }
-
-        getMethods().scheduleAsyncRep(() -> {
-            try {
-                new URL("http://dev.skamps.eu/api/stats.php?player=" + getMethods().getOnlinePlayers().length).openConnection().connect();
-            } catch (IOException e) {
-                System.out.println("Failed to connect to stats-server");
-            }
-        }, 20 * 60 * 15, 20 * 60 * 15);
 
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
             System.out.println("\n \n[]=====[Enabling AdvancedBan]=====[]"

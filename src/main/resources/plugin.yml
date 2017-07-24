@@ -1,6 +1,6 @@
 name: ${project.artifactId}
 version: ${project.version}
-main: ${project.groupId}.BukkitMain
+main: ${project.groupId}.bukkit.BukkitMain
 author: Leoko
 
 commands:

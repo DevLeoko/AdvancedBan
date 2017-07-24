@@ -1,4 +1,4 @@
-package me.leoko.advancedban.listener;
+package me.leoko.advancedban.bukkit.listener;
 
 import me.leoko.advancedban.manager.CommandManager;
 import org.bukkit.command.Command;

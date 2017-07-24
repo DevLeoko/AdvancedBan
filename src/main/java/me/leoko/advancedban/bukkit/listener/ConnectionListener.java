@@ -1,6 +1,6 @@
-package me.leoko.advancedban.listener;
+package me.leoko.advancedban.bukkit.listener;
 
-import me.leoko.advancedban.BukkitMain;
+import me.leoko.advancedban.bukkit.BukkitMain;
 import me.leoko.advancedban.Universal;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
