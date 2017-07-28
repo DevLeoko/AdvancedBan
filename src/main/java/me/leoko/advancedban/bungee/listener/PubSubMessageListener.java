@@ -1,8 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
 import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
-import java.util.ArrayList;
-import java.util.List;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -29,18 +27,25 @@ public class PubSubMessageListener implements Listener {
             }
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
-                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring(6 + msg[1].length()));
+                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
                 }
             } else if (e.getMessage().startsWith("notification ")) {
                 for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
                     if (mi.hasPerms(perm, perm)) {
-                        mi.sendMessage(pp, e.getMessage().substring(13));
+                        mi.sendMessage(pp.getName(), e.getMessage().substring(13));
                     }
                 }
             } else if (e.getMessage().equals("refresh")) {
                 Universal.get().getMethods().runAsync(() -> {
                     PunishmentManager.get().refresh();
                 });
+            } else if (e.getMessage().startsWith("message ")) {
+                if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
+                    ProxyServer.getInstance().getPlayer(msg[1]).sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                }
+                if (msg[1].equalsIgnoreCase("CONSOLE")) {
+                    ProxyServer.getInstance().getConsole().sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                }
             }
         }
     }
