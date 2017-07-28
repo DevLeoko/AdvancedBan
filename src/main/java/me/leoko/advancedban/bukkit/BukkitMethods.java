@@ -12,6 +12,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -150,7 +151,11 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void setCommandExecutor(String cmd) {
-        Bukkit.getPluginCommand(cmd).setExecutor(CommandReceiver.get());
+        PluginCommand command = Bukkit.getPluginCommand(cmd);
+        if(command != null)
+            command.setExecutor(CommandReceiver.get());
+        else
+            System.out.println("AdvancedBan >> Failed to register command "+cmd);
     }
 
     @Override

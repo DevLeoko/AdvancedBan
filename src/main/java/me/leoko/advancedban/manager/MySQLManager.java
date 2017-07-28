@@ -95,7 +95,7 @@ public class MySQLManager {
 
     private void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":3306/" + dbName + "?verifyServerCertificate=false&useSSL=false", usrName, password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false", usrName, password);
         } catch (Exception exc) {
             System.out.println("AdvancedBan <> \n \n \nMySQL-Error\nCould not connect to MySQL-Server!\nDisabling plugin!\nCheck your MySQL.yml \nSkype: Leoko33 \n \n");
             failed = true;
