@@ -1,6 +1,5 @@
 package me.leoko.advancedban.utils;
 
-import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
@@ -10,7 +9,6 @@ import me.leoko.advancedban.manager.TimeManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import me.leoko.advancedban.bungee.BungeeMain;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -159,13 +157,6 @@ public class Punishment {
                 "COUNT", cWarnings + "");
 
         mi.notify("ab." + getType().getName() + ".notify", notification);
-//        for (Object op : mi.getOnlinePlayers()) {
-//            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify")) {
-//                for (String str : notification) {
-//                    mi.sendMessage(op, str);
-//                }
-//            }
-//        }
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
