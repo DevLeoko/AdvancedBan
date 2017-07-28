@@ -29,7 +29,7 @@ public class PubSubMessageListener implements Listener {
             }
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
-                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring(5));
+                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring(6 + msg[1].length()));
                 }
             } else if (e.getMessage().startsWith("notification ")) {
                 for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
