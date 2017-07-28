@@ -132,7 +132,7 @@ public class CommandManager {
                                 return;
                             }
 
-                            new Punishment(name, uuid, reason != null ? reason.toString() : "none", mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
+                            new Punishment(name, uuid, reason != null ? reason.toString() : null, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
                             MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Done", true, "NAME", args[0]);
                         } else {
                             MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
