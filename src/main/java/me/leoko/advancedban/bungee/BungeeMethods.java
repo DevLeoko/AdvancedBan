@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BungeeMethods implements MethodInterface {
+
     private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
@@ -162,12 +164,27 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public boolean hasPerms(Object player, String perms) {
-        return ((CommandSender) player).hasPermission(perms);
+        try {
+            return ((CommandSender) player).hasPermission(perms);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override
     public boolean isOnline(String name) {
         try {
+            if (ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null) {
+                try {
+                    for (String str : RedisBungee.getApi().getHumanPlayersOnline()) {
+                        if (str.equalsIgnoreCase(name)) {
+                            return RedisBungee.getApi().getPlayerIp(RedisBungee.getApi().getUuidFromName(str)) != null;
+                        }
+                    }
+                } catch (Exception ex) {
+                    ProxyServer.getInstance().getConsole().sendMessage("An error has ocurred when trying to use redisbungee to get online players.");
+                }
+            }
             return ProxyServer.getInstance().getPlayer(name).getAddress() != null;
         } catch (NullPointerException exc) {
             return false;
@@ -180,14 +197,13 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void kickPlayer(Object player, String reason) {
+    public void kickPlayer(String player, String reason) {
         //noinspection deprecation
-        ((ProxiedPlayer) player).disconnect(reason);
-    }
-
-    @Override
-    public Object[] getOnlinePlayers() {
-        return ProxyServer.getInstance().getPlayers().toArray();
+        if (Universal.get().useRedis()) {
+            RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
+        } else {
+            ProxyServer.getInstance().getPlayer(player).disconnect(reason);
+        }
     }
 
     @Override
@@ -250,8 +266,8 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public boolean callCMD(Object player, String cmd) {
         Punishment pnt;
-        if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) &&
-                (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
+        if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1))
+                && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
             for (String str : pnt.getLayout()) {
                 sendMessage(player, str);
             }
@@ -376,5 +392,21 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public void notify(String perm, List<String> notification) {
+        if (Universal.get().useRedis()) {
+            RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notificationperm " + perm);
+            notification.forEach((str) -> {
+                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + str);
+            });
+        } else {
+            ProxyServer.getInstance().getPlayers().stream().filter((pp) -> (hasPerms(pp, perm))).forEachOrdered((pp) -> {
+                notification.forEach((str) -> {
+                    sendMessage(pp, str);
+                });
+            });
+        }
     }
 }

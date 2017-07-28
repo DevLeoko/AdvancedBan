@@ -31,6 +31,7 @@ import java.util.UUID;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BukkitMethods implements MethodInterface {
+
     private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
@@ -175,15 +176,14 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void kickPlayer(Object player, String reason) {
-        ((Player) player).kickPlayer(reason);
+    public void kickPlayer(String player, String reason) {
+        Bukkit.getPlayer(player).kickPlayer(reason);
     }
 
-    @Override
-    public Object[] getOnlinePlayers() {
-        return Bukkit.getOnlinePlayers().toArray();
-    }
-
+//    @Override
+//    public Object[] getOnlinePlayers() {
+//        return Bukkit.getOnlinePlayers().toArray();
+//    }
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
         Bukkit.getScheduler().runTaskTimerAsynchronously((JavaPlugin) getPlugin(), rn, l1, l2);
@@ -365,5 +365,16 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public void notify(String perm, List<String> notification) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (hasPerms(p, perm)) {
+                for (String str : notification) {
+                    sendMessage(p, str);
+                }
+            }
+        }
     }
 }
