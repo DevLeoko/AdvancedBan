@@ -86,9 +86,9 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>${project.groupId}</shadedPattern>
-                            <!--<excludes>
+                            <excludes>
                                 <exclude>org.bstats.bungeecord.Metrics</exclude>
-                            </excludes>-->
+                            </excludes>
                         </relocation>
                         <relocation>
                             <pattern>org.bstats.bungeecord</pattern>
