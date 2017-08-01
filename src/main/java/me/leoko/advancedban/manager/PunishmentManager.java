@@ -9,12 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class PunishmentManager {
+
     private static PunishmentManager instance = null;
     private final List<Punishment> punishments = Collections.synchronizedList(new ArrayList<Punishment>());
     private final List<Punishment> history = Collections.synchronizedList(new ArrayList<Punishment>());
@@ -27,32 +29,32 @@ public class PunishmentManager {
         if (Universal.get().isUseMySQL()) {
             try {
                 if (!Universal.get().getMysql().getConnection().getMetaData().getTables(null, null, "Punishments", null).next()) {
-                    String sql = "CREATE TABLE `Punishments` (" +
-                            "`id` int NOT NULL AUTO_INCREMENT," +
-                            "`name` TEXT NULL DEFAULT NULL," +
-                            "`uuid` TEXT NULL DEFAULT NULL," +
-                            "`reason` TEXT NULL DEFAULT NULL," +
-                            "`operator` TEXT NULL DEFAULT NULL," +
-                            "`punishmentType` TEXT NULL DEFAULT NULL," +
-                            "`start` LONG DEFAULT NULL," +
-                            "`end` LONG DEFAULT NULL," +
-                            "`calculation` TEXT NULL DEFAULT NULL," +
-                            "PRIMARY KEY (`id`))";
+                    String sql = "CREATE TABLE `Punishments` ("
+                            + "`id` int NOT NULL AUTO_INCREMENT,"
+                            + "`name` TEXT NULL DEFAULT NULL,"
+                            + "`uuid` TEXT NULL DEFAULT NULL,"
+                            + "`reason` TEXT NULL DEFAULT NULL,"
+                            + "`operator` TEXT NULL DEFAULT NULL,"
+                            + "`punishmentType` TEXT NULL DEFAULT NULL,"
+                            + "`start` LONG DEFAULT NULL,"
+                            + "`end` LONG DEFAULT NULL,"
+                            + "`calculation` TEXT NULL DEFAULT NULL,"
+                            + "PRIMARY KEY (`id`))";
                     Universal.get().getMysql().executeStatement(sql);
                 }
 
                 if (!Universal.get().getMysql().getConnection().getMetaData().getTables(null, null, "PunishmentHistory", null).next()) {
-                    String sql = "CREATE TABLE `PunishmentHistory` (" +
-                            "`id` int NOT NULL AUTO_INCREMENT," +
-                            "`name` TEXT NULL DEFAULT NULL," +
-                            "`uuid` TEXT NULL DEFAULT NULL," +
-                            "`reason` TEXT NULL DEFAULT NULL," +
-                            "`operator` TEXT NULL DEFAULT NULL," +
-                            "`punishmentType` TEXT NULL DEFAULT NULL," +
-                            "`start` LONG DEFAULT NULL," +
-                            "`end` LONG DEFAULT NULL," +
-                            "`calculation` TEXT NULL DEFAULT NULL," +
-                            "PRIMARY KEY (`id`))";
+                    String sql = "CREATE TABLE `PunishmentHistory` ("
+                            + "`id` int NOT NULL AUTO_INCREMENT,"
+                            + "`name` TEXT NULL DEFAULT NULL,"
+                            + "`uuid` TEXT NULL DEFAULT NULL,"
+                            + "`reason` TEXT NULL DEFAULT NULL,"
+                            + "`operator` TEXT NULL DEFAULT NULL,"
+                            + "`punishmentType` TEXT NULL DEFAULT NULL,"
+                            + "`start` LONG DEFAULT NULL,"
+                            + "`end` LONG DEFAULT NULL,"
+                            + "`calculation` TEXT NULL DEFAULT NULL,"
+                            + "PRIMARY KEY (`id`))";
                     Universal.get().getMysql().executeStatement(sql);
                 }
 
@@ -69,6 +71,66 @@ public class PunishmentManager {
                             rs.getInt("id")));
                 }
 
+                ResultSet rsh = Universal.get().getMysql().executeRespStatement("SELECT * FROM `PunishmentHistory`");
+                while (rsh.next()) {
+                    history.add(new Punishment(rsh.getString("name"),
+                            rsh.getString("uuid"), rsh.getString("reason"),
+                            rsh.getString("operator"),
+                            PunishmentType.valueOf(rsh.getString("punishmentType")),
+                            rsh.getLong("start"),
+                            rsh.getLong("end"),
+                            rsh.getString("calculation"),
+                            rsh.getInt("id")));
+                }
+            } catch (SQLException exc) {
+                exc.printStackTrace();
+            }
+        } else {
+            MethodInterface mi = Universal.get().getMethods();
+            if (mi.contains(mi.getData(), "Punishments")) {
+                for (String key : mi.getKeys(mi.getData(), "Punishments")) {
+                    punishments.add(new Punishment(mi.getString(mi.getData(), "Punishments." + key + ".name"),
+                            mi.getString(mi.getData(), "Punishments." + key + ".uuid"), mi.getString(mi.getData(), "Punishments." + key + ".reason"),
+                            mi.getString(mi.getData(), "Punishments." + key + ".operator"),
+                            PunishmentType.valueOf(mi.getString(mi.getData(), "Punishments." + key + ".punishmentType")),
+                            mi.getLong(mi.getData(), "Punishments." + key + ".start"),
+                            mi.getLong(mi.getData(), "Punishments." + key + ".end"),
+                            mi.getString(mi.getData(), "Punishments." + key + "calculation"),
+                            Integer.valueOf(key)));
+                }
+            }
+            if (mi.contains(mi.getData(), "PunishmentHistory")) {
+                for (String key : mi.getKeys(mi.getData(), "PunishmentHistory")) {
+                    history.add(new Punishment(mi.getString(mi.getData(), "PunishmentHistory." + key + ".name"),
+                            mi.getString(mi.getData(), "PunishmentHistory." + key + ".uuid"), mi.getString(mi.getData(), "PunishmentHistory." + key + ".reason"),
+                            mi.getString(mi.getData(), "PunishmentHistory." + key + ".operator"),
+                            PunishmentType.valueOf(mi.getString(mi.getData(), "PunishmentHistory." + key + ".punishmentType")),
+                            mi.getLong(mi.getData(), "PunishmentHistory." + key + ".start"),
+                            mi.getLong(mi.getData(), "PunishmentHistory." + key + ".end"),
+                            mi.getString(mi.getData(), "PunishmentHistory." + key + "calculation"),
+                            Integer.valueOf(key)));
+                }
+            }
+        }
+    }
+
+    public void refresh() {
+        punishments.clear();
+        history.clear();
+        if (Universal.get().isUseMySQL()) {
+            try {
+                Universal.get().getMysql().executeStatement("DELETE FROM `Punishments` WHERE `end` <= '" + TimeManager.getTime() + "' AND `end` != -1");
+                ResultSet rs = Universal.get().getMysql().executeRespStatement("SELECT * FROM `Punishments`");
+                while (rs.next()) {
+                    punishments.add(new Punishment(rs.getString("name"),
+                            rs.getString("uuid"), rs.getString("reason"),
+                            rs.getString("operator"),
+                            PunishmentType.valueOf(rs.getString("punishmentType")),
+                            rs.getLong("start"),
+                            rs.getLong("end"),
+                            rs.getString("calculation"),
+                            rs.getInt("id")));
+                }
                 ResultSet rsh = Universal.get().getMysql().executeRespStatement("SELECT * FROM `PunishmentHistory`");
                 while (rsh.next()) {
                     history.add(new Punishment(rsh.getString("name"),
