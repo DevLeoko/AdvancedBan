@@ -2,6 +2,7 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
@@ -31,7 +32,7 @@ public class CommandManager {
             MethodInterface mi = Universal.get().getMethods();
             if (pt != null) {
                 if (mi.hasPerms(sender, pt.getPerms())) {
-                    boolean isTemp = pt.isTemp();//cmd.getName().matches("temp.*");
+                    boolean isTemp = pt.isTemp();
                     int argsLength = (isTemp ? 2 : 1);
                     if (args.length >= argsLength) {
 
@@ -82,11 +83,7 @@ public class CommandManager {
                                         MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[1].substring(1));
                                         return;
                                     }
-                                    int i = 0;
-                                    for (Punishment pts : PunishmentManager.get().getHistory()) {
-                                        if (pts.getUuid().equals(uuid) && pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(args[1].substring(1)))
-                                            i++;
-                                    }
+                                    int i = PunishmentManager.get().getCalculationLevel(uuid, args[1].substring(1));
                                     List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + args[1].substring(1));
 
                                     String time = timeLayout.get(timeLayout.size() <= i ? timeLayout.size() - 1 : i);
@@ -198,7 +195,7 @@ public class CommandManager {
             } else if (cmd.equalsIgnoreCase("banlist")) {
                 if (mi.hasPerms(sender, "ab.banlist")) {
                     if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
-                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getPunishments(true), "nope", false);
+                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getLoadedPunishments(true), "nope", false);
                     } else {
                         MessageManager.sendMessage(sender, "Banlist.Usage", true);
                     }
@@ -213,7 +210,7 @@ public class CommandManager {
                             MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                             return;
                         }
-                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(uuid, null, false), args[0], true);
+                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().gePunishments(uuid, null, false), args[0], true);
                     } else {
                         MessageManager.sendMessage(sender, "History.Usage", true);
                     }
@@ -247,7 +244,7 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                     return;
                 }
-                performList(sender, page, "Warns", PunishmentManager.get().getPunishments(uuid, PunishmentType.WARNING, true), name, false);
+                performList(sender, page, "Warns", PunishmentManager.get().gePunishments(uuid, PunishmentType.WARNING, true), name, false);
             } else if (cmd.equalsIgnoreCase("check")) {
                 if (mi.hasPerms(sender, "ab.check")) {
                     if (args.length == 1) {
@@ -296,7 +293,8 @@ public class CommandManager {
                     mi.sendMessage(sender, "  §cStatus §8• §a§oStable");
                     mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
                     mi.sendMessage(sender, "  §cLicense §8• §7Public");
-                    mi.sendMessage(sender, "  §cMySQL §8• §7" + Universal.get().isUseMySQL());
+                    mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
+                    mi.sendMessage(sender, "  §cServer §8• §7" + (mi instanceof BungeeMethods ? "Bungeecord" : "Spigot/Bukkit"));
                     mi.sendMessage(sender, "  §cPrefix §8• §7" + MessageManager.getMessage("General.Prefix"));
                     mi.sendMessage(sender, "§8§l§m-=========================-§r ");
                 } else if (args[0].equalsIgnoreCase("reload")) {

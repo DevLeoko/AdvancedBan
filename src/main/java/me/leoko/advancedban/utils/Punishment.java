@@ -2,6 +2,7 @@ package me.leoko.advancedban.utils;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
@@ -86,48 +87,24 @@ public class Punishment {
             return;
         }
 
-        if (Universal.get().isUseMySQL()) {
-            if (getType() != PunishmentType.KICK) {
-                Universal.get().getMysql().executeStatement("INSERT INTO `Punishments` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
-            }
-            Universal.get().getMysql().executeStatement("INSERT INTO `PunishmentHistory` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
-            ResultSet rs = Universal.get().getMysql().executeRespStatement("SELECT * FROM `Punishments` WHERE `uuid` = '" + getUuid() + "' AND `start` = '" + getStart() + "'");
+        if (getType() != PunishmentType.KICK) {
+            DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+        }
+        DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+        ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart());
 
-            if (getType() != PunishmentType.KICK) {
-                try {
-                    if (rs.next()) {
-                        id = rs.getInt("id");
-                    } else {
-                        System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
-                        System.out.println("!! Failed at: " + toString());
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        if (getType() != PunishmentType.KICK) {
+            try {
+                if (rs.next()) {
+                    id = rs.getInt("id");
+                } else {
+                    System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
+                    System.out.println("!! Failed at: " + toString());
                 }
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } else { //TODO improve performance!
-            int i = 1;
-            while (mi.contains(mi.getData(), "Punishments." + i)) {
-                i++;
-            }
-            id = i;
-
-            String pathT = "Punishments.";
-            for (int j = 0; j < 2; j++) {
-                if (j != 0 || getType() != PunishmentType.KICK) {
-                    mi.set(mi.getData(), pathT + id + ".name", getName());
-                    mi.set(mi.getData(), pathT + id + ".uuid", getUuid());
-                    mi.set(mi.getData(), pathT + id + ".reason", getReason());
-                    mi.set(mi.getData(), pathT + id + ".operator", getOperator());
-                    mi.set(mi.getData(), pathT + id + ".punishmentType", getType().name());
-                    mi.set(mi.getData(), pathT + id + ".start", getStart());
-                    mi.set(mi.getData(), pathT + id + ".end", getEnd());
-                    mi.set(mi.getData(), pathT + id + ".calculation", getCalculation());
-                }
-                pathT = "PunishmentHistory.";
-            }
-
-            mi.saveData();
         }
 
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
@@ -176,9 +153,9 @@ public class Punishment {
         }
 
         if (getType() != PunishmentType.KICK) {
-            PunishmentManager.get().getPunishments(false).add(this);
+            PunishmentManager.get().getLoadedPunishments(false).add(this);
         }
-        PunishmentManager.get().getHistory().add(this);
+        PunishmentManager.get().getLoadedHistory().add(this);
 
         mi.callPunishmentEvent(this);
     }
@@ -198,15 +175,9 @@ public class Punishment {
             return;
         }
 
+        DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        if (Universal.get().isUseMySQL()) {
-            Universal.get().getMysql().executeStatement("DELETE FROM `Punishments` WHERE `id` = " + getId());
-        } else {
-            mi.set(mi.getData(), "Punishments." + getId(), null);
-            mi.saveData();
-        }
-
-        PunishmentManager.get().getPunishments(false).remove(this);
+        PunishmentManager.get().getLoadedPunishments(false).remove(this);
 
         mi.callRevokePunishmentEvent(this, massClear);
     }

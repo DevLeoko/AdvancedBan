@@ -2,12 +2,14 @@ package me.leoko.advancedban.bukkit.listener;
 
 import me.leoko.advancedban.bukkit.BukkitMain;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.manager.PunishmentManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 16.07.2016.
@@ -19,6 +21,11 @@ public class ConnectionListener implements Listener {
         if (result != null) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, result);
         }
+    }
+
+    @EventHandler
+    public void onDisconnect(PlayerQuitEvent event){
+        PunishmentManager.get().discard(event.getPlayer().getName());
     }
 
     @EventHandler

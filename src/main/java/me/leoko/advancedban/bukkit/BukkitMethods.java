@@ -5,6 +5,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bukkit.listener.CommandReceiver;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
@@ -109,11 +110,6 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public Object getData() {
-        return data;
-    }
-
-    @Override
     public Object getMessages() {
         return messages;
     }
@@ -126,16 +122,7 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void setupMetrics() {
         Metrics metrics = new Metrics((JavaPlugin) getPlugin());
-        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> Universal.get().isUseMySQL() ? "yes" : "no"));
-    }
-
-    @Override
-    public void saveData() {
-        try {
-            data.save(dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -169,13 +156,11 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public boolean isOnline(String name) {
-        //noinspection deprecation
         return Bukkit.getOfflinePlayer(name).isOnline();
     }
 
     @Override
     public Object getPlayer(String name) {
-        //noinspection deprecation
         return Bukkit.getPlayer(name);
     }
 
@@ -225,13 +210,17 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
+    public String getIP(Object player) {
+        return ((Player) player).getAddress().getHostName();
+    }
+
+    @Override
     public String getInternUUID(Object player) {
         return player instanceof OfflinePlayer ? ((OfflinePlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
     }
 
     @Override
     public String getInternUUID(String player) {
-        //noinspection deprecation
         return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replaceAll("-", "");
     }
 
@@ -345,11 +334,6 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public int getInteger(Object file, String path, int def) {
         return ((YamlConfiguration) file).getInt(path, def);
-    }
-
-    @Override
-    public void set(Object file, String path, Object value) {
-        ((YamlConfiguration) file).set(path, value);
     }
 
     @Override
