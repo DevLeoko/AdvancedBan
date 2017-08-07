@@ -9,6 +9,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
@@ -110,11 +111,6 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public Object getData() {
-        return data;
-    }
-
-    @Override
     public Object getMessages() {
         return messages;
     }
@@ -127,16 +123,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void setupMetrics() {
         Metrics metrics = new Metrics((Plugin) getPlugin());
-        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> Universal.get().isUseMySQL() ? "yes" : "no"));
-    }
-
-    @Override
-    public void saveData() {
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(data, dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -156,7 +143,6 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void sendMessage(Object player, String msg) {
-        //noinspection deprecation
         ((CommandSender) player).sendMessage(msg);
     }
 
@@ -181,7 +167,6 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(Object player, String reason) {
-        //noinspection deprecation
         ((ProxiedPlayer) player).disconnect(reason);
     }
 
@@ -223,6 +208,11 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public String getName(String uuid) {
         return ProxyServer.getInstance().getPlayer(UUID.fromString(uuid)).getName();
+    }
+
+    @Override
+    public String getIP(Object player) {
+        return ((ProxiedPlayer) player).getAddress().getHostName();
     }
 
     @Override
@@ -351,11 +341,6 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public int getInteger(Object file, String path, int def) {
         return ((Configuration) file).getInt(path, def);
-    }
-
-    @Override
-    public void set(Object file, String path, Object value) {
-        ((Configuration) file).set(path, value);
     }
 
     @Override

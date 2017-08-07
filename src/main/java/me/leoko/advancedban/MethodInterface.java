@@ -20,15 +20,11 @@ public interface MethodInterface {
 
     Object getConfig();
 
-    Object getData();
-
     Object getMessages();
 
     Object getLayouts();
 
     void setupMetrics();
-
-    void saveData();
 
     Object getPlugin();
 
@@ -41,6 +37,8 @@ public interface MethodInterface {
     String getName(Object player);
 
     String getName(String uuid);
+
+    String getIP(Object player);
 
     String getInternUUID(Object player);
 
@@ -97,8 +95,6 @@ public interface MethodInterface {
     long getLong(Object file, String path, long def);
 
     int getInteger(Object file, String path, int def);
-
-    void set(Object file, String path, Object value);
 
     boolean contains(Object file, String path);
 
