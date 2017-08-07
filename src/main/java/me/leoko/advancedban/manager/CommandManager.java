@@ -1,6 +1,5 @@
 package me.leoko.advancedban.manager;
 
-import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.Punishment;
@@ -16,7 +15,6 @@ import java.util.List;
  * Created by Leoko @ dev.skamps.eu on 12.07.2016.
  */
 public class CommandManager {
-
     private static CommandManager instance = null;
 
     public static CommandManager get() {
@@ -86,9 +84,8 @@ public class CommandManager {
                                     }
                                     int i = 0;
                                     for (Punishment pts : PunishmentManager.get().getHistory()) {
-                                        if (pts.getUuid().equals(uuid) && pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(args[1].substring(1))) {
+                                        if (pts.getUuid().equals(uuid) && pts.getCalculation() != null && pts.getCalculation().equalsIgnoreCase(args[1].substring(1)))
                                             i++;
-                                        }
                                     }
                                     List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + args[1].substring(1));
 
@@ -120,14 +117,14 @@ public class CommandManager {
                                 }
                             }
 
-                            if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt"))
-                                    || Universal.get().isExemptPlayer(args[0])) {
+                            if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
+                                    Universal.get().isExemptPlayer(args[0])) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
                                 return;
                             }
 
-                            if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid))
-                                    || (pt.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(uuid))) {
+                            if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid)) ||
+                                    (pt.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(uuid))) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".AlreadyDone", true, "NAME", args[0]);
                                 return;
                             }
@@ -356,19 +353,12 @@ public class CommandManager {
             } else {
                 mi.sendMessage(sender, "§cHm wired :/");
             }
-            if (Universal.get().useRedis()) {
-                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "refresh");
-            } else {
-                Universal.get().getMethods().runAsync(() -> {
-                    PunishmentManager.get().refresh();
-                });
-            }
         });
     }
 
     private void performList(Object sender, int cPage, String confName, List<Punishment> pnts, String name, boolean history) {
         MethodInterface mi = Universal.get().getMethods();
-        if (pnts.isEmpty()) {
+        if (pnts.size() == 0) {
             MessageManager.sendMessage(sender, confName + ".NoEntries", true, "NAME", name);
             return;
         }
@@ -381,6 +371,7 @@ public class CommandManager {
             for (String str : MessageManager.getLayout(mi.getMessages(), confName + ".Header", "PREFIX", MessageManager.getMessage("General.Prefix"), "NAME", name)) {
                 mi.sendMessage(sender, str);
             }
+
 
             SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
             for (int i = (cPage - 1) * 5; i < cPage * 5 && pnts.size() > i; i++) {

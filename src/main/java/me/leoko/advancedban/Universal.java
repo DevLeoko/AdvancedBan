@@ -20,13 +20,11 @@ import java.util.Scanner;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class Universal {
-
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
     private MySQLManager mysql;
     private boolean useMySQL = false;
-    private static boolean redis = false;
 
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
@@ -36,6 +34,7 @@ public class Universal {
     // -> Improve performance by adding player-data
     // -> Offline-Exempt
     // -> DoubleIP
+
     public void setup(MethodInterface mi) {
         this.mi = mi;
         mi.loadFiles();
@@ -155,6 +154,7 @@ public class Universal {
         return false;
     }
 
+
     public boolean isExemptPlayer(String name) {
         List<String> exempt = getMethods().getStringList(getMethods().getConfig(), "ExemptPlayers");
         if (exempt != null) {
@@ -200,13 +200,5 @@ public class Universal {
         }
         Universal.get().getIps().put(name, ip);
         return null;
-    }
-
-    public void useRedis(boolean use) {
-        redis = use;
-    }
-    
-    public boolean useRedis() {
-        return redis;
     }
 }

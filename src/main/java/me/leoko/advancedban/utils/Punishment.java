@@ -14,7 +14,6 @@ import java.util.List;
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class Punishment {
-
     private static final MethodInterface mi = Universal.get().getMethods();
     private final String name;
     private final String uuid;
@@ -156,13 +155,19 @@ public class Punishment {
                 "NAME", getName(),
                 "COUNT", cWarnings + "");
 
-        mi.notify("ab." + getType().getName() + ".notify", notification);
+        for (Object op : mi.getOnlinePlayers()) {
+            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify")) {
+                for (String str : notification) {
+                    mi.sendMessage(op, str);
+                }
+            }
+        }
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
-                mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
+                mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
             } else {
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);
@@ -192,6 +197,7 @@ public class Punishment {
             System.out.println("!! Failed at: " + toString());
             return;
         }
+
 
         if (Universal.get().isUseMySQL()) {
             Universal.get().getMysql().executeStatement("DELETE FROM `Punishments` WHERE `id` = " + getId());
@@ -249,16 +255,16 @@ public class Punishment {
 
     @Override
     public String toString() {
-        return "Punishment{"
-                + "id=" + id
-                + ", name='" + name + '\''
-                + ", uuid='" + uuid + '\''
-                + ", reason='" + reason + '\''
-                + ", operator='" + operator + '\''
-                + ", start=" + start
-                + ", end=" + end
-                + ", calculation='" + calculation + '\''
-                + ", type=" + type
-                + '}';
+        return "Punishment{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", reason='" + reason + '\'' +
+                ", operator='" + operator + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", calculation='" + calculation + '\'' +
+                ", type=" + type +
+                '}';
     }
 }
