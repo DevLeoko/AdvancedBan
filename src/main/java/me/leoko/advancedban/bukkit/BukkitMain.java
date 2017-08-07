@@ -16,7 +16,6 @@ public class BukkitMain extends JavaPlugin {
         return instance;
     }
 
-    @Override
     public void onEnable() {
         instance = this;
         Universal.get().setup(new BukkitMethods());
@@ -35,7 +34,6 @@ public class BukkitMain extends JavaPlugin {
         }
     }
 
-    @Override
     public void onDisable() {
         Universal.get().shutdown();
     }

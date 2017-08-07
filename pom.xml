@@ -34,12 +34,6 @@
             <artifactId>bstats-bungeecord</artifactId>
             <version>1.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.imaginarycode.minecraft</groupId>
-            <artifactId>RedisBungee</artifactId>
-            <version>0.3.6-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -53,10 +47,6 @@
         <repository>
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>md_5-snapshots</id>
-            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <build>

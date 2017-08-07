@@ -52,7 +52,9 @@ public interface MethodInterface {
 
     Object getPlayer(String name);
 
-    void kickPlayer(String player, String reason);
+    void kickPlayer(Object player, String reason);
+
+    Object[] getOnlinePlayers();
 
     void scheduleAsyncRep(Runnable rn, long l1, long l2);
 
@@ -105,6 +107,4 @@ public interface MethodInterface {
     void callPunishmentEvent(Punishment punishment);
 
     void callRevokePunishmentEvent(Punishment punishment, boolean massClear);
-
-    public void notify(String permission, List<String> notification);
 }
