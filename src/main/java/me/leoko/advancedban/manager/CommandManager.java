@@ -56,7 +56,7 @@ public class CommandManager {
 
                             String name = args[0];
                             String uuid;
-                            if (pt != PunishmentType.IP_BAN) {
+                            if (pt != PunishmentType.IP_BAN && pt != PunishmentType.TEMP_IP_BAN) {
                                 uuid = UUIDManager.get().getUUID(args[0]);
                                 if (uuid == null) {
                                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);

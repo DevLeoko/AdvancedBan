@@ -13,6 +13,9 @@ commands:
   ipban:
     description: Ban a user by IP
     aliases: [banip, ban-ip]
+  tempipban:
+    description: Ban a user temporarily by IP
+    aliases: [tipban]
   kick:
     description: Kick a user
   warn:

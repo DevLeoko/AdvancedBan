@@ -148,13 +148,12 @@ public class Punishment {
             } else {
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);
+
                 }
+                PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
 
-        if (getType() != PunishmentType.KICK) {
-            PunishmentManager.get().getLoadedPunishments(false).add(this);
-        }
         PunishmentManager.get().getLoadedHistory().add(this);
 
         mi.callPunishmentEvent(this);

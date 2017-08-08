@@ -5,12 +5,13 @@ package me.leoko.advancedban.utils;
  */
 public enum PunishmentType {
     BAN("Ban", null, false, "ab.ban.perma"),
-    TEMP_BAN("Tempban", PunishmentType.BAN, true, "ab.ban.temp"),
-    IP_BAN("Ipban", PunishmentType.BAN, false, "ab.ban.ip"),
+    TEMP_BAN("Tempban", BAN, true, "ab.ban.temp"),
+    IP_BAN("Ipban", BAN, false, "ab.ipban.perma"),
+    TEMP_IP_BAN("Tempipban", BAN, true, "ab.ipban.temp"),
     MUTE("Mute", null, false, "ab.mute.perma"),
-    TEMP_MUTE("Tempmute", PunishmentType.MUTE, true, "ab.mute.temp"),
+    TEMP_MUTE("Tempmute", MUTE, true, "ab.mute.temp"),
     WARNING("Warn", null, false, "ab.warn.perma"),
-    TEMP_WARNING("Tempwarn", PunishmentType.WARNING, true, "ab.warn.temp"),
+    TEMP_WARNING("Tempwarn", WARNING, true, "ab.warn.temp"),
     KICK("Kick", null, false, "ab.kick.use");
 
     private final String name;
@@ -28,22 +29,26 @@ public enum PunishmentType {
     public static PunishmentType fromCommandName(String cmd) {
         switch (cmd) {
             case "ban":
-                return PunishmentType.BAN;
+                return BAN;
             case "tempban":
-                return PunishmentType.TEMP_BAN;
+                return TEMP_BAN;
+            case "ban-ip":
             case "banip":
             case "ipban":
-                return PunishmentType.IP_BAN;
+                return IP_BAN;
+            case "tempipban":
+            case "tipban":
+                return TEMP_IP_BAN;
             case "mute":
-                return PunishmentType.MUTE;
+                return MUTE;
             case "tempmute":
-                return PunishmentType.TEMP_MUTE;
+                return TEMP_MUTE;
             case "warn":
-                return PunishmentType.WARNING;
+                return WARNING;
             case "tempwarn":
-                return PunishmentType.TEMP_WARNING;
+                return TEMP_WARNING;
             case "kick":
-                return PunishmentType.KICK;
+                return KICK;
             default:
                 return null;
         }

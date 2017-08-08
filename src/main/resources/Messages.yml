@@ -62,6 +62,24 @@ Tempban:
   - "&7For the reason &o%REASON%"
   - "&7&oThis player got banned for &e&o%DURATION%"
 
+Tempipban:
+  Usage: "&cUsage &8\xbb &7&o/tempipban [Name/IP] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
+  MaxDuration: "&cYou are not able to ban more than %MAX%sec"
+  Layout:
+  - '%PREFIX% &7Temporarily banned'
+  - '&7'
+  - '&7'
+  - "&cReason &8\xbb &7%REASON%"
+  - "&cDuration &8\xbb &7%DURATION%"
+  - '&7'
+  - '&8Unban application in TS or forum'
+  - "&eTS-Ip &8\xbb &c&ncoming soon"
+  - "&eForum &8\xbb &c&ncoming soon"
+  Notification:
+  - "&c&o%NAME% &7got banned by &e&o%OPERATOR%"
+  - "&7For the reason &o%REASON%"
+  - "&7&oThis player got banned for &e&o%DURATION%"
+
 Mute:
   Usage: "&cUsage &8\xbb &7&o/mute [Name] [Reason/@Layout]"
   Done: "&c&o%NAME% &7was successfully muted!"

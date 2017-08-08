@@ -137,6 +137,15 @@ public class DatabaseManager {
         }
     }
 
+    public boolean isConnectionValid(int timeout){
+        try {
+            return connection.isValid(timeout);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean isFailedMySQL() {
         return failedMySQL;
     }

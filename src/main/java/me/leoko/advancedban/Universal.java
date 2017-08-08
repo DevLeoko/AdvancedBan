@@ -3,6 +3,7 @@ package me.leoko.advancedban;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.manager.UpdateManager;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
 
@@ -33,6 +34,8 @@ public class Universal {
         this.mi = mi;
         mi.loadFiles();
 
+        UpdateManager.get().setup();
+
         try{
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
         }catch (Exception exc){
@@ -44,10 +47,13 @@ public class Universal {
         PunishmentManager.get().setup();
 
         mi.setCommandExecutor("advancedban");
-        mi.setCommandExecutor("advancedban");
         mi.setCommandExecutor("ban");
         mi.setCommandExecutor("tempban");
         mi.setCommandExecutor("ipban");
+        mi.setCommandExecutor("ban-ip");
+        mi.setCommandExecutor("banip");
+        mi.setCommandExecutor("tempipban");
+        mi.setCommandExecutor("tipban");
         mi.setCommandExecutor("banip");
         mi.setCommandExecutor("kick");
         mi.setCommandExecutor("warn");
