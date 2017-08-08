@@ -1,4 +1,5 @@
-import me.leoko.advancedban.Universal;
+package me.leoko.advancedban;
+
 import me.leoko.advancedban.manager.DatabaseManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

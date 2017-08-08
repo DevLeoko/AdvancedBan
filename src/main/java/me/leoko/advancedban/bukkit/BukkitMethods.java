@@ -33,10 +33,8 @@ import java.util.UUID;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BukkitMethods implements MethodInterface {
-    private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private YamlConfiguration data;
     private YamlConfiguration config;
     private File configFile = new File(getDataFolder(), "config.yml");
     private YamlConfiguration messages;
@@ -66,20 +64,10 @@ public class BukkitMethods implements MethodInterface {
             ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
             config = YamlConfiguration.loadConfiguration(configFile);
         }
-
-        if (!dataFile.exists()) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        data = YamlConfiguration.loadConfiguration(dataFile);
     }
 
     @Override
-    public String getFromURL_JSON(String url, String key) {
+    public String getFromUrlJson(String url, String key) {
         try {
             HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
             request.connect();

@@ -1,4 +1,5 @@
-import me.leoko.advancedban.Universal;
+package me.leoko.advancedban;
+
 import me.leoko.advancedban.manager.CommandManager;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -46,7 +47,7 @@ public class PunishmentTest {
         Assert.assertFalse("Punishment should not be cached if user is not online", PunishmentManager.get().getLoadedPunishments(false).contains(punishment));
         Assert.assertTrue("Punishment should be active even if not in cache", PunishmentManager.get().isBanned("cache"));
         PunishmentManager.get().load("cache", "cache", "127.0.0.1").accept();
-        Assert.assertTrue("Punishment should be cached after user is loaded", PunishmentManager.get().getLoadedPunishments(false).stream().filter(pt -> pt.getUuid().equals("cache")).findAny().isPresent());
+        Assert.assertTrue("Punishment should be cached after user is loaded", PunishmentManager.get().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getUuid().equals("cache")));
         Assert.assertTrue("Punishment should be still active when in cache", PunishmentManager.get().isBanned("cache"));
     }
 

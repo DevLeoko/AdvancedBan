@@ -107,11 +107,9 @@ public class CommandManager {
                                 }
                             }
 
-                            if (!mi.isOnline(args[0])) {
-                                if (pt == PunishmentType.KICK) {
-                                    MessageManager.sendMessage(sender, "Kick.NotOnline", true, "NAME", args[0]);
-                                    return;
-                                }
+                            if (!mi.isOnline(args[0]) && pt == PunishmentType.KICK) {
+                                MessageManager.sendMessage(sender, "Kick.NotOnline", true, "NAME", args[0]);
+                                return;
                             }
 
                             if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
@@ -255,7 +253,7 @@ public class CommandManager {
                                 return;
                             }
                             String ip = Universal.get().getIps().containsKey(args[0].toLowerCase()) ? Universal.get().getIps().get(args[0]).toLowerCase() : "none cashed";
-                            String loc = mi.getFromURL_JSON("http://freegeoip.net/json/" + ip, "country_name");
+                            String loc = mi.getFromUrlJson("http://freegeoip.net/json/" + ip, "country_name");
                             Punishment mute = PunishmentManager.get().getMute(uuid);
                             Punishment ban = PunishmentManager.get().getBan(uuid);
 

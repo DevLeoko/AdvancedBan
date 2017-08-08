@@ -36,11 +36,9 @@ import java.util.concurrent.TimeUnit;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BungeeMethods implements MethodInterface {
-    private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private Configuration data;
     private Configuration config;
     private Configuration messages;
     private Configuration layouts;
@@ -66,12 +64,6 @@ public class BungeeMethods implements MethodInterface {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
             messages = ConfigurationProvider.getProvider(YamlConfiguration.class).load(messageFile);
             layouts = ConfigurationProvider.getProvider(YamlConfiguration.class).load(layoutFile);
-
-            if (!dataFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                dataFile.createNewFile();
-            }
-            data = ConfigurationProvider.getProvider(YamlConfiguration.class).load(dataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,7 +71,7 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public String getFromURL_JSON(String url, String key) {
+    public String getFromUrlJson(String url, String key) {
         try {
             HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
             request.connect();

@@ -12,7 +12,7 @@ import java.util.List;
 public interface MethodInterface {
     void loadFiles();
 
-    String getFromURL_JSON(String url, String key);
+    String getFromUrlJson(String url, String key);
 
     String getVersion();
 

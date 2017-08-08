@@ -1,4 +1,5 @@
-import me.leoko.advancedban.MethodInterface;
+package me.leoko.advancedban;
+
 import me.leoko.advancedban.utils.Punishment;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -34,8 +35,8 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public String getFromURL_JSON(String url, String key) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #1");
+    public String getFromUrlJson(String url, String key) {
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #1");
         return null;
     }
 
@@ -46,7 +47,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String[] getKeys(Object file, String path) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #2");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #2");
         return new String[0];
     }
 
@@ -62,7 +63,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Object getLayouts() {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #5");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #5");
         return null;
     }
 
@@ -73,7 +74,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Object getPlugin() {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #6");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #6");
         return null;
     }
 
@@ -109,13 +110,13 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String getInternUUID(Object player) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #7");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #7");
         return null;
     }
 
     @Override
     public String getInternUUID(String player) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #8");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #8");
         return null;
     }
 
@@ -131,13 +132,13 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Object getPlayer(String name) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #10");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #10");
         return null;
     }
 
     @Override
     public void kickPlayer(Object player, String reason) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #11");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #11");
 
     }
 
@@ -148,12 +149,12 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #13");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #13");
     }
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #14");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #14");
     }
 
     @Override
@@ -168,18 +169,18 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public void executeCommand(String cmd) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #17");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #17");
     }
 
     @Override
     public boolean callChat(Object player) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #18");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #18");
         return false;
     }
 
     @Override
     public boolean callCMD(Object player, String cmd) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #19");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #19");
         return false;
     }
 
@@ -195,25 +196,25 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Object getMySQLFile() {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #22");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #22");
         return null;
     }
 
     @Override
     public String parseJSON(InputStreamReader json, String key) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #23");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #23");
         return null;
     }
 
     @Override
     public String parseJSON(String json, String key) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #24");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #24");
         return null;
     }
 
     @Override
     public Boolean getBoolean(Object file, String path) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #25");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #25");
         return null;
     }
 
@@ -224,13 +225,13 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Long getLong(Object file, String path) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #27");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #27");
         return null;
     }
 
     @Override
     public Integer getInteger(Object file, String path) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #28");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #28");
         return null;
     }
 
@@ -241,9 +242,9 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public boolean getBoolean(Object file, String path, boolean def) {
-        if(path.equals("DetailedEnableMessage")) return false;
-        if(path.equals("DetailedDisableMessage")) return false;
-        if(path.equals("UUID-Fetcher.Enabled")) return false;
+        if(path.equals("DetailedEnableMessage")
+                || path.equals("UUID-Fetcher.Enabled")
+                || path.equals("DetailedDisableMessage")) return false;
         return def;
     }
 
@@ -269,7 +270,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String getFileName(Object file) {
-        fail("This method has not been setup for tests yet. Edit the TestMethods Class! #35");
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #35");
         return null;
     }
 
