@@ -1,4 +1,7 @@
 # AdvancedBan
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a84ecbeefd4d4eca864152d72adfde9c)](https://www.codacy.com/app/DevLeoko/AdvancedBan?utm_source=github.com&utm_medium=referral&utm_content=DevLeoko/AdvancedBan&utm_campaign=badger)
+
 Bukkit- & BungeeCord-Plugin at once <br>
 Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/) for more  information!
 
