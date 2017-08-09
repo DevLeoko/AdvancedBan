@@ -16,14 +16,11 @@ import java.util.List;
  */
 public class Punishment {
     private static final MethodInterface mi = Universal.get().getMethods();
-    private final String name;
-    private final String uuid;
-    private final String reason;
-    private final String operator;
-    private final long start;
-    private final long end;
-    private final String calculation;
+    private final String name, uuid, operator, calculation;
+    private final long start, end;
     private final PunishmentType type;
+
+    private String reason;
     private int id;
 
     public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id) {
@@ -74,7 +71,11 @@ public class Punishment {
         return id;
     }
 
-    public void create() {
+    public void create(){
+        create(false);
+    }
+
+    public void create(boolean silent) {
         if (id != -1) {
             System.out.println("!! Failed! AB tried to overwrite the punishment:");
             System.out.println("!! Failed at: " + toString());
@@ -87,14 +88,12 @@ public class Punishment {
             return;
         }
 
-        if (getType() != PunishmentType.KICK) {
-            DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
-        }
         DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
-        ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart());
 
         if (getType() != PunishmentType.KICK) {
             try {
+                DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+                ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart());
                 if (rs.next()) {
                     id = rs.getInt("id");
                 } else {
@@ -123,6 +122,36 @@ public class Punishment {
             });
         }
 
+        if(!silent)
+            announce(cWarnings);
+
+        if (mi.isOnline(getName())) {
+            final Object p = mi.getPlayer(getName());
+
+            if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
+                mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
+            } else {
+                for (String str : getLayout()) {
+                    mi.sendMessage(p, str);
+                }
+                PunishmentManager.get().getLoadedPunishments(false).add(this);
+            }
+        }
+
+        PunishmentManager.get().getLoadedHistory().add(this);
+
+        mi.callPunishmentEvent(this);
+    }
+
+    public void updateReason(String reason){
+        this.reason = reason;
+
+        if (id != -1) {
+            DatabaseManager.get().executeStatement(SQLQuery.UPDATE_PUNISHMENT_REASON, reason, id);
+        }
+    }
+
+    private void announce(int cWarnings){
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
                 getType().getConfSection() + ".Notification",
                 "OPERATOR", getOperator(),
@@ -139,24 +168,6 @@ public class Punishment {
                 }
             }
         }
-
-        if (mi.isOnline(getName())) {
-            final Object p = mi.getPlayer(getName());
-
-            if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
-                mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
-            } else {
-                for (String str : getLayout()) {
-                    mi.sendMessage(p, str);
-
-                }
-                PunishmentManager.get().getLoadedPunishments(false).add(this);
-            }
-        }
-
-        PunishmentManager.get().getLoadedHistory().add(this);
-
-        mi.callPunishmentEvent(this);
     }
 
     public void delete() {

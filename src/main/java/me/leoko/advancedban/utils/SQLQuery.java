@@ -104,9 +104,13 @@ public enum SQLQuery {
             "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? AND `calculation` = ?",
             "SELECT * FROM PunishmentHistory WHERE uuid = ? AND calculation = ?"
     ),
+    UPDATE_PUNISHMENT_REASON(
+            "UPDATE `Punishments` SET `reason` = ? WHERE `id` = ?",
+            "UPDATE Punishments SET reason = ? WHERE id = ?"
+    ),
     SELECT_PUNISHMENT_BY_ID(
-            "SELECT * FROM `PunishmentHistory` WHERE `id` = ?",
-            "SELECT * FROM PunishmentHistory WHERE id = ?"
+            "SELECT * FROM `Punishments` WHERE `id` = ?",
+            "SELECT * FROM Punishments WHERE id = ?"
     );
 
     private String mysql;

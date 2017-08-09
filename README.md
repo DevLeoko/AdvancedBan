@@ -2,6 +2,9 @@
 Bukkit- & BungeeCord-Plugin at once <br>
 Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/) for more  information!
 
+![Minecraft Version 1.7-1.12](https://img.shields.io/badge/supports%20minecraft%20versions-1.7--1.12-brightgreen.svg)
+![license GLP-3.0](https://img.shields.io/badge/license-GLP--3.0-lightgrey.svg)
+
 _Coded by Leoko_ 
 
 ## Description

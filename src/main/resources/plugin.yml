@@ -44,3 +44,5 @@ commands:
     description: Unban a user
   unmute:
     description: Unmute a user
+  change-reason:
+    description: Change the reason of an existing punishment

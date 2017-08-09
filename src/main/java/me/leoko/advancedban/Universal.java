@@ -47,6 +47,7 @@ public class Universal {
         PunishmentManager.get().setup();
 
         mi.setCommandExecutor("advancedban");
+        mi.setCommandExecutor("change-reason");
         mi.setCommandExecutor("ban");
         mi.setCommandExecutor("tempban");
         mi.setCommandExecutor("ipban");

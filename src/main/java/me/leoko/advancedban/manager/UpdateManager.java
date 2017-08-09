@@ -40,7 +40,12 @@ public class UpdateManager {
                             "  Notification:",
                             "  - \"&c&o%NAME% &7got banned by &e&o%OPERATOR%\"",
                             "  - \"&7For the reason &o%REASON%\"",
-                            "  - \"&7&oThis player got banned for &e&o%DURATION%\""), true);
+                            "  - \"&7&oThis player got banned for &e&o%DURATION%\"",
+                            "",
+                            "ChangeReason:",
+                            "  Usage: \"&cUsage &8\\xbb &7&o/change-reason [ID or ban/mute USER] [New reason]\"",
+                            "  Done: \"&7Punishment &a&o#%ID% &7has successfully been updated!\"",
+                            "  NotFound: \"&cSorry we have not been able to find this punishment\""), true);
             } catch (IOException e) {
                 e.printStackTrace();
             }

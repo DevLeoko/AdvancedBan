@@ -33,25 +33,23 @@ public class CommandManager {
             if (pt != null) {
                 if (mi.hasPerms(sender, pt.getPerms())) {
                     boolean isTemp = pt.isTemp();
+                    boolean silent = false;
                     int argsLength = (isTemp ? 2 : 1);
                     if (args.length >= argsLength) {
 
                         if (!isTemp || (args[1].toLowerCase().matches("[1-9][0-9]*([wdhms]|mo)") || args[1].toLowerCase().matches("#.+"))) {
                             StringBuilder reason = null;
-                            if (args.length > argsLength) {
-                                if (!args[argsLength].matches("@.+") && !args[argsLength].matches("~.+")) {
-                                    reason = new StringBuilder();
-                                    for (int i = argsLength; i < args.length; i++) {
-                                        reason.append(" ").append(args[i]);
-                                    }
-                                    reason = new StringBuilder(reason.substring(1));
-                                } else {
-                                    if (!mi.contains(mi.getLayouts(), "Message." + args[argsLength].substring(1))) {
-                                        MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[argsLength].substring(1));
-                                        return;
-                                    }
-                                    reason = new StringBuilder(args[argsLength]);
-                                }
+
+                            int reasonBegin = argsLength;
+                            if(args.length > argsLength && args[argsLength].equalsIgnoreCase("-s")){
+                                reasonBegin++;
+                                silent = true;
+                            }
+
+                            if (args.length > reasonBegin) {
+                                reason = buildReason(args, reasonBegin, sender);
+                                if(reason == null)
+                                    return;
                             }
 
                             String name = args[0];
@@ -124,7 +122,7 @@ public class CommandManager {
                                 return;
                             }
 
-                            new Punishment(name, uuid, reason != null ? reason.toString() : null, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create();
+                            new Punishment(name, uuid, reason != null ? reason.toString() : null, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create(silent);
                             MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Done", true, "NAME", args[0]);
                         } else {
                             MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
@@ -186,6 +184,40 @@ public class CommandManager {
                         }
                     } else {
                         MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
+                    }
+                } else {
+                    MessageManager.sendMessage(sender, "General.NoPerms", true);
+                }
+            } else if (cmd.equalsIgnoreCase("change-reason")) {
+                if (mi.hasPerms(sender, "ab.changeReason")) {
+                    Punishment punishment;
+                    int reasonStart;
+                    if(args.length > 1 && args[0].matches("[0-9]*")) {
+                        punishment = PunishmentManager.get().getPunishment(Integer.parseInt(args[0]));
+                        reasonStart = 1;
+                    }else if(args.length > 2 && args[0].toLowerCase().matches("mute|ban")){
+                        reasonStart = 2;
+                        if (!args[1].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+                            args[1] = UUIDManager.get().getUUID(args[1]);
+                        }
+
+                        if(args[0].equalsIgnoreCase("ban"))
+                            punishment = PunishmentManager.get().getBan(args[1]);
+                        else
+                            punishment = PunishmentManager.get().getMute(args[1]);
+                    }else{
+                        MessageManager.sendMessage(sender, "ChangeReason.Usage", true);
+                        return;
+                    }
+
+                    StringBuilder reason = buildReason(args, reasonStart, sender);
+                    if(reason != null){
+                        if(punishment != null) {
+                            punishment.updateReason(reason.toString());
+                            MessageManager.sendMessage(sender, "ChangeReason.Done", true, "ID", String.valueOf(punishment.getId()));
+                        }else{
+                            MessageManager.sendMessage(sender, "ChangeReason.NotFound", true);
+                        }
                     }
                 } else {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
@@ -350,6 +382,23 @@ public class CommandManager {
                 mi.sendMessage(sender, "§cHm wired :/");
             }
         });
+    }
+
+    private StringBuilder buildReason(String[] args, int reasonBegin, Object sender){
+        MethodInterface mi = Universal.get().getMethods();
+        if (!args[reasonBegin].matches("@.+") && !args[reasonBegin].matches("~.+")) {
+            StringBuilder reason = new StringBuilder();
+            for (int i = reasonBegin; i < args.length; i++) {
+                reason.append(" ").append(args[i]);
+            }
+            return new StringBuilder(reason.substring(1));
+        } else {
+            if (!mi.contains(mi.getLayouts(), "Message." + args[reasonBegin].substring(1))) {
+                MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[reasonBegin].substring(1));
+                return null;
+            }
+            return new StringBuilder(args[reasonBegin]);
+        }
     }
 
     private void performList(Object sender, int cPage, String confName, List<Punishment> pnts, String name, boolean history) {
