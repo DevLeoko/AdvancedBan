@@ -1,5 +1,6 @@
 package me.leoko.advancedban;
 
+import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -35,6 +36,7 @@ public class Universal {
         mi.loadFiles();
 
         UpdateManager.get().setup();
+        UUIDManager.get().setup();
 
         try{
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
@@ -126,6 +128,10 @@ public class Universal {
         return mi;
     }
 
+    public boolean isBungee(){
+        return mi instanceof BungeeMethods;
+    }
+
     public String getFromURL(String surl) {
         String response = null;
         try {
@@ -197,5 +203,21 @@ public class Universal {
         }
 
         return pt.getLayoutBSN();
+    }
+
+    public boolean hasPerms(Object player, String perms){
+        if(mi.hasPerms(player, perms))
+            return true;
+
+        if(mi.getBoolean(mi.getConfig(), "EnableAllPermissionNodes", false)){
+            while(perms.contains(".")){
+                perms = perms.substring(0, perms.lastIndexOf('.'));
+                if(mi.hasPerms(player, perms+".all"))
+                    return true;
+
+            }
+        }
+
+        return false;
     }
 }

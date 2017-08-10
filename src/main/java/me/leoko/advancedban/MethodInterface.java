@@ -103,4 +103,6 @@ public interface MethodInterface {
     void callPunishmentEvent(Punishment punishment);
 
     void callRevokePunishmentEvent(Punishment punishment, boolean massClear);
+
+    boolean isOnlineMode();
 }

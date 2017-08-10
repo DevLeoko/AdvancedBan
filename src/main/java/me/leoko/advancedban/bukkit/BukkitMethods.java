@@ -75,7 +75,11 @@ public class BukkitMethods implements MethodInterface {
             JSONParser jp = new JSONParser();
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            return json.get(key).toString();
+            String[] keys = key.split("\\|");
+            for (int i = 0; i < keys.length-1; i++)
+                json = (JSONObject) json.get(keys[i]);
+
+            return json.get(keys[keys.length-1]).toString();
         } catch (Exception exc) {
             return null;
         }
@@ -342,5 +346,10 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public boolean isOnlineMode() {
+        return Bukkit.getOnlineMode();
     }
 }

@@ -60,6 +60,11 @@ ExemptPlayers:
 # The date-format which will be used for the %DATE% variable
 DateFormat: "dd.MM.yyyy-HH:mm"
 
+# This is useful for bungeecord servers or server with permission systems which do not support *-Perms
+# So if you enable this you can use ab.all instead of ab.* or ab.ban.all instead of ab.ban.*
+# This does not work with negative permissions! e.g. -ab.all would not block all commands for that user.
+EnableAllPermissionNodes: false
+
 # If you use external REST-APIs they will have to respond in JSON
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either use the official MojangAPI or the InternFetcher
@@ -67,7 +72,10 @@ DateFormat: "dd.MM.yyyy-HH:mm"
 #   to the one you can see online on http://NamesMC.com
 #   if they are similar we recommend using the InternFetcher
 UUID-Fetcher:
-  # Disable for cracked servers
+  # If dynamic it set to true it will override the 'enabled' and 'intern' settings
+  # and automatically detect the best possible uuid fetcher settings for your server.
+  # Our recommendation: don't set dynamic to false if you don't have any problems.
+  Dynamic: true
   Enabled: true
   Intern: false
   REST-API:

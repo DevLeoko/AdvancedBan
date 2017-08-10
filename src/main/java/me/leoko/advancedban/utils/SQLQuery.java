@@ -7,7 +7,7 @@ import me.leoko.advancedban.manager.DatabaseManager;
  */
 public enum SQLQuery {
     CREATE_TABLE_PUNISHMENT(
-            "CREATE TABLE IF NOT EXISTS Punishments "+
+            "CREATE TABLE IF NOT EXISTS `Punishments` ("+
             "`id` int NOT NULL AUTO_INCREMENT," +
             "`name` VARCHAR(16) NULL DEFAULT NULL," +
             "`uuid` VARCHAR(35) NULL DEFAULT NULL," +

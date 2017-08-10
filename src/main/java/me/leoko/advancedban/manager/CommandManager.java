@@ -2,7 +2,6 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
@@ -31,7 +30,7 @@ public class CommandManager {
             PunishmentType pt = PunishmentType.fromCommandName(cmd);
             MethodInterface mi = Universal.get().getMethods();
             if (pt != null) {
-                if (mi.hasPerms(sender, pt.getPerms())) {
+                if (Universal.get().hasPerms(sender, pt.getPerms())) {
                     boolean isTemp = pt.isTemp();
                     boolean silent = false;
                     int argsLength = (isTemp ? 2 : 1);
@@ -89,10 +88,10 @@ public class CommandManager {
                                 } else {
                                     long toAdd = TimeManager.toMilliSec(args[1].toLowerCase());
                                     end += toAdd;
-                                    if (!mi.hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
+                                    if (!Universal.get().hasPerms(sender, "ab." + pt.getName() + ".dur.max")) {
                                         long max = -1;
                                         for (int i = 10; i >= 1; i--) {
-                                            if (mi.hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
+                                            if (Universal.get().hasPerms(sender, "ab." + pt.getName() + ".dur." + i) && mi.contains(mi.getConfig(), "TempPerms." + i)) {
                                                 max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
                                                 break;
                                             }
@@ -110,7 +109,7 @@ public class CommandManager {
                                 return;
                             }
 
-                            if ((mi.isOnline(args[0]) && mi.hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
+                            if ((mi.isOnline(args[0]) && Universal.get().hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
                                     Universal.get().isExemptPlayer(args[0])) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
                                 return;
@@ -135,7 +134,7 @@ public class CommandManager {
                 }
             } else if (cmd.toLowerCase().matches("un.+")) {
                 pt = PunishmentType.fromCommandName(cmd.toLowerCase().substring(2));
-                if (mi.hasPerms(sender, "ab." + (pt == null ? "all" : pt.getName()) + ".undo")) {
+                if (Universal.get().hasPerms(sender, "ab." + (pt == null ? "all" : pt.getName()) + ".undo")) {
                     if (args.length == 1 || (pt == PunishmentType.WARNING && args.length == 2)) {
                         if (pt != null && pt != PunishmentType.WARNING) {
                             String uuid = args[0];
@@ -189,7 +188,7 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
                 }
             } else if (cmd.equalsIgnoreCase("change-reason")) {
-                if (mi.hasPerms(sender, "ab.changeReason")) {
+                if (Universal.get().hasPerms(sender, "ab.changeReason")) {
                     Punishment punishment;
                     int reasonStart;
                     if(args.length > 1 && args[0].matches("[0-9]*")) {
@@ -223,7 +222,7 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
                 }
             } else if (cmd.equalsIgnoreCase("banlist")) {
-                if (mi.hasPerms(sender, "ab.banlist")) {
+                if (Universal.get().hasPerms(sender, "ab.banlist")) {
                     if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
                         performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getLoadedPunishments(true), "nope", false);
                     } else {
@@ -233,7 +232,7 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
                 }
             } else if (cmd.equalsIgnoreCase("history")) {
-                if (mi.hasPerms(sender, "ab.history")) {
+                if (Universal.get().hasPerms(sender, "ab.history")) {
                     if (args.length == 1 || (args.length == 2 && args[1].matches("[1-9][0-9]*"))) {
                         String uuid = UUIDManager.get().getUUID(args[0]);
                         if (uuid == null) {
@@ -251,14 +250,14 @@ public class CommandManager {
                 String name = mi.getName(sender);
                 int page = 1;
                 if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
-                    if (!mi.hasPerms(sender, "ab.warns.own")) {
+                    if (!Universal.get().hasPerms(sender, "ab.warns.own")) {
                         MessageManager.sendMessage(sender, "General.NoPerms", true);
                         return;
                     } else if (args.length == 1) {
                         page = Integer.valueOf(args[0]);
                     }
                 } else if (args.length == 1 || (args.length == 2 && args[1].matches("[1-9][0-9]*"))) {
-                    if (!mi.hasPerms(sender, "ab.warns.other")) {
+                    if (!Universal.get().hasPerms(sender, "ab.warns.other")) {
                         MessageManager.sendMessage(sender, "General.NoPerms", true);
                         return;
                     } else if (args.length == 2) {
@@ -276,7 +275,7 @@ public class CommandManager {
                 }
                 performList(sender, page, "Warns", PunishmentManager.get().gePunishments(uuid, PunishmentType.WARNING, true), name, false);
             } else if (cmd.equalsIgnoreCase("check")) {
-                if (mi.hasPerms(sender, "ab.check")) {
+                if (Universal.get().hasPerms(sender, "ab.check")) {
                     if (args.length == 1) {
                         try {
                             String uuid = UUIDManager.get().getUUID(args[0].toLowerCase());
@@ -291,7 +290,7 @@ public class CommandManager {
 
                             MessageManager.sendMessage(sender, "Check.Header", true, "NAME", args[0]);
                             MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid);
-                            if (mi.hasPerms(sender, "ab.check.ip")) {
+                            if (Universal.get().hasPerms(sender, "ab.check.ip")) {
                                 MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
                             }
                             MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
@@ -308,11 +307,15 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
                 }
             } else if (cmd.equalsIgnoreCase("systemPrefs")) {
-                if (mi.hasPerms(sender, "ab.systemprefs")) {
+                if (Universal.get().hasPerms(sender, "ab.systemprefs")) {
                     Calendar calendar = new GregorianCalendar();
                     mi.sendMessage(sender, "§c§lAdvancedBan v2 §cSystemPrefs");
                     mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
                     mi.sendMessage(sender, "§cYour UUID (Intern) §8» §7" + mi.getInternUUID(sender));
+                    if(args.length == 1){
+                        mi.sendMessage(sender, "§c"+args[0]+"'s UUID (Intern) §8» §7" + mi.getInternUUID(args[0]));
+                        mi.sendMessage(sender, "§c"+args[0]+"'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(args[0]));
+                    }
                 } else {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
                 }
@@ -324,18 +327,19 @@ public class CommandManager {
                     mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
                     mi.sendMessage(sender, "  §cLicense §8• §7Public");
                     mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
-                    mi.sendMessage(sender, "  §cServer §8• §7" + (mi instanceof BungeeMethods ? "Bungeecord" : "Spigot/Bukkit"));
+                    mi.sendMessage(sender, "  §cServer §8• §7" + (Universal.get().isBungee() ? "Bungeecord" : "Spigot/Bukkit"));
+                    mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
                     mi.sendMessage(sender, "  §cPrefix §8• §7" + MessageManager.getMessage("General.Prefix"));
                     mi.sendMessage(sender, "§8§l§m-=========================-§r ");
                 } else if (args[0].equalsIgnoreCase("reload")) {
-                    if (mi.hasPerms(sender, "ab.reload")) {
+                    if (Universal.get().hasPerms(sender, "ab.reload")) {
                         mi.loadFiles();
                         mi.sendMessage(sender, "§a§lAdvancedBan §8§l» §7Reloaded!");
                     } else {
                         MessageManager.sendMessage(sender, "General.NoPerms", true);
                     }
                 } else if (args[0].equalsIgnoreCase("help")) {
-                    if (mi.hasPerms(sender, "ab.help")) {
+                    if (Universal.get().hasPerms(sender, "ab.help")) {
                         mi.sendMessage(sender, "§8");
                         mi.sendMessage(sender, "§c§lAdvancedBan §7Command-Help");
                         mi.sendMessage(sender, "§8");

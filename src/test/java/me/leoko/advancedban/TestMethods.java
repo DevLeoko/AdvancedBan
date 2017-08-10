@@ -116,7 +116,6 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String getInternUUID(String player) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #8");
         return null;
     }
 
@@ -282,5 +281,10 @@ public class TestMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         System.out.println("Called punishment-revoke event!");
+    }
+
+    @Override
+    public boolean isOnlineMode() {
+        return false;
     }
 }

@@ -162,7 +162,7 @@ public class Punishment {
                 "COUNT", cWarnings + "");
 
         for (Object op : mi.getOnlinePlayers()) {
-            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify")) {
+            if (Universal.get().hasPerms(op, "ab." + getType().getName() + ".notify")) {
                 for (String str : notification) {
                     mi.sendMessage(op, str);
                 }

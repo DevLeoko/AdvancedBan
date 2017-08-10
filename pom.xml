@@ -44,7 +44,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
-            <scope>provided</scope> <!-- This is included in the Spigot/Bukkit JAR -->
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
@@ -99,6 +99,7 @@
                         <includes>
                             <include>org.bstats:*</include>
                             <include>org.hsqldb:*</include>
+                            <include>commons-io:*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -106,7 +107,7 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>${project.groupId}</shadedPattern>
                             <excludes>
-                                <exclude>org.bstats.bungeecord.Metrics</exclude>
+                                <exclude>org.bstats.bungeecord.*</exclude>
                             </excludes>
                         </relocation>
                         <relocation>

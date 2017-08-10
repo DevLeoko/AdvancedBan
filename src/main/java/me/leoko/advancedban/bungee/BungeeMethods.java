@@ -79,7 +79,11 @@ public class BungeeMethods implements MethodInterface {
             JsonParser jp = new JsonParser();
             JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            return json.get(key).toString().replaceAll("\"", "");
+            String[] keys = key.split("\\|");
+            for (int i = 0; i < keys.length-1; i++)
+                json = json.getAsJsonObject(keys[i]);
+
+            return json.get(keys[keys.length-1]).toString().replaceAll("\"", "");
 
         } catch (Exception exc) {
             return null;
@@ -214,7 +218,11 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getInternUUID(String player) {
-        return ProxyServer.getInstance().getPlayer(player).getUniqueId().toString().replaceAll("-", "");
+        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(player);
+        if(proxiedPlayer == null)
+            return null;
+        UUID uniqueId = proxiedPlayer.getUniqueId();
+        return uniqueId == null ? null : uniqueId.toString().replaceAll("-", "");
     }
 
     @Override
@@ -353,5 +361,10 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public boolean isOnlineMode() {
+        return ProxyServer.getInstance().getConfig().isOnlineMode();
     }
 }
