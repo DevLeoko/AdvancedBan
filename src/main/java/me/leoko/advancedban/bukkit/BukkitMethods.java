@@ -33,6 +33,7 @@ import java.util.UUID;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BukkitMethods implements MethodInterface {
+
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
     private YamlConfiguration config;
@@ -76,10 +77,11 @@ public class BukkitMethods implements MethodInterface {
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
             String[] keys = key.split("\\|");
-            for (int i = 0; i < keys.length-1; i++)
+            for (int i = 0; i < keys.length - 1; i++) {
                 json = (JSONObject) json.get(keys[i]);
+            }
 
-            return json.get(keys[keys.length-1]).toString();
+            return json.get(keys[keys.length - 1]).toString();
         } catch (Exception exc) {
             return null;
         }
@@ -130,10 +132,11 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void setCommandExecutor(String cmd) {
         PluginCommand command = Bukkit.getPluginCommand(cmd);
-        if(command != null)
+        if (command != null) {
             command.setExecutor(CommandReceiver.get());
-        else
-            System.out.println("AdvancedBan >> Failed to register command "+cmd);
+        } else {
+            System.out.println("AdvancedBan >> Failed to register command " + cmd);
+        }
     }
 
     @Override
@@ -351,5 +354,16 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public boolean isOnlineMode() {
         return Bukkit.getOnlineMode();
+    }
+
+    @Override
+    public void notify(String perm, List<String> notification) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (hasPerms(p, perm)) {
+                for (String str : notification) {
+                    sendMessage(p, str);
+                }
+            }
+        }
     }
 }

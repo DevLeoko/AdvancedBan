@@ -287,4 +287,9 @@ public class TestMethods implements MethodInterface {
     public boolean isOnlineMode() {
         return false;
     }
+
+    @Override
+    public void notify(String perm, List<String> notification) {
+        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #27");        
+    }
 }

@@ -105,4 +105,6 @@ public interface MethodInterface {
     void callRevokePunishmentEvent(Punishment punishment, boolean massClear);
 
     boolean isOnlineMode();
+    
+    void notify(String perm, List<String> notification);
 }

@@ -26,6 +26,10 @@
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
+        <repository>
+            <id>md_5-snapshots</id>
+            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -75,6 +79,12 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.0.0-RC2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.imaginarycode.minecraft</groupId>
+            <artifactId>RedisBungee</artifactId>
+            <version>0.3.6-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>

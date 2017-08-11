@@ -35,10 +35,22 @@ public class PunishmentManager {
             load(name, UUIDManager.get().getUUID(name), mi.getIP(player));
         }
     }
+    
+    public void refresh() {
+        MethodInterface mi = Universal.get().getMethods();
+        mi.runAsync(() -> {
+            punishments.clear();
+            history.clear();
+            for (Object player : mi.getOnlinePlayers()) {
+                String name = mi.getName(player).toLowerCase();
+                load(name, UUIDManager.get().getUUID(name), mi.getIP(player));
+            } 
+        });
+    }
 
     public InterimData load(String name, String uuid, String ip){
-        List<Punishment> punishments = new ArrayList<>();
-        List<Punishment> history = new ArrayList<>();
+        //List<Punishment> punishments = new ArrayList<>();
+        //List<Punishment> history = new ArrayList<>();
         try {
             ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
             while (rs.next()) {

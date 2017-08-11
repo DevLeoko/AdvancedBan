@@ -26,6 +26,7 @@ public class Universal {
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
+    private static boolean redis = false;
 
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
@@ -219,5 +220,13 @@ public class Universal {
         }
 
         return false;
+    }
+    
+    public void useRedis(boolean use) {
+        redis = use;
+    }
+    
+    public boolean useRedis() {
+        return redis;
     }
 }
