@@ -9,6 +9,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
@@ -19,6 +20,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.bstats.bungeecord.Metrics;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +36,9 @@ import java.util.concurrent.TimeUnit;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BungeeMethods implements MethodInterface {
-    private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private Configuration data;
     private Configuration config;
     private Configuration messages;
     private Configuration layouts;
@@ -64,12 +64,6 @@ public class BungeeMethods implements MethodInterface {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
             messages = ConfigurationProvider.getProvider(YamlConfiguration.class).load(messageFile);
             layouts = ConfigurationProvider.getProvider(YamlConfiguration.class).load(layoutFile);
-
-            if (!dataFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                dataFile.createNewFile();
-            }
-            data = ConfigurationProvider.getProvider(YamlConfiguration.class).load(dataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,7 +71,7 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public String getFromURL_JSON(String url, String key) {
+    public String getFromUrlJson(String url, String key) {
         try {
             HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
             request.connect();
@@ -85,7 +79,11 @@ public class BungeeMethods implements MethodInterface {
             JsonParser jp = new JsonParser();
             JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            return json.get(key).toString().replaceAll("\"", "");
+            String[] keys = key.split("\\|");
+            for (int i = 0; i < keys.length-1; i++)
+                json = json.getAsJsonObject(keys[i]);
+
+            return json.get(keys[keys.length-1]).toString().replaceAll("\"", "");
 
         } catch (Exception exc) {
             return null;
@@ -109,11 +107,6 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public Object getData() {
-        return data;
-    }
-
-    @Override
     public Object getMessages() {
         return messages;
     }
@@ -124,12 +117,9 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void saveData() {
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(data, dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setupMetrics() {
+        Metrics metrics = new Metrics((Plugin) getPlugin());
+        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -149,7 +139,6 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void sendMessage(Object player, String msg) {
-        //noinspection deprecation
         ((CommandSender) player).sendMessage(msg);
     }
 
@@ -174,7 +163,6 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(Object player, String reason) {
-        //noinspection deprecation
         ((ProxiedPlayer) player).disconnect(reason);
     }
 
@@ -219,13 +207,22 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
+    public String getIP(Object player) {
+        return ((ProxiedPlayer) player).getAddress().getHostName();
+    }
+
+    @Override
     public String getInternUUID(Object player) {
         return player instanceof ProxiedPlayer ? ((ProxiedPlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
     }
 
     @Override
     public String getInternUUID(String player) {
-        return ProxyServer.getInstance().getPlayer(player).getUniqueId().toString().replaceAll("-", "");
+        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(player);
+        if(proxiedPlayer == null)
+            return null;
+        UUID uniqueId = proxiedPlayer.getUniqueId();
+        return uniqueId == null ? null : uniqueId.toString().replaceAll("-", "");
     }
 
     @Override
@@ -347,11 +344,6 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void set(Object file, String path, Object value) {
-        ((Configuration) file).set(path, value);
-    }
-
-    @Override
     public boolean contains(Object file, String path) {
         return ((Configuration) file).get(path) != null;
     }
@@ -369,5 +361,10 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public boolean isOnlineMode() {
+        return ProxyServer.getInstance().getConfig().isOnlineMode();
     }
 }

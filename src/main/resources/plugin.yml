@@ -1,6 +1,6 @@
 name: ${project.artifactId}
 version: ${project.version}
-main: ${project.groupId}.BukkitMain
+main: ${project.groupId}.bukkit.BukkitMain
 author: Leoko
 
 commands:
@@ -13,6 +13,9 @@ commands:
   ipban:
     description: Ban a user by IP
     aliases: [banip, ban-ip]
+  tempipban:
+    description: Ban a user temporarily by IP
+    aliases: [tipban]
   kick:
     description: Kick a user
   warn:
@@ -41,3 +44,5 @@ commands:
     description: Unban a user
   unmute:
     description: Unmute a user
+  change-reason:
+    description: Change the reason of an existing punishment

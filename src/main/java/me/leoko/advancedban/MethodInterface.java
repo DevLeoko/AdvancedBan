@@ -12,7 +12,7 @@ import java.util.List;
 public interface MethodInterface {
     void loadFiles();
 
-    String getFromURL_JSON(String url, String key);
+    String getFromUrlJson(String url, String key);
 
     String getVersion();
 
@@ -20,13 +20,11 @@ public interface MethodInterface {
 
     Object getConfig();
 
-    Object getData();
-
     Object getMessages();
 
     Object getLayouts();
 
-    void saveData();
+    void setupMetrics();
 
     Object getPlugin();
 
@@ -39,6 +37,8 @@ public interface MethodInterface {
     String getName(Object player);
 
     String getName(String uuid);
+
+    String getIP(Object player);
 
     String getInternUUID(Object player);
 
@@ -96,8 +96,6 @@ public interface MethodInterface {
 
     int getInteger(Object file, String path, int def);
 
-    void set(Object file, String path, Object value);
-
     boolean contains(Object file, String path);
 
     String getFileName(Object file);
@@ -105,4 +103,6 @@ public interface MethodInterface {
     void callPunishmentEvent(Punishment punishment);
 
     void callRevokePunishmentEvent(Punishment punishment, boolean massClear);
+
+    boolean isOnlineMode();
 }

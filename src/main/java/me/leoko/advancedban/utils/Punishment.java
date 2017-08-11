@@ -2,6 +2,7 @@ package me.leoko.advancedban.utils;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
@@ -15,14 +16,11 @@ import java.util.List;
  */
 public class Punishment {
     private static final MethodInterface mi = Universal.get().getMethods();
-    private final String name;
-    private final String uuid;
-    private final String reason;
-    private final String operator;
-    private final long start;
-    private final long end;
-    private final String calculation;
+    private final String name, uuid, operator, calculation;
+    private final long start, end;
     private final PunishmentType type;
+
+    private String reason;
     private int id;
 
     public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id) {
@@ -73,7 +71,11 @@ public class Punishment {
         return id;
     }
 
-    public void create() {
+    public void create(){
+        create(false);
+    }
+
+    public void create(boolean silent) {
         if (id != -1) {
             System.out.println("!! Failed! AB tried to overwrite the punishment:");
             System.out.println("!! Failed at: " + toString());
@@ -86,48 +88,22 @@ public class Punishment {
             return;
         }
 
-        if (Universal.get().isUseMySQL()) {
-            if (getType() != PunishmentType.KICK) {
-                Universal.get().getMysql().executeStatement("INSERT INTO `Punishments` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
-            }
-            Universal.get().getMysql().executeStatement("INSERT INTO `PunishmentHistory` (`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) VALUES ('" + getName() + "', '" + getUuid() + "', '" + getReason() + "', '" + getOperator() + "', '" + getType().name() + "', '" + getStart() + "', '" + getEnd() + "', '" + getCalculation() + "')");
-            ResultSet rs = Universal.get().getMysql().executeRespStatement("SELECT * FROM `Punishments` WHERE `uuid` = '" + getUuid() + "' AND `start` = '" + getStart() + "'");
+        DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
 
-            if (getType() != PunishmentType.KICK) {
-                try {
-                    if (rs.next()) {
-                        id = rs.getInt("id");
-                    } else {
-                        System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
-                        System.out.println("!! Failed at: " + toString());
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        if (getType() != PunishmentType.KICK) {
+            try {
+                DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+                ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart());
+                if (rs.next()) {
+                    id = rs.getInt("id");
+                } else {
+                    System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
+                    System.out.println("!! Failed at: " + toString());
                 }
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } else { //TODO improve performance!
-            int i = 1;
-            while (mi.contains(mi.getData(), "Punishments." + i)) {
-                i++;
-            }
-            id = i;
-
-            String pathT = "Punishments.";
-            for (int j = 0; j < 2; j++) {
-                if (j != 0 || getType() != PunishmentType.KICK) {
-                    mi.set(mi.getData(), pathT + id + ".name", getName());
-                    mi.set(mi.getData(), pathT + id + ".uuid", getUuid());
-                    mi.set(mi.getData(), pathT + id + ".reason", getReason());
-                    mi.set(mi.getData(), pathT + id + ".operator", getOperator());
-                    mi.set(mi.getData(), pathT + id + ".punishmentType", getType().name());
-                    mi.set(mi.getData(), pathT + id + ".start", getStart());
-                    mi.set(mi.getData(), pathT + id + ".end", getEnd());
-                    mi.set(mi.getData(), pathT + id + ".calculation", getCalculation());
-                }
-                pathT = "PunishmentHistory.";
-            }
-
-            mi.saveData();
         }
 
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
@@ -146,22 +122,8 @@ public class Punishment {
             });
         }
 
-        List<String> notification = MessageManager.getLayout(mi.getMessages(),
-                getType().getConfSection() + ".Notification",
-                "OPERATOR", getOperator(),
-                "PREFIX", MessageManager.getMessage("General.Prefix"),
-                "DURATION", getDuration(true),
-                "REASON", getReason(),
-                "NAME", getName(),
-                "COUNT", cWarnings + "");
-
-        for (Object op : mi.getOnlinePlayers()) {
-            if (mi.hasPerms(op, "ab." + getType().getName() + ".notify")) {
-                for (String str : notification) {
-                    mi.sendMessage(op, str);
-                }
-            }
-        }
+        if(!silent)
+            announce(cWarnings);
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
@@ -172,15 +134,40 @@ public class Punishment {
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);
                 }
+                PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
 
-        if (getType() != PunishmentType.KICK) {
-            PunishmentManager.get().getPunishments(false).add(this);
-        }
-        PunishmentManager.get().getHistory().add(this);
+        PunishmentManager.get().getLoadedHistory().add(this);
 
         mi.callPunishmentEvent(this);
+    }
+
+    public void updateReason(String reason){
+        this.reason = reason;
+
+        if (id != -1) {
+            DatabaseManager.get().executeStatement(SQLQuery.UPDATE_PUNISHMENT_REASON, reason, id);
+        }
+    }
+
+    private void announce(int cWarnings){
+        List<String> notification = MessageManager.getLayout(mi.getMessages(),
+                getType().getConfSection() + ".Notification",
+                "OPERATOR", getOperator(),
+                "PREFIX", MessageManager.getMessage("General.Prefix"),
+                "DURATION", getDuration(true),
+                "REASON", getReason(),
+                "NAME", getName(),
+                "COUNT", cWarnings + "");
+
+        for (Object op : mi.getOnlinePlayers()) {
+            if (Universal.get().hasPerms(op, "ab." + getType().getName() + ".notify")) {
+                for (String str : notification) {
+                    mi.sendMessage(op, str);
+                }
+            }
+        }
     }
 
     public void delete() {
@@ -198,15 +185,9 @@ public class Punishment {
             return;
         }
 
+        DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        if (Universal.get().isUseMySQL()) {
-            Universal.get().getMysql().executeStatement("DELETE FROM `Punishments` WHERE `id` = " + getId());
-        } else {
-            mi.set(mi.getData(), "Punishments." + getId(), null);
-            mi.saveData();
-        }
-
-        PunishmentManager.get().getPunishments(false).remove(this);
+        PunishmentManager.get().getLoadedPunishments(false).remove(this);
 
         mi.callRevokePunishmentEvent(this, massClear);
     }

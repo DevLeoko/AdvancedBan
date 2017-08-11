@@ -1,8 +1,11 @@
 package me.leoko.advancedban;
 
-import me.leoko.advancedban.manager.MySQLManager;
+import me.leoko.advancedban.bungee.BungeeMethods;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.manager.UpdateManager;
+import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
 
 import java.io.File;
@@ -23,34 +26,37 @@ public class Universal {
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
-    private MySQLManager mysql;
-    private boolean useMySQL = false;
 
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
     }
 
-    //TODO Main-Points
-    // -> Improve performance by adding player-data
-    // -> Offline-Exempt
-    // -> DoubleIP
-
     public void setup(MethodInterface mi) {
         this.mi = mi;
         mi.loadFiles();
 
-        if (useMySQL = mi.getBoolean(mi.getConfig(), "UseMySQL", false)) {
-            mysql = new MySQLManager(new File(mi.getDataFolder(), "MySQL.yml"), true, 10);
-            useMySQL = !mysql.isFailed();
+        UpdateManager.get().setup();
+        UUIDManager.get().setup();
+
+        try{
+            DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
+        }catch (Exception exc){
+            exc.printStackTrace();
+            System.out.println("Failed enabling database-manager...");
         }
 
+        mi.setupMetrics();
         PunishmentManager.get().setup();
 
         mi.setCommandExecutor("advancedban");
-        mi.setCommandExecutor("advancedban");
+        mi.setCommandExecutor("change-reason");
         mi.setCommandExecutor("ban");
         mi.setCommandExecutor("tempban");
         mi.setCommandExecutor("ipban");
+        mi.setCommandExecutor("ban-ip");
+        mi.setCommandExecutor("banip");
+        mi.setCommandExecutor("tempipban");
+        mi.setCommandExecutor("tipban");
         mi.setCommandExecutor("banip");
         mi.setCommandExecutor("kick");
         mi.setCommandExecutor("warn");
@@ -75,21 +81,13 @@ public class Universal {
             upt = "There is a new version available! [" + response + "]";
         }
 
-        getMethods().scheduleAsyncRep(() -> {
-            try {
-                new URL("http://dev.skamps.eu/api/stats.php?player=" + getMethods().getOnlinePlayers().length).openConnection().connect();
-            } catch (IOException e) {
-                System.out.println("Failed to connect to stats-server");
-            }
-        }, 20 * 60 * 15, 20 * 60 * 15);
-
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
             System.out.println("\n \n[]=====[Enabling AdvancedBan]=====[]"
                     + "\n| Information:"
                     + "\n|   Name: AdvancedBan"
                     + "\n|   Developer: Leoko"
                     + "\n|   Version: " + mi.getVersion()
-                    + "\n|   MySQL: " + useMySQL
+                    + "\n|   Storage: " + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n| Support:"
                     + "\n|   Skype: Leoko33"
                     + "\n|   Mail: Leoko4433@gmail.com"
@@ -98,34 +96,28 @@ public class Universal {
                     + "\n[]================================[]\n ");
         } else {
             System.out.println("Enabling AdvancedBan on Version " + mi.getVersion());
-            System.out.println("Coded by Leoko | Web: dev.skamps.eu");
+            System.out.println("Coded by Leoko | Web: Skamps.eu");
         }
     }
 
     public void shutdown() {
+        DatabaseManager.get().shutdown();
+
         if (mi.getBoolean(mi.getConfig(), "DetailedDisableMessage", true)) {
             System.out.println("\n \n[]=====[Disabling AdvancedBan]=====[]"
                     + "\n| Information:"
                     + "\n|   Name: AdvancedBan"
                     + "\n|   Developer: Leoko"
                     + "\n|   Version: " + getMethods().getVersion()
-                    + "\n|   MySQL: " + useMySQL
+                    + "\n|   Storage: " + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n| Support:"
                     + "\n|   Skype: Leoko33"
                     + "\n|   Mail: Leoko4433@gmail.com"
                     + "\n[]================================[]\n ");
         } else {
             System.out.println("Disabling AdvancedBan on Version " + getMethods().getVersion());
-            System.out.println("Coded by Leoko | Web: dev.skamps.eu");
+            System.out.println("Coded by Leoko | Web: Skamps.eu");
         }
-    }
-
-    public MySQLManager getMysql() {
-        return mysql;
-    }
-
-    public boolean isUseMySQL() {
-        return useMySQL;
     }
 
     public Map<String, String> getIps() {
@@ -134,6 +126,10 @@ public class Universal {
 
     public MethodInterface getMethods() {
         return mi;
+    }
+
+    public boolean isBungee(){
+        return mi instanceof BungeeMethods;
     }
 
     public String getFromURL(String surl) {
@@ -188,24 +184,40 @@ public class Universal {
         return true;
     }
 
-    public String callConnection(String name, String ip) {
+    public String callConnection(String name, String ip){
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
         if (uuid == null) {
             return "[AdvancedBan] Failed to fetch your UUID";
         }
-        Punishment pt = PunishmentManager.get().getBan(uuid);
-        if (pt == null) {
-            pt = PunishmentManager.get().getBan(ip);
-        }
-        if (pt != null) {
-            return pt.getLayoutBSN();
+
+        ips.remove(name);
+        ips.put(name, ip);
+
+        InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
+        Punishment pt = interimData.getBan();
+
+        if(pt == null){
+            interimData.accept();
+            return null;
         }
 
-        if (Universal.get().getIps().containsKey(name)) {
-            Universal.get().getIps().remove(name);
+        return pt.getLayoutBSN();
+    }
+
+    public boolean hasPerms(Object player, String perms){
+        if(mi.hasPerms(player, perms))
+            return true;
+
+        if(mi.getBoolean(mi.getConfig(), "EnableAllPermissionNodes", false)){
+            while(perms.contains(".")){
+                perms = perms.substring(0, perms.lastIndexOf('.'));
+                if(mi.hasPerms(player, perms+".all"))
+                    return true;
+
+            }
         }
-        Universal.get().getIps().put(name, ip);
-        return null;
+
+        return false;
     }
 }

@@ -1,15 +1,13 @@
-package me.leoko.advancedban;
+package me.leoko.advancedban.bukkit;
 
-import me.leoko.advancedban.listener.ChatListener;
-import me.leoko.advancedban.listener.CommandListener;
-import me.leoko.advancedban.listener.ConnectionListener;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bukkit.listener.ChatListener;
+import me.leoko.advancedban.bukkit.listener.CommandListener;
+import me.leoko.advancedban.bukkit.listener.ConnectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
-
-import java.io.IOException;
 
 public class BukkitMain extends JavaPlugin {
     private static BukkitMain instance;
@@ -21,14 +19,6 @@ public class BukkitMain extends JavaPlugin {
     public void onEnable() {
         instance = this;
         Universal.get().setup(new BukkitMethods());
-
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-            System.out.println("[AdvancedBan] MC-Stats >> Connected");
-        } catch (IOException e) {
-            System.out.println("[AdvancedBan] Failed to send Stats!\n Contact: Leoko4433@gmail.com \n Error Code: AB344");
-        }
 
         ConnectionListener connListener = new ConnectionListener();
         this.getServer().getPluginManager().registerEvents(connListener, this);

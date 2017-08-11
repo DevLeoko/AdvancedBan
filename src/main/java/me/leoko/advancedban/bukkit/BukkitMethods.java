@@ -1,14 +1,19 @@
-package me.leoko.advancedban;
+package me.leoko.advancedban.bukkit;
 
-import me.leoko.advancedban.event.PunishmentEvent;
-import me.leoko.advancedban.event.RevokePunishmentEvent;
-import me.leoko.advancedban.listener.CommandReceiver;
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bukkit.event.PunishmentEvent;
+import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
+import me.leoko.advancedban.bukkit.listener.CommandReceiver;
+import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,10 +33,8 @@ import java.util.UUID;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BukkitMethods implements MethodInterface {
-    private final File dataFile = new File(getDataFolder(), "data.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private YamlConfiguration data;
     private YamlConfiguration config;
     private File configFile = new File(getDataFolder(), "config.yml");
     private YamlConfiguration messages;
@@ -61,20 +64,10 @@ public class BukkitMethods implements MethodInterface {
             ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
             config = YamlConfiguration.loadConfiguration(configFile);
         }
-
-        if (!dataFile.exists()) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        data = YamlConfiguration.loadConfiguration(dataFile);
     }
 
     @Override
-    public String getFromURL_JSON(String url, String key) {
+    public String getFromUrlJson(String url, String key) {
         try {
             HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
             request.connect();
@@ -82,7 +75,11 @@ public class BukkitMethods implements MethodInterface {
             JSONParser jp = new JSONParser();
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            return json.get(key).toString();
+            String[] keys = key.split("\\|");
+            for (int i = 0; i < keys.length-1; i++)
+                json = (JSONObject) json.get(keys[i]);
+
+            return json.get(keys[keys.length-1]).toString();
         } catch (Exception exc) {
             return null;
         }
@@ -105,11 +102,6 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public Object getData() {
-        return data;
-    }
-
-    @Override
     public Object getMessages() {
         return messages;
     }
@@ -120,12 +112,9 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void saveData() {
-        try {
-            data.save(dataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setupMetrics() {
+        Metrics metrics = new Metrics((JavaPlugin) getPlugin());
+        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -140,7 +129,11 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void setCommandExecutor(String cmd) {
-        Bukkit.getPluginCommand(cmd).setExecutor(CommandReceiver.get());
+        PluginCommand command = Bukkit.getPluginCommand(cmd);
+        if(command != null)
+            command.setExecutor(CommandReceiver.get());
+        else
+            System.out.println("AdvancedBan >> Failed to register command "+cmd);
     }
 
     @Override
@@ -155,13 +148,11 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public boolean isOnline(String name) {
-        //noinspection deprecation
         return Bukkit.getOfflinePlayer(name).isOnline();
     }
 
     @Override
     public Object getPlayer(String name) {
-        //noinspection deprecation
         return Bukkit.getPlayer(name);
     }
 
@@ -211,13 +202,17 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
+    public String getIP(Object player) {
+        return ((Player) player).getAddress().getHostName();
+    }
+
+    @Override
     public String getInternUUID(Object player) {
         return player instanceof OfflinePlayer ? ((OfflinePlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
     }
 
     @Override
     public String getInternUUID(String player) {
-        //noinspection deprecation
         return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replaceAll("-", "");
     }
 
@@ -334,11 +329,6 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void set(Object file, String path, Object value) {
-        ((YamlConfiguration) file).set(path, value);
-    }
-
-    @Override
     public boolean contains(Object file, String path) {
         return ((YamlConfiguration) file).contains(path);
     }
@@ -356,5 +346,10 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+    }
+
+    @Override
+    public boolean isOnlineMode() {
+        return Bukkit.getOnlineMode();
     }
 }
