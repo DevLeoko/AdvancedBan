@@ -43,7 +43,7 @@ public class PunishmentManager {
             history.clear();
             for (Object player : mi.getOnlinePlayers()) {
                 String name = mi.getName(player).toLowerCase();
-                load(name, UUIDManager.get().getUUID(name), mi.getIP(player));
+                load(name, UUIDManager.get().getUUID(name), mi.getIP(player)).accept();
             } 
         });
     }
