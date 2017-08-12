@@ -66,7 +66,7 @@ public class DatabaseManager {
             }
 
             try {
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:"+mi.getDataFolder().getPath()+"\\data\\storage;hsqldb.lock_file=false", "SA", "");
+                connection = DriverManager.getConnection("jdbc:hsqldb:file:"+mi.getDataFolder().getPath()+"/data/storage;hsqldb.lock_file=false", "SA", "");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
