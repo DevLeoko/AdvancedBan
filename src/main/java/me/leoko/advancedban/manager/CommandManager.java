@@ -365,6 +365,8 @@ public class CommandManager {
                         mi.sendMessage(sender, "§8» §7Unmute a user");
                         mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
                         mi.sendMessage(sender, "§8» §7Deletes a warn");
+                        mi.sendMessage(sender, "§c/change-reason [ID or ban/mute USER] [New reason]");
+                        mi.sendMessage(sender, "§8» §7Changes the reason of a punishment");
                         mi.sendMessage(sender, "§c/unpunish [ID]");
                         mi.sendMessage(sender, "§8» §7Deletes a punishment by ID");
                         mi.sendMessage(sender, "§c/banlist <Page>");
