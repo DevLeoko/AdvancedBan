@@ -121,7 +121,6 @@ public class DatabaseManager {
 
             if(result){
                 ResultSet resultSet = statement.executeQuery();
-                statement.close();
                 return resultSet;
             }else{
                 statement.execute();
