@@ -149,7 +149,7 @@ public class BungeeMethods implements MethodInterface {
     public boolean hasPerms(Object player, String perms) {
         try {
             return ((CommandSender) player).hasPermission(perms);
-        } catch (Exception ex) {
+        } catch (NullPointerException ex) {
             return false;
         }
     }
