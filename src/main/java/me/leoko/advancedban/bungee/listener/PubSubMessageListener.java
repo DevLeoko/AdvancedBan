@@ -47,6 +47,9 @@ public class PubSubMessageListener implements Listener {
                     ProxyServer.getInstance().getConsole().sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
                 }
             }
+        } else if (e.getChannel().equals("AdvancedBanConnection")) {
+            String[] msg = e.getMessage().split(", ");
+            Universal.get().callConnection(msg[0], msg[1]);
         }
     }
 }

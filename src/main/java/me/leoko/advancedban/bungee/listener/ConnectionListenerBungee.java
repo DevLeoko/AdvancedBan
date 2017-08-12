@@ -1,5 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
 import net.md_5.bungee.api.ProxyServer;
@@ -15,6 +16,9 @@ import net.md_5.bungee.event.EventHandler;
 public class ConnectionListenerBungee implements Listener {
     @EventHandler
     public void onConnection(PreLoginEvent event) {
+        if (Universal.get().useRedis()) {
+            RedisBungee.getApi().sendChannelMessage("AdvancedBanConnect", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
+        }
         String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
         if (result != null) {
             event.setCancelled(true);
