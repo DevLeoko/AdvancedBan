@@ -37,10 +37,6 @@ public class PubSubMessageListener implements Listener {
                         mi.sendMessage(pp, e.getMessage().substring(13));
                     }
                 }
-            } else if (e.getMessage().equals("refresh")) {
-                Universal.get().getMethods().runAsync(() -> {
-                    PunishmentManager.get().refresh();
-                });
             } else if (e.getMessage().startsWith("message ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
                     ProxyServer.getInstance().getPlayer(msg[1]).sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));

@@ -391,9 +391,6 @@ public class CommandManager {
             } else {
                 mi.sendMessage(sender, "§cHm wired :/");
             }
-            if (Universal.get().useRedis()) {
-                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "refresh");
-            }
         });
     }
 
