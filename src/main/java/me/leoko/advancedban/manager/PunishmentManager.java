@@ -49,8 +49,8 @@ public class PunishmentManager {
     }
 
     public InterimData load(String name, String uuid, String ip){
-        //List<Punishment> punishments = new ArrayList<>();
-        //List<Punishment> history = new ArrayList<>();
+        List<Punishment> punishments = new ArrayList<>();
+        List<Punishment> history = new ArrayList<>();
         try {
             ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
             while (rs.next()) {
