@@ -1,12 +1,13 @@
 # AdvancedBan
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a84ecbeefd4d4eca864152d72adfde9c)](https://www.codacy.com/app/DevLeoko/AdvancedBan?utm_source=github.com&utm_medium=referral&utm_content=DevLeoko/AdvancedBan&utm_campaign=badger)
 
 Bukkit- & BungeeCord-Plugin at once <br>
 Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/) for more  information!
 
 ![Minecraft Version 1.7-1.12](https://img.shields.io/badge/supports%20minecraft%20versions-1.7--1.12-brightgreen.svg)
 ![license GLP-3.0](https://img.shields.io/badge/license-GLP--3.0-lightgrey.svg)
+![latest build](https://img.shields.io/jenkins/s/http/v.skamps.eu/jenkins/job/AdvancedBanV2.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a84ecbeefd4d4eca864152d72adfde9c)](https://www.codacy.com/app/DevLeoko/AdvancedBan?utm_source=github.com&utm_medium=referral&utm_content=DevLeoko/AdvancedBan&utm_campaign=badger)
 
 _Coded by Leoko_ 
 
