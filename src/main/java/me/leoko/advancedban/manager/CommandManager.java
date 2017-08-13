@@ -1,6 +1,5 @@
 package me.leoko.advancedban.manager;
 
-import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.Punishment;
