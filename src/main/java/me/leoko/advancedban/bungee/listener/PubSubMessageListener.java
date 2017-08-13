@@ -21,19 +21,15 @@ public class PubSubMessageListener implements Listener {
     @EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
         if (e.getChannel().equalsIgnoreCase("AdvancedBan")) {
-            String perm = "ab.notify.unknow";
             String[] msg = e.getMessage().split(" ");
-            if (e.getMessage().startsWith("notificationperm ")) {
-                perm = e.getMessage().substring(17);
-            }
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
                     ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
                 }
             } else if (e.getMessage().startsWith("notification ")) {
                 for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
-                    if (mi.hasPerms(pp, perm)) {
-                        mi.sendMessage(pp, e.getMessage().substring(13));
+                    if (mi.hasPerms(pp, msg[1])) {
+                        mi.sendMessage(pp, e.getMessage().substring((msg[0] + msg[1] + msg[2]).length() + 3));
                     }
                 }
             } else if (e.getMessage().startsWith("message ")) {
