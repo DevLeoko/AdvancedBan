@@ -179,8 +179,9 @@ public class BungeeMethods implements MethodInterface {
     public void kickPlayer(String player, String reason) {
         if (Universal.get().useRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
+        } else {
+            ProxyServer.getInstance().getPlayer(player).disconnect(reason);
         }
-        ProxyServer.getInstance().getPlayer(player).disconnect(reason);
     }
 
     @Override
