@@ -129,7 +129,7 @@ public class Punishment {
             final Object p = mi.getPlayer(getName());
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
-                mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
+                mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
             } else {
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);

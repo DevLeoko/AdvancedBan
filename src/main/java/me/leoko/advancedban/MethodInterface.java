@@ -50,7 +50,7 @@ public interface MethodInterface {
 
     Object getPlayer(String name);
 
-    void kickPlayer(Object player, String reason);
+    void kickPlayer(String player, String reason);
 
     Object[] getOnlinePlayers();
 

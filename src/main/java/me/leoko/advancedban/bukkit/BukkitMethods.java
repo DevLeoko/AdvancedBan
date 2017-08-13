@@ -160,8 +160,8 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void kickPlayer(Object player, String reason) {
-        ((Player) player).kickPlayer(reason);
+    public void kickPlayer(String player, String reason) {
+        Bukkit.getPlayer(player).kickPlayer(reason);
     }
 
     @Override

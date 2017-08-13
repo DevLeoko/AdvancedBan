@@ -14,11 +14,11 @@ import net.md_5.bungee.event.EventHandler;
  * @author Beelzebu
  */
 public class PubSubMessageListener implements Listener {
-    
+
     // TODO:
     // - Send the ip and name for the /check command
     private static final MethodInterface mi = Universal.get().getMethods();
-    
+
     @EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
         if (e.getChannel().equalsIgnoreCase("AdvancedBan")) {
@@ -29,7 +29,7 @@ public class PubSubMessageListener implements Listener {
             }
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
-                    mi.kickPlayer(ProxyServer.getInstance().getPlayer(msg[1]), e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
                 }
             } else if (e.getMessage().startsWith("notification ")) {
                 for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
