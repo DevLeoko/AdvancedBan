@@ -89,8 +89,8 @@ public enum SQLQuery {
             "SELECT * FROM Punishments WHERE uuid = ?"
     ),
     SELECT_USER_PUNISHMENTS_HISTORY(
-            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? OR `uuid` = ?",
-            "SELECT * FROM PunishmentHistory WHERE uuid = ? OR uuid = ?"
+            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ?",
+            "SELECT * FROM PunishmentHistory WHERE uuid = ?"
     ),
     SELECT_USER_PUNISHMENTS_WITH_IP(
             "SELECT * FROM `Punishments` WHERE `uuid` = ? OR `uuid` = ?",
