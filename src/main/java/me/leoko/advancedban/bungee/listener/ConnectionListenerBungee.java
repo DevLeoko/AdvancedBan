@@ -13,6 +13,7 @@ import net.md_5.bungee.event.EventHandler;
  * Created by Leoko @ dev.skamps.eu on 24.07.2016.
  */
 public class ConnectionListenerBungee implements Listener {
+
     @EventHandler
     public void onConnection(PreLoginEvent event) {
         String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
@@ -23,8 +24,12 @@ public class ConnectionListenerBungee implements Listener {
     }
 
     @EventHandler
-    public void onDisconnect(PlayerDisconnectEvent event){
-        PunishmentManager.get().discard(event.getPlayer().getName());
+    public void onDisconnect(PlayerDisconnectEvent event) {
+        Universal.get().getMethods().runAsync(() -> {
+            if (event.getPlayer() != null) {
+                PunishmentManager.get().discard(event.getPlayer().getName());
+            }
+        });
     }
 
     @EventHandler

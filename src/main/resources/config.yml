@@ -4,7 +4,7 @@
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
 # Do you want your own Plugin or Website? Check out our Dev-Page: http://dev.skamps.eu
 
-# If set to false all bans will be saved locally in the data.yml
+# If set to false all bans will be saved locally in a HSQLDB-Database
 UseMySQL: false
 
 # Set to false if you want to have only short messages in the console

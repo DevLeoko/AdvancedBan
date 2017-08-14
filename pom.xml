@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.leoko.advancedban</groupId>
     <artifactId>AdvancedBan</artifactId>
-    <version>2.1.0-${build}</version>
+    <version>2.1.1-${build}</version>
     <packaging>jar</packaging>
     <properties>
         <build>RELEASE</build>
@@ -26,6 +26,10 @@
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
+        <repository>
+            <id>md_5-snapshots</id>
+            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -38,6 +42,12 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.12-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.imaginarycode.minecraft</groupId>
+            <artifactId>RedisBungee</artifactId>
+            <version>0.3.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

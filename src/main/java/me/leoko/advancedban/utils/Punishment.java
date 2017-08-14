@@ -129,7 +129,7 @@ public class Punishment {
             final Object p = mi.getPlayer(getName());
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
-                mi.runSync(() -> mi.kickPlayer(p, getLayoutBSN()));
+                mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
             } else {
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);
@@ -161,13 +161,7 @@ public class Punishment {
                 "NAME", getName(),
                 "COUNT", cWarnings + "");
 
-        for (Object op : mi.getOnlinePlayers()) {
-            if (Universal.get().hasPerms(op, "ab." + getType().getName() + ".notify")) {
-                for (String str : notification) {
-                    mi.sendMessage(op, str);
-                }
-            }
-        }
+        mi.notify("ab." + getType().getName() + ".notify", notification);
     }
 
     public void delete() {

@@ -328,6 +328,9 @@ public class CommandManager {
                     mi.sendMessage(sender, "  §cLicense §8• §7Public");
                     mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
                     mi.sendMessage(sender, "  §cServer §8• §7" + (Universal.get().isBungee() ? "Bungeecord" : "Spigot/Bukkit"));
+                    if (Universal.get().isBungee()) {
+                        mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.get().useRedis() ? "true" : "false"));
+                    }
                     mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
                     mi.sendMessage(sender, "  §cPrefix §8• §7" + MessageManager.getMessage("General.Prefix"));
                     mi.sendMessage(sender, "§8§l§m-=========================-§r ");
@@ -365,6 +368,8 @@ public class CommandManager {
                         mi.sendMessage(sender, "§8» §7Unmute a user");
                         mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
                         mi.sendMessage(sender, "§8» §7Deletes a warn");
+                        mi.sendMessage(sender, "§c/change-reason [ID or ban/mute USER] [New reason]");
+                        mi.sendMessage(sender, "§8» §7Changes the reason of a punishment");
                         mi.sendMessage(sender, "§c/unpunish [ID]");
                         mi.sendMessage(sender, "§8» §7Deletes a punishment by ID");
                         mi.sendMessage(sender, "§c/banlist <Page>");

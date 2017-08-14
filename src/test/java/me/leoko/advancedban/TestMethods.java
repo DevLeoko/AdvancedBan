@@ -136,7 +136,7 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public void kickPlayer(Object player, String reason) {
+    public void kickPlayer(String player, String reason) {
         fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #11");
 
     }
@@ -286,5 +286,10 @@ public class TestMethods implements MethodInterface {
     @Override
     public boolean isOnlineMode() {
         return false;
+    }
+
+    @Override
+    public void notify(String perm, List<String> notification) {
+        notification.forEach(System.out::println);
     }
 }
