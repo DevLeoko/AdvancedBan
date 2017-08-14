@@ -147,11 +147,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public boolean hasPerms(Object player, String perms) {
-        try {
-            return ((CommandSender) player).hasPermission(perms);
-        } catch (NullPointerException ex) {
-            return false;
-        }
+        return player == null ? false : ((CommandSender) player).hasPermission(perms);
     }
 
     @Override

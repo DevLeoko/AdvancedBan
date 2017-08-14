@@ -12,7 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skipTests>false</skipTests>
         <trimStackTrace>true</trimStackTrace>
-        <minimize>true</minimize>
     </properties>
     <repositories>
         <repository>
@@ -43,6 +42,12 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.12-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.imaginarycode.minecraft</groupId>
+            <artifactId>RedisBungee</artifactId>
+            <version>0.3.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -80,12 +85,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.0.0-RC2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.imaginarycode.minecraft</groupId>
-            <artifactId>RedisBungee</artifactId>
-            <version>0.3.6-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -126,7 +125,6 @@
                             <shadedPattern>${project.groupId}.bungee</shadedPattern>
                         </relocation>
                     </relocations>
-                    <minimizeJar>${minimize}</minimizeJar>
                 </configuration>
                 <executions>
                     <execution>
