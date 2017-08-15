@@ -104,8 +104,12 @@ public class DatabaseManager {
     }
 
     private ResultSet executeStatement(SQLQuery sql, boolean result, Object... parameters) {
+        return executeStatement(sql.toString(), result, parameters);
+    }
+
+    public ResultSet executeStatement(String sql, boolean result, Object... parameters) {
         try {
-            PreparedStatement statement = connection.prepareStatement(sql.toString());
+            PreparedStatement statement = connection.prepareStatement(sql);
 
             for (int i = 0; i < parameters.length; i++) {
                 Object obj = parameters[i];

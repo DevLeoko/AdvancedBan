@@ -4,6 +4,7 @@ import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.SQLQuery;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -224,7 +225,7 @@ public class CommandManager {
             } else if (cmd.equalsIgnoreCase("banlist")) {
                 if (Universal.get().hasPerms(sender, "ab.banlist")) {
                     if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
-                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getLoadedPunishments(true), "nope", false);
+                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150), "nope", false);
                     } else {
                         MessageManager.sendMessage(sender, "Banlist.Usage", true);
                     }
@@ -239,7 +240,7 @@ public class CommandManager {
                             MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                             return;
                         }
-                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().gePunishments(uuid, null, false), args[0], true);
+                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(uuid, null, false), args[0], true);
                     } else {
                         MessageManager.sendMessage(sender, "History.Usage", true);
                     }
@@ -273,7 +274,7 @@ public class CommandManager {
                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                     return;
                 }
-                performList(sender, page, "Warns", PunishmentManager.get().gePunishments(uuid, PunishmentType.WARNING, true), name, false);
+                performList(sender, page, "Warns", PunishmentManager.get().getPunishments(uuid, PunishmentType.WARNING, true), name, false);
             } else if (cmd.equalsIgnoreCase("check")) {
                 if (Universal.get().hasPerms(sender, "ab.check")) {
                     if (args.length == 1) {

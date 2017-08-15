@@ -7,7 +7,7 @@ General:
   TimeLayoutH: "%H%hour(s) %M%min and %S%sec"
   TimeLayoutM: "%M%min and %S%sec"
   TimeLayoutS: "%S% seconds"
-  FailedFetch: "&cCloud not fetch the UUID of %NAME%! See console for details."
+  FailedFetch: "&cCould not fetch the UUID of %NAME%! See console for details."
 
 
 Ban:
@@ -170,9 +170,9 @@ UnPunish:
 Banlist:
   Usage: "&cUsage &8\xbb &7&o/banlist <Page>"
   OutOfIndex: "&cThere is no page %PAGE%!"
-  NoEntries: "&c&oThere are no cached entries"
+  NoEntries: "&c&oThere are no entries"
   Header:
-  - "%PREFIX% &7Banlist: (Only cached bans)"
+  - "%PREFIX% &7Banlist:"
   - "&c&oPlayer/IP &8| &e&oDuration &8| &7&oBanned by"
   - "&c&oType &8> &7&oReason"
   - "&7"
@@ -181,7 +181,7 @@ Banlist:
   - "&c%NAME% &8| &e%DURATION% &8| &7%OPERATOR%"
   - "&c%TYPE% &8> &7&o%REASON%"
   - "&7"
-  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Cached bans: &e&o%COUNT%"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Listed bans: &e&o%COUNT%"
   PageFooter: "&7Use &e&o/banlist %NEXT_PAGE% &7to see the next page"
 
 History:

@@ -111,6 +111,22 @@ public enum SQLQuery {
     SELECT_PUNISHMENT_BY_ID(
             "SELECT * FROM `Punishments` WHERE `id` = ?",
             "SELECT * FROM Punishments WHERE id = ?"
+    ),
+    SELECT_ALL_PUNISHMENTS(
+            "SELECT * FROM `Punishments`",
+            "SELECT * FROM Punishments"
+    ),
+    SELECT_ALL_PUNISHMENTS_HISTORY(
+            "SELECT * FROM `PunishmentHistory`",
+            "SELECT * FROM PunishmentHistory"
+    ),
+    SELECT_ALL_PUNISHMENTS_LIMIT(
+            "SELECT * FROM `Punishments` ORDER BY `start` DESC LIMIT ?",
+            "SELECT * FROM Punishments ORDER BY start DESC LIMIT ?"
+    ),
+    SELECT_ALL_PUNISHMENTS_HISTORY_LIMIT(
+            "SELECT * FROM `PunishmentHistory` ORDER BY `start` DESC LIMIT ?",
+            "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
     );
 
     private String mysql;

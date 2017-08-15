@@ -42,27 +42,13 @@ public class PunishmentManager {
         try {
             ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
             while (rs.next()) {
-                punishments.add(new Punishment(rs.getString("name"),
-                        rs.getString("uuid"), rs.getString("reason"),
-                        rs.getString("operator"),
-                        PunishmentType.valueOf(rs.getString("punishmentType")),
-                        rs.getLong("start"),
-                        rs.getLong("end"),
-                        rs.getString("calculation"),
-                        rs.getInt("id")));
+                punishments.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
 
             rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip);
             while (rs.next()) {
-                history.add(new Punishment(rs.getString("name"),
-                        rs.getString("uuid"), rs.getString("reason"),
-                        rs.getString("operator"),
-                        PunishmentType.valueOf(rs.getString("punishmentType")),
-                        rs.getLong("start"),
-                        rs.getLong("end"),
-                        rs.getString("calculation"),
-                        rs.getInt("id")));
+                history.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
         } catch (SQLException e) {
@@ -94,7 +80,7 @@ public class PunishmentManager {
         }
     }
 
-    public List<Punishment> gePunishments(String uuid, PunishmentType put, boolean current) {
+    public List<Punishment> getPunishments(String uuid, PunishmentType put, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
 
         if(isCached(uuid)) {
@@ -111,14 +97,7 @@ public class PunishmentManager {
             ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, uuid);
             try {
                 while (rs.next()) {
-                    Punishment punishment = new Punishment(rs.getString("name"),
-                            rs.getString("uuid"), rs.getString("reason"),
-                            rs.getString("operator"),
-                            PunishmentType.valueOf(rs.getString("punishmentType")),
-                            rs.getLong("start"),
-                            rs.getLong("end"),
-                            rs.getString("calculation"),
-                            rs.getInt("id"));
+                    Punishment punishment = getPunishmentFromResultSet(rs);
                     if((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired()))
                         ptList.add(punishment);
                 }
@@ -130,19 +109,28 @@ public class PunishmentManager {
         return ptList;
     }
 
+    public List<Punishment> getPunishments(SQLQuery sqlQuery, Object... parameters) {
+        List<Punishment> ptList = new ArrayList<>();
+
+        ResultSet rs = DatabaseManager.get().executeResultStatement(sqlQuery, parameters);
+        try {
+            while (rs.next()) {
+                Punishment punishment = getPunishmentFromResultSet(rs);
+                ptList.add(punishment);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ptList;
+    }
+
     public Punishment getPunishment(int id) {
         ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id);
         Punishment pt = null;
         try {
             if(rs.next()) {
-                pt = new Punishment(rs.getString("name"),
-                        rs.getString("uuid"), rs.getString("reason"),
-                        rs.getString("operator"),
-                        PunishmentType.valueOf(rs.getString("punishmentType")),
-                        rs.getLong("start"),
-                        rs.getLong("end"),
-                        rs.getString("calculation"),
-                        rs.getInt("id"));
+                pt = getPunishmentFromResultSet(rs);
             }
             rs.close();
         } catch (SQLException e) {
@@ -157,16 +145,16 @@ public class PunishmentManager {
     }
 
     public List<Punishment> getWarns(String uuid) {
-        return gePunishments(uuid, PunishmentType.WARNING, true);
+        return getPunishments(uuid, PunishmentType.WARNING, true);
     }
 
     public Punishment getBan(String uuid) {
-        List<Punishment> punishments = gePunishments(uuid, PunishmentType.BAN, true);
+        List<Punishment> punishments = getPunishments(uuid, PunishmentType.BAN, true);
         return punishments.isEmpty() ? null : punishments.get(0);
     }
 
     public Punishment getMute(String uuid) {
-        List<Punishment> punishments = gePunishments(uuid, PunishmentType.MUTE, true);
+        List<Punishment> punishments = getPunishments(uuid, PunishmentType.MUTE, true);
         return punishments.isEmpty() ? null : punishments.get(0);
     }
 
@@ -235,6 +223,17 @@ public class PunishmentManager {
 //
 //        return end;
 //    }
+
+    public Punishment getPunishmentFromResultSet(ResultSet rs) throws SQLException {
+        return new Punishment(rs.getString("name"),
+            rs.getString("uuid"), rs.getString("reason"),
+            rs.getString("operator"),
+            PunishmentType.valueOf(rs.getString("punishmentType")),
+            rs.getLong("start"),
+            rs.getLong("end"),
+            rs.getString("calculation"),
+            rs.getInt("id"));
+    }
 
     public List<Punishment> getLoadedHistory() {
         return history;
