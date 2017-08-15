@@ -12,7 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skipTests>false</skipTests>
         <trimStackTrace>true</trimStackTrace>
-        <minimize>true</minimize>
     </properties>
     <repositories>
         <repository>
@@ -126,7 +125,6 @@
                             <shadedPattern>${project.groupId}.bungee</shadedPattern>
                         </relocation>
                     </relocations>
-                    <minimizeJar>${minimize}</minimizeJar>
                 </configuration>
                 <executions>
                     <execution>
