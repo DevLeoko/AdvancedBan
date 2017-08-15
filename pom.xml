@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.leoko.advancedban</groupId>
     <artifactId>AdvancedBan</artifactId>
-    <version>2.1.1-${build}</version>
+    <version>2.1.2-${build}</version>
     <packaging>jar</packaging>
     <properties>
         <build>RELEASE</build>
