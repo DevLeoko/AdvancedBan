@@ -159,6 +159,7 @@ public class Punishment {
                 "DURATION", getDuration(true),
                 "REASON", getReason(),
                 "NAME", getName(),
+                "ID", String.valueOf(id),
                 "COUNT", cWarnings + "");
 
         mi.notify("ab." + getType().getName() + ".notify", notification);
@@ -196,6 +197,7 @@ public class Punishment {
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
                 "REASON", getReason(),
+                "ID", String.valueOf(id),
                 "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) + "" : "0");
     }
 
