@@ -165,10 +165,10 @@ public class Punishment {
     }
 
     public void delete() {
-        delete(false);
+        delete(false, true);
     }
 
-    public void delete(boolean massClear) {
+    public void delete(boolean massClear, boolean removeCache) {
         if (getType() == PunishmentType.KICK) {
             System.out.println("!! Failed deleting! You are not able to delete Kicks!");
         }
@@ -181,7 +181,9 @@ public class Punishment {
 
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        PunishmentManager.get().getLoadedPunishments(false).remove(this);
+        if(removeCache) {
+            PunishmentManager.get().getLoadedPunishments(false).remove(this);
+        }
 
         mi.callRevokePunishmentEvent(this, massClear);
     }

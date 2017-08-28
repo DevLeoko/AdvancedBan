@@ -84,12 +84,14 @@ public class PunishmentManager {
         List<Punishment> ptList = new ArrayList<>();
 
         if(isCached(uuid)) {
-            for (Punishment pt : current ? punishments : history) {
+            for(Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();){
+                Punishment pt = iterator.next();
                 if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(uuid)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
-                        pt.delete();
+                        pt.delete(false, false);
+                        iterator.remove();
                     }
                 }
             }
