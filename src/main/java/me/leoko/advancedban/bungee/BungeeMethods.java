@@ -387,7 +387,7 @@ public class BungeeMethods implements MethodInterface {
     public void notify(String perm, List<String> notification) {
         if (Universal.get().useRedis()) {
             notification.forEach((str) -> {
-                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " "+ str);
+                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " " + str);
             });
         } else {
             ProxyServer.getInstance().getPlayers().stream().filter((pp) -> (hasPerms(pp, perm))).forEachOrdered((pp) -> {

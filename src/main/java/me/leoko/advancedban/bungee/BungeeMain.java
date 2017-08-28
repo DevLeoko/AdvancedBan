@@ -27,7 +27,7 @@ public class BungeeMain extends Plugin {
             Universal.get().useRedis(true);
             ProxyServer.getInstance().getPluginManager().registerListener(this, new PubSubMessageListener());
             RedisBungee.getApi().registerPubSubChannels("AdvancedBan");
-            ProxyServer.getInstance().getConsole().sendMessage("§cAdvancedBan §8» §7RedisBungee detected, hoking into it!");
+            ProxyServer.getInstance().getConsole().sendMessage("§cAdvancedBan §8» §7RedisBungee detected, hooking into it!");
         }
     }
 
