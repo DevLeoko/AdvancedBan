@@ -6,8 +6,6 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
-import me.leoko.advancedban.utils.PunishmentType;
-import me.leoko.advancedban.utils.SQLQuery;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -225,16 +223,32 @@ public class Punishment {
         if (getType().isTemp()) {
             long diff = (getEnd() - (fromStart ? start : TimeManager.getTime())) / 1000;
             if (diff > 60 * 60 * 24) {
-                duration = MessageManager.getMessage("General.TimeLayoutD", "D", diff / 60 / 60 / 24 + "", "H", diff / 60 / 60 % 24 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + "");
+                duration = MessageManager.getMessage("General.TimeLayoutD", getDurationParameter("D", diff / 60 / 60 / 24 + "", "H", diff / 60 / 60 % 24 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + ""));
             } else if (diff > 60 * 60) {
-                duration = MessageManager.getMessage("General.TimeLayoutH", "H", diff / 60 / 60 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + "");
+                duration = MessageManager.getMessage("General.TimeLayoutH", getDurationParameter("H", diff / 60 / 60 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + ""));
             } else if (diff > 60) {
-                duration = MessageManager.getMessage("General.TimeLayoutM", "M", diff / 60 + "", "S", diff % 60 + "");
+                duration = MessageManager.getMessage("General.TimeLayoutM", getDurationParameter("M", diff / 60 + "", "S", diff % 60 + ""));
             } else {
-                duration = MessageManager.getMessage("General.TimeLayoutS", "S", diff + "");
+                duration = MessageManager.getMessage("General.TimeLayoutS", getDurationParameter("S", diff + ""));
             }
         }
         return duration;
+    }
+
+    private String[] getDurationParameter(String... parameter){
+        int length = parameter.length;
+        String[] newParameter = new String[length*2];
+        for (int i = 0; i < length; i+=2) {
+            String name = parameter[i];
+            String count = parameter[i + 1];
+
+            newParameter[i] = name;
+            newParameter[i+1] = count;
+            newParameter[length+i] = name+name;
+            newParameter[length+i+1] = (count.length() <= 1 ? "0" : "")+count;
+        }
+
+        return newParameter;
     }
 
     public String getLayoutBSN() {
