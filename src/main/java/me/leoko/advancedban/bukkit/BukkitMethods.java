@@ -366,4 +366,9 @@ public class BukkitMethods implements MethodInterface {
             }
         }
     }
+    
+    @Override
+    public void log(String msg) {
+        Bukkit.getServer().getConsoleSender().sendMessage("§8[§cAdvancedBan§8] §7" + msg);
+    }
 }

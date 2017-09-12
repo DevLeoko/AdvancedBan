@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class PunishmentManager {
     private static PunishmentManager instance = null;
+    private final Universal universal = Universal.get();
     private final List<Punishment> punishments = Collections.synchronizedList(new ArrayList<Punishment>());
     private final List<Punishment> history = Collections.synchronizedList(new ArrayList<Punishment>());
     private final List<String> cached = Collections.synchronizedList(new ArrayList<String>());
@@ -28,7 +29,7 @@ public class PunishmentManager {
     }
 
     public void setup() {
-        MethodInterface mi = Universal.get().getMethods();
+        MethodInterface mi = universal.getMethods();
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_OLD_PUNISHMENTS, TimeManager.getTime());
         for (Object player : mi.getOnlinePlayers()) {
             String name = mi.getName(player).toLowerCase();
@@ -51,8 +52,9 @@ public class PunishmentManager {
                 history.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred loading the punishments from the database.");
+            universal.debug(ex);
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -102,8 +104,9 @@ public class PunishmentManager {
                         ptList.add(punishment);
                 }
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                universal.log("An error has ocurred getting the punishments for " + uuid);
+                universal.debug(ex);
             }
         }
         return ptList;
@@ -119,8 +122,10 @@ public class PunishmentManager {
                 ptList.add(punishment);
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred executing a query in the database.");
+            universal.debug("Query: \n" + sqlQuery);
+            universal.debug(ex);
         }
         return ptList;
     }
@@ -133,8 +138,10 @@ public class PunishmentManager {
                 pt = getPunishmentFromResultSet(rs);
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred getting a punishment by his id.");
+            universal.debug("Punishment id: '" + id + "'");
+            universal.debug(ex);
         }
         return pt == null || pt.isExpired() ? null : pt;
     }
@@ -184,8 +191,9 @@ public class PunishmentManager {
                 while(resultSet.next())
                     i++;
                 resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
+                universal.debug(ex);
             }
             return i;
         }

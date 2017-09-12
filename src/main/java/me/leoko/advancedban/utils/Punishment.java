@@ -77,14 +77,14 @@ public class Punishment {
 
     public void create(boolean silent) {
         if (id != -1) {
-            System.out.println("!! Failed! AB tried to overwrite the punishment:");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed! AB tried to overwrite the punishment:");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
         if (uuid == null) {
-            System.out.println("!! Failed! AB has not saved the " + getType().getName() + " because there is no fetched UUID");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed! AB has not saved the " + getType().getName() + " because there is no fetched UUID");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
@@ -97,12 +97,12 @@ public class Punishment {
                 if (rs.next()) {
                     id = rs.getInt("id");
                 } else {
-                    System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
-                    System.out.println("!! Failed at: " + toString());
+                    Universal.get().log("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
+                    Universal.get().log("!! Failed at: " + toString());
                 }
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                Universal.get().debug(ex);
             }
         }
 
@@ -118,7 +118,7 @@ public class Punishment {
             final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
             mi.runSync(() -> {
                 mi.executeCommand(finalCmd);
-                System.out.println("[AdvancedBan] Executing command: " + finalCmd);
+                Universal.get().log("[AdvancedBan] Executing command: " + finalCmd);
             });
         }
 
@@ -170,12 +170,12 @@ public class Punishment {
 
     public void delete(boolean massClear) {
         if (getType() == PunishmentType.KICK) {
-            System.out.println("!! Failed deleting! You are not able to delete Kicks!");
+            Universal.get().log("!! Failed deleting! You are not able to delete Kicks!");
         }
 
         if (id == -1) {
-            System.out.println("!! Failed deleting! The Punishment is not created yet!");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed deleting! The Punishment is not created yet!");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 

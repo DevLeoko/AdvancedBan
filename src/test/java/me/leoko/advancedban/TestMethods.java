@@ -292,4 +292,9 @@ public class TestMethods implements MethodInterface {
     public void notify(String perm, List<String> notification) {
         notification.forEach(System.out::println);
     }
+
+    @Override
+    public void log(String msg) {
+        System.out.println("Logging: " + msg);
+    }
 }
