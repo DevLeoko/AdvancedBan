@@ -6,9 +6,13 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
+import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.SQLQuery;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,6 +73,15 @@ public class Punishment {
 
     public int getId() {
         return id;
+    }
+    
+    public String getHexId() {
+    	return Integer.toHexString(id).toUpperCase();
+    }
+    
+    public String getDate (long date) {
+    	SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
+    	return format.format(new Date(date));
     }
 
     public void create(){
@@ -159,16 +172,19 @@ public class Punishment {
                 "DURATION", getDuration(true),
                 "REASON", getReason(),
                 "NAME", getName(),
+                "ID", String.valueOf(id),
+                "HEXID", getHexId(),
+                "DATE", getDate(start),
                 "COUNT", cWarnings + "");
 
         mi.notify("ab." + getType().getName() + ".notify", notification);
     }
 
     public void delete() {
-        delete(false);
+        delete(false, true);
     }
 
-    public void delete(boolean massClear) {
+    public void delete(boolean massClear, boolean removeCache) {
         if (getType() == PunishmentType.KICK) {
             Universal.get().log("!! Failed deleting! You are not able to delete Kicks!");
         }
@@ -181,7 +197,9 @@ public class Punishment {
 
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        PunishmentManager.get().getLoadedPunishments(false).remove(this);
+        if(removeCache) {
+            PunishmentManager.get().getLoadedPunishments(false).remove(this);
+        }
 
         mi.callRevokePunishmentEvent(this, massClear);
     }
@@ -196,6 +214,9 @@ public class Punishment {
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
                 "REASON", getReason(),
+                "HEXID", getHexId(),
+                "ID", String.valueOf(id),
+                "DATE", getDate(start),
                 "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) + "" : "0");
     }
 
