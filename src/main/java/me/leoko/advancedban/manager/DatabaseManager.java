@@ -1,14 +1,18 @@
 package me.leoko.advancedban.manager;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.SQLQuery;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.*;
-
 public class DatabaseManager {
+
     private String ip;
     private String dbName;
     private String usrName;
@@ -24,18 +28,19 @@ public class DatabaseManager {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
 
-    public void setup(boolean useMySQLServer){
+    public void setup(boolean useMySQLServer) {
         MethodInterface mi = Universal.get().getMethods();
 
-        if(useMySQLServer){
+        if (useMySQLServer) {
             File file = new File(mi.getDataFolder(), "MySQL.yml");
             boolean createFile = !file.exists();
 
             if (createFile) {
                 try {
                     file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ex) {
+                    Universal.get().log("§cAn unexpected error has occurred while creating the MySQL.yml file, try restarting the server.");
+                    Universal.get().debug(ex);
                 }
             }
             mi.loadMySQLFile(file);
@@ -43,7 +48,7 @@ public class DatabaseManager {
             if (createFile) {
                 mi.createMySQLFile(file);
                 failedMySQL = true;
-            }else{
+            } else {
                 ip = mi.getString(mi.getMySQLFile(), "MySQL.IP", "Unknown");
                 dbName = mi.getString(mi.getMySQLFile(), "MySQL.DB-Name", "Unknown");
                 usrName = mi.getString(mi.getMySQLFile(), "MySQL.Username", "Unknown");
@@ -56,19 +61,26 @@ public class DatabaseManager {
 
         useMySQL = useMySQLServer && !failedMySQL;
 
-        if(!useMySQL){
+        if (!useMySQL) {
             try {
-                Class.forName("org.hsqldb.jdbc.JDBCDriver" );
-            } catch (Exception e) {
-                System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
-                e.printStackTrace();
+                Class.forName("org.hsqldb.jdbc.JDBCDriver");
+            } catch (ClassNotFoundException ex) {
+                Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
+                Universal.get().debug(ex);
                 return;
             }
-
             try {
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:"+mi.getDataFolder().getPath()+"/data/storage;hsqldb.lock_file=false", "SA", "");
-            } catch (SQLException e) {
-                e.printStackTrace();
+                connection = DriverManager.getConnection("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false", "SA", "");
+            } catch (SQLException ex) {
+                Universal.get().log(
+                        " \n"
+                        + " HSQLDB-Error\n"
+                        + " Could not connect to HSQLDB-Server!\n"
+                        + " Disabling plugin!\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                        + " \n"
+                );
             }
         }
 
@@ -76,21 +88,32 @@ public class DatabaseManager {
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
     }
 
-    public void shutdown(){
+    public void shutdown() {
         try {
-            if(!useMySQL)
+            if (!useMySQL) {
                 connection.prepareStatement("SHUTDOWN").execute();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            Universal.get().log("An unexpected error has occurred turning off the database");
+            Universal.get().debug(ex);
         }
     }
 
     private void connectMySQLServer() {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true", usrName, password);
-        } catch (Exception exc) {
-            System.out.println("AdvancedBan <> \n \n \nMySQL-Error\nCould not connect to MySQL-Server!\nDisabling plugin!\nCheck your MySQL.yml \nSkype: Leoko33 \n \n");
+        } catch (SQLException exc) {
+            Universal.get().log(
+                    " \n"
+                    + " MySQL-Error\n"
+                    + " Could not connect to MySQL-Server!\n"
+                    + " Disabling plugin!\n"
+                    + " Check your MySQL.yml\n"
+                    + " Skype: Leoko33\n"
+                    + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues \n"
+                    + " \n"
+            );
             failedMySQL = true;
         }
     }
@@ -113,38 +136,45 @@ public class DatabaseManager {
 
             for (int i = 0; i < parameters.length; i++) {
                 Object obj = parameters[i];
-                if(obj instanceof Integer)
+                if (obj instanceof Integer) {
                     statement.setInt(i + 1, (Integer) obj);
-                else if(obj instanceof String)
-                    statement.setString(i+1, (String) obj);
-                else if(obj instanceof Long)
-                    statement.setLong(i+1, (Long) obj);
-                else
-                    statement.setObject(i+1, obj);
+                } else if (obj instanceof String) {
+                    statement.setString(i + 1, (String) obj);
+                } else if (obj instanceof Long) {
+                    statement.setLong(i + 1, (Long) obj);
+                } else {
+                    statement.setObject(i + 1, obj);
+                }
             }
 
-            if(result){
+            if (result) {
                 ResultSet resultSet = statement.executeQuery();
                 return resultSet;
-            }else{
+            } else {
                 statement.execute();
                 statement.close();
             }
             return null;
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             //TODO change here and below...
 //            System.out.println("AdvancedBan <> Failed due to exception: " + e.getMessage());
-            System.out.println("SQL -> "+sql);
-            e.printStackTrace();
+            Universal.get().log(
+                    "An unexpected error has ocurred executing an Statement in the database\n"
+                    + "Please check the debug.log file in the plugin's folder and report this"
+                    + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
+            );
+            Universal.get().debug("Query: \n" + sql);
+            Universal.get().debug(ex);
             return null;
         }
     }
 
-    public boolean isConnectionValid(int timeout){
+    public boolean isConnectionValid(int timeout) {
         try {
             return connection.isValid(timeout);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            Universal.get().log("An unexpected error has occurred with the database.");
+            Universal.get().debug(ex);
             return false;
         }
     }

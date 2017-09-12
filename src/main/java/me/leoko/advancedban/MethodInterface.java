@@ -107,4 +107,6 @@ public interface MethodInterface {
     boolean isOnlineMode();
     
     void notify(String perm, List<String> notification);
+    
+    void log(String msg);
 }

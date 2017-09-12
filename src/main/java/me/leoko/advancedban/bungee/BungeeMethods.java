@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -396,5 +397,10 @@ public class BungeeMethods implements MethodInterface {
                 });
             });
         }
+    }
+    
+    @Override
+    public void log(String msg) {
+        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText("§8[§cAdvancedBan§8] §7" + msg));
     }
 }

@@ -1,13 +1,6 @@
 package me.leoko.advancedban;
 
-import me.leoko.advancedban.bungee.BungeeMethods;
-import me.leoko.advancedban.manager.DatabaseManager;
-import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.UUIDManager;
-import me.leoko.advancedban.manager.UpdateManager;
-import me.leoko.advancedban.utils.InterimData;
-import me.leoko.advancedban.utils.Punishment;
-
+import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,11 +11,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import me.leoko.advancedban.bungee.BungeeMethods;
+import me.leoko.advancedban.manager.DatabaseManager;
+import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.manager.UpdateManager;
+import me.leoko.advancedban.utils.InterimData;
+import me.leoko.advancedban.utils.Punishment;
+import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class Universal {
+    
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
@@ -38,12 +41,12 @@ public class Universal {
 
         UpdateManager.get().setup();
         UUIDManager.get().setup();
-
-        try{
+        
+        try {
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
-        }catch (Exception exc){
-            exc.printStackTrace();
-            System.out.println("Failed enabling database-manager...");
+        } catch (Exception ex) {
+            log("Failed enabling database-manager...");
+            debug(ex);
         }
 
         mi.setupMetrics();
@@ -143,7 +146,7 @@ public class Universal {
                 s.close();
             }
         } catch (IOException exc) {
-            System.out.println("AdvancedBan <> !! Failed to connect to URL: " + surl);
+            debug("!! Failed to connect to URL: " + surl);
         }
         return response;
     }
@@ -207,18 +210,18 @@ public class Universal {
     }
 
     public boolean hasPerms(Object player, String perms){
-        if(mi.hasPerms(player, perms))
+        if (mi.hasPerms(player, perms)) {
             return true;
-
-        if(mi.getBoolean(mi.getConfig(), "EnableAllPermissionNodes", false)){
-            while(perms.contains(".")){
-                perms = perms.substring(0, perms.lastIndexOf('.'));
-                if(mi.hasPerms(player, perms+".all"))
-                    return true;
-
-            }
         }
 
+        if (mi.getBoolean(mi.getConfig(), "EnableAllPermissionNodes", false)) {
+            while (perms.contains(".")) {
+                perms = perms.substring(0, perms.lastIndexOf('.'));
+                if (mi.hasPerms(player, perms + ".all")) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
     
@@ -228,5 +231,30 @@ public class Universal {
     
     public boolean useRedis() {
         return redis;
+    }
+    
+    public void log(String msg) {
+        mi.log(msg);
+    }
+    
+    public void debug(Object msg) {
+        if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
+            mi.log("§cDebug: §7" + msg.toString());
+        }
+        File debugFile = new File(mi.getDataFolder(), "debug.log");
+        if (!debugFile.exists()) {
+            try {
+                debugFile.createNewFile();
+            } catch (IOException ex) {
+                log("An error has ocurred creating the 'debug.log' file.");
+                log(ex.getMessage());
+            }
+        }
+        try {
+            FileUtils.writeStringToFile(debugFile, ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
+        } catch (IOException ex) {
+           log("An error has ocurred writing to 'debug.log' file.");
+                log(ex.getMessage());
+        }
     }
 }
