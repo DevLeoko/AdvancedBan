@@ -1,7 +1,14 @@
 # The default layouts are in the Message.yml file!
 
 # Message-Layouts can not only be used for bans but also for mutes and warns
-# Variables: %OPERATOR%, %REASON%, %PREFIX%, %DURATION%
+# Currently available variables:
+#   %OPERATOR% - The user who dealt the punishment.
+#   %REASON% - Reason for punishment.
+#   %PREFIX% - Prefix set in Message.yml.
+#   %DURATION% - Amount of time left before a punishment expires (will be -1 for permanent punishments).
+#   %DATE% - Date punishment was issued on.
+#   %ID% - Displays the punishment ID (i.e. first punishment = 0, second punishment = 1, third punishment = 2, etc.)
+#   %HEXID% - Displays the punishment ID in base 16. 
 # For warns you have also the variable %COUNT% which will be
 # replaced with the current amount of warns the player already received
 # Example usage: /ban Leoko @ExampleLayout
