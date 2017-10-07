@@ -13,9 +13,7 @@ import net.md_5.bungee.event.EventHandler;
  * @author Beelzebu
  */
 public class PubSubMessageListener implements Listener {
-
-    // TODO:
-    // - Send the ip and name for the /check command
+    
     private static final MethodInterface mi = Universal.get().getMethods();
 
     @EventHandler

@@ -54,7 +54,7 @@ public class PunishmentManager {
             rs.close();
         } catch (SQLException ex) {
             universal.log("An error has ocurred loading the punishments from the database.");
-            universal.debug(ex);
+            universal.debug(ex.getMessage());
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -108,7 +108,7 @@ public class PunishmentManager {
                 rs.close();
             } catch (SQLException ex) {
                 universal.log("An error has ocurred getting the punishments for " + uuid);
-                universal.debug(ex);
+                universal.debug(ex.getMessage());
             }
         }
         return ptList;
@@ -127,7 +127,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has ocurred executing a query in the database.");
             universal.debug("Query: \n" + sqlQuery);
-            universal.debug(ex);
+            universal.debug(ex.getMessage());
         }
         return ptList;
     }
@@ -143,7 +143,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has ocurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
-            universal.debug(ex);
+            universal.debug(ex.getMessage());
         }
         return pt == null || pt.isExpired() ? null : pt;
     }
@@ -190,12 +190,13 @@ public class PunishmentManager {
             ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout);
             int i = 0;
             try {
-                while(resultSet.next())
+                while(resultSet.next()) {
                     i++;
+                }
                 resultSet.close();
             } catch (SQLException ex) {
                 universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
-                universal.debug(ex);
+                universal.debug(ex.getMessage());
             }
             return i;
         }

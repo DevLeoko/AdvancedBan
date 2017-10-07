@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class Universal {
-    
+
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
@@ -41,12 +41,12 @@ public class Universal {
 
         UpdateManager.get().setup();
         UUIDManager.get().setup();
-        
+
         try {
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
         } catch (Exception ex) {
             log("Failed enabling database-manager...");
-            debug(ex);
+            debug(ex.getMessage());
         }
 
         mi.setupMetrics();
@@ -132,7 +132,7 @@ public class Universal {
         return mi;
     }
 
-    public boolean isBungee(){
+    public boolean isBungee() {
         return mi instanceof BungeeMethods;
     }
 
@@ -161,7 +161,6 @@ public class Universal {
         return false;
     }
 
-
     public boolean isExemptPlayer(String name) {
         List<String> exempt = getMethods().getStringList(getMethods().getConfig(), "ExemptPlayers");
         if (exempt != null) {
@@ -188,7 +187,7 @@ public class Universal {
         return true;
     }
 
-    public String callConnection(String name, String ip){
+    public String callConnection(String name, String ip) {
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
         if (uuid == null) {
@@ -201,7 +200,7 @@ public class Universal {
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
         Punishment pt = interimData.getBan();
 
-        if(pt == null){
+        if (pt == null) {
             interimData.accept();
             return null;
         }
@@ -209,7 +208,7 @@ public class Universal {
         return pt.getLayoutBSN();
     }
 
-    public boolean hasPerms(Object player, String perms){
+    public boolean hasPerms(Object player, String perms) {
         if (mi.hasPerms(player, perms)) {
             return true;
         }
@@ -224,23 +223,27 @@ public class Universal {
         }
         return false;
     }
-    
+
     public void useRedis(boolean use) {
         redis = use;
     }
-    
+
     public boolean useRedis() {
         return redis;
     }
-    
+
     public void log(String msg) {
         mi.log(msg);
+        debugToFile(msg);
     }
-    
+
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
             mi.log("§cDebug: §7" + msg.toString());
         }
+    }
+    
+    private void debugToFile(Object msg) {
         File debugFile = new File(mi.getDataFolder(), "debug.log");
         if (!debugFile.exists()) {
             try {
@@ -253,8 +256,8 @@ public class Universal {
         try {
             FileUtils.writeStringToFile(debugFile, ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
-           log("An error has ocurred writing to 'debug.log' file.");
-                log(ex.getMessage());
+            System.out.print("An error has ocurred writing to 'debug.log' file.");
+            System.out.print(ex.getMessage());
         }
     }
 }

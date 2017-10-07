@@ -1,17 +1,16 @@
 package me.leoko.advancedban.utils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -203,15 +202,15 @@ public class Punishment {
     }
 
     public List<String> getLayout() {
-        boolean isLayout = getReason().matches("@.+") || getReason().matches("~.+");
+        boolean isLayout = getReason().startsWith("@") || getReason().startsWith("~");
 
         return MessageManager.getLayout(
                 isLayout ? mi.getLayouts() : mi.getMessages(),
-                isLayout ? "Message." + getReason().substring(1) : getType().getConfSection() + ".Layout",
+                isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getConfSection() + ".Layout",
                 "OPERATOR", getOperator(),
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
-                "REASON", getReason(),
+                "REASON", (isLayout ? (getReason().contains("@") ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason()),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),

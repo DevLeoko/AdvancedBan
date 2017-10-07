@@ -1,16 +1,15 @@
 package me.leoko.advancedban.manager;
 
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
-import me.leoko.advancedban.utils.SQLQuery;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.SQLQuery;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 12.07.2016.
@@ -396,18 +395,18 @@ public class CommandManager {
 
     private StringBuilder buildReason(String[] args, int reasonBegin, Object sender){
         MethodInterface mi = Universal.get().getMethods();
-        if (!args[reasonBegin].matches("@.+") && !args[reasonBegin].matches("~.+")) {
-            StringBuilder reason = new StringBuilder();
+        StringBuilder reason = new StringBuilder();
             for (int i = reasonBegin; i < args.length; i++) {
                 reason.append(" ").append(args[i]);
             }
+        if (!args[reasonBegin].matches("@.+") && !args[reasonBegin].matches("~.+")) {
             return new StringBuilder(reason.substring(1));
         } else {
             if (!mi.contains(mi.getLayouts(), "Message." + args[reasonBegin].substring(1))) {
                 MessageManager.sendMessage(sender, "General.LayoutNotFound", true, "NAME", args[reasonBegin].substring(1));
                 return null;
             }
-            return new StringBuilder(args[reasonBegin]);
+            return new StringBuilder(reason.substring(1));
         }
     }
 

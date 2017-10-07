@@ -40,7 +40,7 @@ public class DatabaseManager {
                     file.createNewFile();
                 } catch (IOException ex) {
                     Universal.get().log("§cAn unexpected error has occurred while creating the MySQL.yml file, try restarting the server.");
-                    Universal.get().debug(ex);
+                    Universal.get().debug(ex.getMessage());
                 }
             }
             mi.loadMySQLFile(file);
@@ -66,7 +66,7 @@ public class DatabaseManager {
                 Class.forName("org.hsqldb.jdbc.JDBCDriver");
             } catch (ClassNotFoundException ex) {
                 Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
-                Universal.get().debug(ex);
+                Universal.get().debug(ex.getMessage());
                 return;
             }
             try {
@@ -96,7 +96,7 @@ public class DatabaseManager {
             }
         } catch (SQLException ex) {
             Universal.get().log("An unexpected error has occurred turning off the database");
-            Universal.get().debug(ex);
+            Universal.get().debug(ex.getMessage());
         }
     }
 
@@ -164,7 +164,7 @@ public class DatabaseManager {
                     + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
             );
             Universal.get().debug("Query: \n" + sql);
-            Universal.get().debug(ex);
+            Universal.get().debug(ex.getMessage());
             return null;
         }
     }
@@ -174,7 +174,7 @@ public class DatabaseManager {
             return connection.isValid(timeout);
         } catch (SQLException ex) {
             Universal.get().log("An unexpected error has occurred with the database.");
-            Universal.get().debug(ex);
+            Universal.get().debug(ex.getMessage());
             return false;
         }
     }
