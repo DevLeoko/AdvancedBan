@@ -1,18 +1,17 @@
 package me.leoko.advancedban.manager;
 
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.utils.InterimData;
-import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
-import me.leoko.advancedban.utils.SQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.InterimData;
+import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.SQLQuery;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -54,7 +53,7 @@ public class PunishmentManager {
             rs.close();
         } catch (SQLException ex) {
             universal.log("An error has ocurred loading the punishments from the database.");
-            universal.debug(ex.getMessage());
+            universal.debug(ex);
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -108,7 +107,7 @@ public class PunishmentManager {
                 rs.close();
             } catch (SQLException ex) {
                 universal.log("An error has ocurred getting the punishments for " + uuid);
-                universal.debug(ex.getMessage());
+                universal.debug(ex);
             }
         }
         return ptList;
@@ -127,7 +126,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has ocurred executing a query in the database.");
             universal.debug("Query: \n" + sqlQuery);
-            universal.debug(ex.getMessage());
+            universal.debug(ex);
         }
         return ptList;
     }
@@ -143,7 +142,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has ocurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
-            universal.debug(ex.getMessage());
+            universal.debug(ex);
         }
         return pt == null || pt.isExpired() ? null : pt;
     }
@@ -196,7 +195,7 @@ public class PunishmentManager {
                 resultSet.close();
             } catch (SQLException ex) {
                 universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
-                universal.debug(ex.getMessage());
+                universal.debug(ex);
             }
             return i;
         }

@@ -7,12 +7,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.DatabaseManager;
+import me.leoko.advancedban.manager.LogManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.manager.UpdateManager;
@@ -29,6 +31,7 @@ public class Universal {
     private static Universal instance = null;
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
+    private LogManager logManager;
     private static boolean redis = false;
 
     public static Universal get() {
@@ -38,7 +41,7 @@ public class Universal {
     public void setup(MethodInterface mi) {
         this.mi = mi;
         mi.loadFiles();
-
+        logManager = new LogManager();
         UpdateManager.get().setup();
         UUIDManager.get().setup();
 
@@ -239,19 +242,30 @@ public class Universal {
 
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            mi.log("§cDebug: §7" + msg.toString());
+            log("§cDebug: §7" + msg.toString());
+        }
+    }
+    
+    public void debug(SQLException ex) {
+        if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
+            log("§cDebug: §7An error has ocurred with the database, the error code is: '" + ex.getErrorCode() + "'");
+            log("§7The state of the sql is: " + ex.getSQLState());
+            log("§7Error message: " + ex.getMessage());
         }
     }
     
     private void debugToFile(Object msg) {
-        File debugFile = new File(mi.getDataFolder(), "debug.log");
+        File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
+            System.out.print("Seems that a problem has ocurred while creating the latest.log file in the startup.");
             try {
                 debugFile.createNewFile();
             } catch (IOException ex) {
-                log("An error has ocurred creating the 'debug.log' file.");
-                log(ex.getMessage());
+                System.out.print("An error has ocurred creating the 'latest.log' file again, check your server.");
+                System.out.print("Error message" + ex.getMessage());
             }
+        } else {
+            logManager.checkLastLog(false);
         }
         try {
             FileUtils.writeStringToFile(debugFile, ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);

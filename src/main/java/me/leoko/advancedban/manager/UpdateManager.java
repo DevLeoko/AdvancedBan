@@ -1,14 +1,13 @@
 package me.leoko.advancedban.manager;
 
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Created by Leo on 07.08.2017.
@@ -82,6 +81,14 @@ public class UpdateManager {
                         "# the plugin works correctly is not recommended to activate it since it is",
                         "# designed to find bugs.",
                         "Debug: false"));
+            }
+            if (!mi.contains(mi.getConfig(), "Log Purge Days")) {
+                lines.addAll(Arrays.asList(
+                        "",
+                        "# This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.",
+                        "# By default is set to 10 days.",
+                        "Logs Purge Days: 10"
+                ));
             }
             FileUtils.writeLines(file, lines);
         } catch (IOException exc) {

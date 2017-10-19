@@ -110,3 +110,7 @@ TempPerms:
 # the plugin works correctly is not recommended to activate it since it is 
 # designed to find bugs.
 Debug: false
+
+# This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.
+# By default is set to 10 days.
+Log Purge Days: 10
