@@ -163,7 +163,7 @@ public class CommandManager {
                                 List<Punishment> ptn = PunishmentManager.get().getWarns(uuid);
                                 if (!ptn.isEmpty()) {
                                     for (Punishment punishment : ptn) {
-                                        punishment.delete(true, true);
+                                        punishment.delete(mi.getName(sender), true, true);
                                     }
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Done", true, "COUNT", String.valueOf(ptn.size()));
                                 } else {

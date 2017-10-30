@@ -18,7 +18,7 @@ public class PubSubMessageListener implements Listener {
 
     @EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
-        if (e.getChannel().equalsIgnoreCase("AdvancedBan")) {
+        if (e.getChannel().equals("AdvancedBan")) {
             String[] msg = e.getMessage().split(" ");
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
@@ -38,6 +38,10 @@ public class PubSubMessageListener implements Listener {
                     ProxyServer.getInstance().getConsole().sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
                 }
             }
+        } else if (e.getChannel().equals("AdvancedBanConnection")) {
+            String[] msg = e.getMessage().split(",");
+            Universal.get().getIps().remove(msg[0].toLowerCase());
+            Universal.get().getIps().put(msg[0].toLowerCase(), msg[1]);
         }
     }
 }

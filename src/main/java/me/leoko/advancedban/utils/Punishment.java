@@ -16,6 +16,7 @@ import me.leoko.advancedban.manager.TimeManager;
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class Punishment {
+
     private static final MethodInterface mi = Universal.get().getMethods();
     private final String name, uuid, operator, calculation;
     private final long start, end;
@@ -71,17 +72,17 @@ public class Punishment {
     public int getId() {
         return id;
     }
-    
+
     public String getHexId() {
-    	return Integer.toHexString(id).toUpperCase();
-    }
-    
-    public String getDate (long date) {
-    	SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
-    	return format.format(new Date(date));
+        return Integer.toHexString(id).toUpperCase();
     }
 
-    public void create(){
+    public String getDate(long date) {
+        SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
+        return format.format(new Date(date));
+    }
+
+    public void create() {
         create(false);
     }
 
@@ -132,8 +133,9 @@ public class Punishment {
             });
         }
 
-        if(!silent)
+        if (!silent) {
             announce(cWarnings);
+        }
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
@@ -153,7 +155,7 @@ public class Punishment {
         mi.callPunishmentEvent(this);
     }
 
-    public void updateReason(String reason){
+    public void updateReason(String reason) {
         this.reason = reason;
 
         if (id != -1) {
@@ -161,7 +163,7 @@ public class Punishment {
         }
     }
 
-    private void announce(int cWarnings){
+    private void announce(int cWarnings) {
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
                 getType().getConfSection() + ".Notification",
                 "OPERATOR", getOperator(),
@@ -178,12 +180,13 @@ public class Punishment {
     }
 
     public void delete() {
-        delete(false, true);
+        delete(null, false, true);
     }
 
-    public void delete(boolean massClear, boolean removeCache) {
+    public void delete(String who, boolean massClear, boolean removeCache) {
         if (getType() == PunishmentType.KICK) {
             Universal.get().log("!! Failed deleting! You are not able to delete Kicks!");
+            return;
         }
 
         if (id == -1) {
@@ -194,10 +197,14 @@ public class Punishment {
 
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        if(removeCache) {
+        if (removeCache) {
             PunishmentManager.get().getLoadedPunishments(false).remove(this);
         }
 
+        if (who != null) {
+            Universal.get().debug(who + " is deleting a punishment");
+        }
+        Universal.get().debug("Deleted punishment " + getId() + " from " + getName() + " punishment reason: " + getReason());
         mi.callRevokePunishmentEvent(this, massClear);
     }
 
@@ -234,17 +241,17 @@ public class Punishment {
         return duration;
     }
 
-    private String[] getDurationParameter(String... parameter){
+    private String[] getDurationParameter(String... parameter) {
         int length = parameter.length;
-        String[] newParameter = new String[length*2];
-        for (int i = 0; i < length; i+=2) {
+        String[] newParameter = new String[length * 2];
+        for (int i = 0; i < length; i += 2) {
             String name = parameter[i];
             String count = parameter[i + 1];
 
             newParameter[i] = name;
-            newParameter[i+1] = count;
-            newParameter[length+i] = name+name;
-            newParameter[length+i+1] = (count.length() <= 1 ? "0" : "")+count;
+            newParameter[i + 1] = count;
+            newParameter[length + i] = name + name;
+            newParameter[length + i + 1] = (count.length() <= 1 ? "0" : "") + count;
         }
 
         return newParameter;
@@ -264,16 +271,16 @@ public class Punishment {
 
     @Override
     public String toString() {
-        return "Punishment{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", uuid='" + uuid + '\'' +
-                ", reason='" + reason + '\'' +
-                ", operator='" + operator + '\'' +
-                ", start=" + start +
-                ", end=" + end +
-                ", calculation='" + calculation + '\'' +
-                ", type=" + type +
-                '}';
+        return "Punishment{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", uuid='" + uuid + '\''
+                + ", reason='" + reason + '\''
+                + ", operator='" + operator + '\''
+                + ", start=" + start
+                + ", end=" + end
+                + ", calculation='" + calculation + '\''
+                + ", type=" + type
+                + '}';
     }
 }

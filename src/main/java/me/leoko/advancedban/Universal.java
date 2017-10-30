@@ -197,8 +197,8 @@ public class Universal {
             return "[AdvancedBan] Failed to fetch your UUID";
         }
 
-        ips.remove(name);
-        ips.put(name, ip);
+        getIps().remove(name);
+        getIps().put(name, ip);
 
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
         Punishment pt = interimData.getBan();

@@ -92,13 +92,13 @@ public enum SQLQuery {
             "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ?",
             "SELECT * FROM PunishmentHistory WHERE uuid = ?"
     ),
-    SELECT_USER_PUNISHMENTS_WITH_IP(
-            "SELECT * FROM `Punishments` WHERE `uuid` = ? OR `uuid` = ?",
-            "SELECT * FROM Punishments WHERE uuid = ? OR uuid = ?"
+    SELECT_USER_PUNISHMENTS_WITH_IP_OR_NAME(
+            "SELECT * FROM `Punishments` WHERE `uuid` = ? OR `name` = ?",
+            "SELECT * FROM Punishments WHERE uuid = ? OR name = ?"
     ),
-    SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP(
-            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? OR `uuid` = ?",
-            "SELECT * FROM PunishmentHistory WHERE uuid = ? OR uuid = ?"
+    SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP_OR_NAME(
+            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? OR `name` = ?",
+            "SELECT * FROM PunishmentHistory WHERE uuid = ? OR name = ?"
     ),
     SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION(
             "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? AND `calculation` = ?",

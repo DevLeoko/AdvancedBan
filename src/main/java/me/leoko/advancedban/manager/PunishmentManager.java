@@ -4,8 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.InterimData;
@@ -17,11 +19,12 @@ import me.leoko.advancedban.utils.SQLQuery;
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class PunishmentManager {
+
     private static PunishmentManager instance = null;
     private final Universal universal = Universal.get();
-    private final List<Punishment> punishments = Collections.synchronizedList(new ArrayList<Punishment>());
-    private final List<Punishment> history = Collections.synchronizedList(new ArrayList<Punishment>());
-    private final List<String> cached = Collections.synchronizedList(new ArrayList<String>());
+    private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
+    private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
+    private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
 
     public static PunishmentManager get() {
         return instance == null ? instance = new PunishmentManager() : instance;
@@ -36,17 +39,15 @@ public class PunishmentManager {
         }
     }
 
-    public InterimData load(String name, String uuid, String ip){
-        List<Punishment> punishments = new ArrayList<>();
-        List<Punishment> history = new ArrayList<>();
+    public InterimData load(String name, String uuid, String ip) {
         try {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
+            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP_OR_NAME, uuid, name);
             while (rs.next()) {
                 punishments.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
 
-            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip);
+            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP_OR_NAME, uuid, name);
             while (rs.next()) {
                 history.add(getPunishmentFromResultSet(rs));
             }
@@ -58,7 +59,7 @@ public class PunishmentManager {
         return new InterimData(uuid, name, ip, punishments, history);
     }
 
-    public void discard(String name){
+    public void discard(String name) {
         name = name.toLowerCase();
         String ip = Universal.get().getIps().get(name);
         String uuid = UUIDManager.get().getUUID(name);
@@ -67,42 +68,45 @@ public class PunishmentManager {
         cached.remove(ip);
 
         Iterator<Punishment> iterator = punishments.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if(punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip))
+            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
                 iterator.remove();
+            }
         }
 
         iterator = history.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if(punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip))
+            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
                 iterator.remove();
+            }
         }
     }
 
     public List<Punishment> getPunishments(String uuid, PunishmentType put, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
 
-        if(isCached(uuid)) {
-            for(Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();){
+        if (isCached(uuid)) {
+            for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();) {
                 Punishment pt = iterator.next();
                 if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(uuid)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
-                        pt.delete(false, false);
+                        pt.delete(null, false, false);
                         iterator.remove();
                     }
                 }
             }
-        }else{
+        } else {
             ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, uuid);
             try {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
-                    if((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired()))
+                    if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
+                    }
                 }
                 rs.close();
             } catch (SQLException ex) {
@@ -135,7 +139,7 @@ public class PunishmentManager {
         ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id);
         Punishment pt = null;
         try {
-            if(rs.next()) {
+            if (rs.next()) {
                 pt = getPunishmentFromResultSet(rs);
             }
             rs.close();
@@ -174,22 +178,22 @@ public class PunishmentManager {
         return getMute(uuid) != null;
     }
 
-    public boolean isCached(String name){
+    public boolean isCached(String name) {
         return cached.contains(name);
     }
 
-    public void addCached(String name){
+    public void addCached(String name) {
         cached.add(name);
     }
 
-    public int getCalculationLevel(String uuid, String layout){
-        if(isCached(uuid)) {
+    public int getCalculationLevel(String uuid, String layout) {
+        if (isCached(uuid)) {
             return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
-        }else{
+        } else {
             ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout);
             int i = 0;
             try {
-                while(resultSet.next()) {
+                while (resultSet.next()) {
                     i++;
                 }
                 resultSet.close();
@@ -205,7 +209,7 @@ public class PunishmentManager {
         return getWarns(uuid).size();
     }
 
-    public List<Punishment> getLoadedPunishments(boolean checkExpired) {
+    public Set<Punishment> getLoadedPunishments(boolean checkExpired) {
         if (checkExpired) {
             List<Punishment> toDelete = new ArrayList<>();
             for (Punishment pu : punishments) {
@@ -233,19 +237,19 @@ public class PunishmentManager {
 //
 //        return end;
 //    }
-
     public Punishment getPunishmentFromResultSet(ResultSet rs) throws SQLException {
-        return new Punishment(rs.getString("name"),
-            rs.getString("uuid"), rs.getString("reason"),
-            rs.getString("operator"),
-            PunishmentType.valueOf(rs.getString("punishmentType")),
-            rs.getLong("start"),
-            rs.getLong("end"),
-            rs.getString("calculation"),
-            rs.getInt("id"));
+        return new Punishment(
+                rs.getString("name"),
+                rs.getString("uuid"), rs.getString("reason"),
+                rs.getString("operator"),
+                PunishmentType.valueOf(rs.getString("punishmentType")),
+                rs.getLong("start"),
+                rs.getLong("end"),
+                rs.getString("calculation"),
+                rs.getInt("id"));
     }
 
-    public List<Punishment> getLoadedHistory() {
+    public Set<Punishment> getLoadedHistory() {
         return history;
     }
 }
