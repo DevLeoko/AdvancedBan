@@ -33,27 +33,10 @@ public class PunishmentManager {
     public void setup() {
         MethodInterface mi = universal.getMethods();
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_OLD_PUNISHMENTS, TimeManager.getTime());
-        loadAll();
-    }
-
-    public InterimData loadAll() {
-        try {
-            ResultSet res;
-            res = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_ALL_PUNISHMENTS);
-            while (res.next()) {
-                punishments.add(getPunishmentFromResultSet(res));
-            }
-            res.close();
-            res = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_ALL_PUNISHMENTS_HISTORY);
-            while (res.next()) {
-                history.add(getPunishmentFromResultSet(res));
-            }
-            res.close();
-        } catch (SQLException ex) {
-            universal.log("An error has ocurred loading the punishments from the database.");
-            universal.debug(ex);
+        for (Object player : mi.getOnlinePlayers()) {
+            String name = mi.getName(player).toLowerCase();
+            load(name, UUIDManager.get().getUUID(name), mi.getIP(player));
         }
-        return new InterimData(null, null, null, punishments, history);
     }
 
     public InterimData load(String name, String uuid, String ip) {
