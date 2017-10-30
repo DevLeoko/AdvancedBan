@@ -7,6 +7,7 @@ import me.leoko.advancedban.manager.PunishmentManager;
  * Created by Leo on 04.08.2017.
  */
 public class InterimData {
+
     private final String uuid, name, ip;
     private final Set<Punishment> punishments, history;
 
@@ -20,18 +21,24 @@ public class InterimData {
 
     public Punishment getBan() {
         for (Punishment pt : punishments) {
-            if (pt.getType().getBasic() == PunishmentType.BAN && !pt.isExpired()) {
+            if (pt.getType().getBasic() == PunishmentType.BAN && !pt.isExpired() && pt.getName().equals(name)) {
                 return pt;
             }
         }
         return null;
     }
 
-    public void accept(){
+    public void accept() {
         PunishmentManager.get().getLoadedPunishments(false).addAll(punishments);
         PunishmentManager.get().getLoadedHistory().addAll(history);
-        PunishmentManager.get().addCached(name);
-        PunishmentManager.get().addCached(ip);
-        PunishmentManager.get().addCached(uuid);
+        if (name != null) {
+            PunishmentManager.get().addCached(name);
+        }
+        if (ip != null) {
+            PunishmentManager.get().addCached(ip);
+        }
+        if (uuid != null) {
+            PunishmentManager.get().addCached(uuid);
+        }
     }
 }
