@@ -43,13 +43,13 @@ public class PunishmentManager {
 	Set<Punishment> punishments = new HashSet<>();
 	Set<Punishment> history = new HashSet<>();
         try {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP_OR_NAME, uuid, ip, name);
+            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
             while (rs.next()) {
                 punishments.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
 
-            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP_OR_NAME, uuid, ip, name);
+            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip);
             while (rs.next()) {
                 history.add(getPunishmentFromResultSet(rs));
             }
