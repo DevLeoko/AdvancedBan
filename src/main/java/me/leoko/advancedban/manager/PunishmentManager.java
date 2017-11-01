@@ -40,16 +40,16 @@ public class PunishmentManager {
     }
 
     public InterimData load(String name, String uuid, String ip) {
+	Set<Punishment> punishments = new HashSet<>();
+	Set<Punishment> history = new HashSet<>();
         try {
-            Set<Punishment> punishments = new HashSet<>();
-            Set<Punishment> history = new HashSet<>();
-            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP_OR_NAME, uuid, name);
+            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP_OR_NAME, uuid, ip, name);
             while (rs.next()) {
                 punishments.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
 
-            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP_OR_NAME, uuid, name);
+            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP_OR_NAME, uuid, ip, name);
             while (rs.next()) {
                 history.add(getPunishmentFromResultSet(rs));
             }

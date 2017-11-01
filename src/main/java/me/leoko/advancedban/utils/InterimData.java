@@ -21,7 +21,7 @@ public class InterimData {
 
     public Punishment getBan() {
         for (Punishment pt : punishments) {
-            if (pt.getType().getBasic() == PunishmentType.BAN && !pt.isExpired() && pt.getName().equals(name)) {
+            if (pt.getType().getBasic() == PunishmentType.BAN && !pt.isExpired()) {
                 return pt;
             }
         }
@@ -31,14 +31,8 @@ public class InterimData {
     public void accept() {
         PunishmentManager.get().getLoadedPunishments(false).addAll(punishments);
         PunishmentManager.get().getLoadedHistory().addAll(history);
-        if (name != null) {
-            PunishmentManager.get().addCached(name);
-        }
-        if (ip != null) {
-            PunishmentManager.get().addCached(ip);
-        }
-        if (uuid != null) {
-            PunishmentManager.get().addCached(uuid);
-        }
+	PunishmentManager.get().addCached(name);
+	PunishmentManager.get().addCached(ip);
+	PunishmentManager.get().addCached(uuid);
     }
 }
