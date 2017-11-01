@@ -1,5 +1,12 @@
 package me.leoko.advancedban.bukkit;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.UUID;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
@@ -20,14 +27,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -161,7 +160,9 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        Bukkit.getPlayer(player).kickPlayer(reason);
+        if (Bukkit.getPlayer(player) != null && Bukkit.getPlayer(player).isOnline()) {
+            Bukkit.getPlayer(player).kickPlayer(reason);
+        }
     }
 
     @Override
@@ -365,5 +366,10 @@ public class BukkitMethods implements MethodInterface {
                 }
             }
         }
+    }
+
+    @Override
+    public void log(String msg) {
+        Bukkit.getServer().getConsoleSender().sendMessage("§8[§cAdvancedBan§8] §7" + msg);
     }
 }

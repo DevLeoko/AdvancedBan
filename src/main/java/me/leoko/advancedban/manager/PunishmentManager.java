@@ -1,5 +1,13 @@
 package me.leoko.advancedban.manager;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.InterimData;
@@ -7,28 +15,23 @@ import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class PunishmentManager {
+
     private static PunishmentManager instance = null;
-    private final List<Punishment> punishments = Collections.synchronizedList(new ArrayList<Punishment>());
-    private final List<Punishment> history = Collections.synchronizedList(new ArrayList<Punishment>());
-    private final List<String> cached = Collections.synchronizedList(new ArrayList<String>());
+    private final Universal universal = Universal.get();
+    private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
+    private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
+    private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
 
     public static PunishmentManager get() {
         return instance == null ? instance = new PunishmentManager() : instance;
     }
 
     public void setup() {
-        MethodInterface mi = Universal.get().getMethods();
+        MethodInterface mi = universal.getMethods();
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_OLD_PUNISHMENTS, TimeManager.getTime());
         for (Object player : mi.getOnlinePlayers()) {
             String name = mi.getName(player).toLowerCase();
@@ -36,9 +39,9 @@ public class PunishmentManager {
         }
     }
 
-    public InterimData load(String name, String uuid, String ip){
-        List<Punishment> punishments = new ArrayList<>();
-        List<Punishment> history = new ArrayList<>();
+    public InterimData load(String name, String uuid, String ip) {
+	Set<Punishment> punishments = new HashSet<>();
+	Set<Punishment> history = new HashSet<>();
         try {
             ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
             while (rs.next()) {
@@ -51,13 +54,14 @@ public class PunishmentManager {
                 history.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred loading the punishments from the database.");
+            universal.debug(ex);
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
 
-    public void discard(String name){
+    public void discard(String name) {
         name = name.toLowerCase();
         String ip = Universal.get().getIps().get(name);
         String uuid = UUIDManager.get().getUUID(name);
@@ -66,46 +70,50 @@ public class PunishmentManager {
         cached.remove(ip);
 
         Iterator<Punishment> iterator = punishments.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if(punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip))
+            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
                 iterator.remove();
+            }
         }
 
         iterator = history.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if(punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip))
+            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
                 iterator.remove();
+            }
         }
     }
 
     public List<Punishment> getPunishments(String uuid, PunishmentType put, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
 
-        if(isCached(uuid)) {
-            for(Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();){
+        if (isCached(uuid)) {
+            for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();) {
                 Punishment pt = iterator.next();
                 if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(uuid)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
-                        pt.delete(false, false);
+                        pt.delete(null, false, false);
                         iterator.remove();
                     }
                 }
             }
-        }else{
+        } else {
             ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, uuid);
             try {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
-                    if((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired()))
+                    if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
+                    }
                 }
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                universal.log("An error has ocurred getting the punishments for " + uuid);
+                universal.debug(ex);
             }
         }
         return ptList;
@@ -121,8 +129,10 @@ public class PunishmentManager {
                 ptList.add(punishment);
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred executing a query in the database.");
+            universal.debug("Query: \n" + sqlQuery);
+            universal.debug(ex);
         }
         return ptList;
     }
@@ -131,12 +141,14 @@ public class PunishmentManager {
         ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id);
         Punishment pt = null;
         try {
-            if(rs.next()) {
+            if (rs.next()) {
                 pt = getPunishmentFromResultSet(rs);
             }
             rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            universal.log("An error has ocurred getting a punishment by his id.");
+            universal.debug("Punishment id: '" + id + "'");
+            universal.debug(ex);
         }
         return pt == null || pt.isExpired() ? null : pt;
     }
@@ -168,26 +180,28 @@ public class PunishmentManager {
         return getMute(uuid) != null;
     }
 
-    public boolean isCached(String name){
+    public boolean isCached(String name) {
         return cached.contains(name);
     }
 
-    public void addCached(String name){
+    public void addCached(String name) {
         cached.add(name);
     }
 
-    public int getCalculationLevel(String uuid, String layout){
-        if(isCached(uuid)) {
+    public int getCalculationLevel(String uuid, String layout) {
+        if (isCached(uuid)) {
             return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
-        }else{
+        } else {
             ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout);
             int i = 0;
             try {
-                while(resultSet.next())
+                while (resultSet.next()) {
                     i++;
+                }
                 resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
+                universal.debug(ex);
             }
             return i;
         }
@@ -197,7 +211,7 @@ public class PunishmentManager {
         return getWarns(uuid).size();
     }
 
-    public List<Punishment> getLoadedPunishments(boolean checkExpired) {
+    public Set<Punishment> getLoadedPunishments(boolean checkExpired) {
         if (checkExpired) {
             List<Punishment> toDelete = new ArrayList<>();
             for (Punishment pu : punishments) {
@@ -225,19 +239,19 @@ public class PunishmentManager {
 //
 //        return end;
 //    }
-
     public Punishment getPunishmentFromResultSet(ResultSet rs) throws SQLException {
-        return new Punishment(rs.getString("name"),
-            rs.getString("uuid"), rs.getString("reason"),
-            rs.getString("operator"),
-            PunishmentType.valueOf(rs.getString("punishmentType")),
-            rs.getLong("start"),
-            rs.getLong("end"),
-            rs.getString("calculation"),
-            rs.getInt("id"));
+        return new Punishment(
+                rs.getString("name"),
+                rs.getString("uuid"), rs.getString("reason"),
+                rs.getString("operator"),
+                PunishmentType.valueOf(rs.getString("punishmentType")),
+                rs.getLong("start"),
+                rs.getLong("end"),
+                rs.getString("calculation"),
+                rs.getInt("id"));
     }
 
-    public List<Punishment> getLoadedHistory() {
+    public Set<Punishment> getLoadedHistory() {
         return history;
     }
 }

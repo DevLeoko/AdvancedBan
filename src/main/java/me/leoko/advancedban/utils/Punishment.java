@@ -1,5 +1,10 @@
 package me.leoko.advancedban.utils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
@@ -7,16 +12,11 @@ import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class Punishment {
+
     private static final MethodInterface mi = Universal.get().getMethods();
     private final String name, uuid, operator, calculation;
     private final long start, end;
@@ -72,30 +72,30 @@ public class Punishment {
     public int getId() {
         return id;
     }
-    
+
     public String getHexId() {
-    	return Integer.toHexString(id).toUpperCase();
-    }
-    
-    public String getDate (long date) {
-    	SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
-    	return format.format(new Date(date));
+        return Integer.toHexString(id).toUpperCase();
     }
 
-    public void create(){
+    public String getDate(long date) {
+        SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
+        return format.format(new Date(date));
+    }
+
+    public void create() {
         create(false);
     }
 
     public void create(boolean silent) {
         if (id != -1) {
-            System.out.println("!! Failed! AB tried to overwrite the punishment:");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed! AB tried to overwrite the punishment:");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
         if (uuid == null) {
-            System.out.println("!! Failed! AB has not saved the " + getType().getName() + " because there is no fetched UUID");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed! AB has not saved the " + getType().getName() + " because there is no fetched UUID");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
@@ -108,12 +108,12 @@ public class Punishment {
                 if (rs.next()) {
                     id = rs.getInt("id");
                 } else {
-                    System.out.println("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
-                    System.out.println("!! Failed at: " + toString());
+                    Universal.get().log("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
+                    Universal.get().log("!! Failed at: " + toString());
                 }
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                Universal.get().debug(ex);
             }
         }
 
@@ -129,12 +129,13 @@ public class Punishment {
             final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
             mi.runSync(() -> {
                 mi.executeCommand(finalCmd);
-                System.out.println("[AdvancedBan] Executing command: " + finalCmd);
+                Universal.get().log("[AdvancedBan] Executing command: " + finalCmd);
             });
         }
 
-        if(!silent)
+        if (!silent) {
             announce(cWarnings);
+        }
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
@@ -154,7 +155,7 @@ public class Punishment {
         mi.callPunishmentEvent(this);
     }
 
-    public void updateReason(String reason){
+    public void updateReason(String reason) {
         this.reason = reason;
 
         if (id != -1) {
@@ -162,7 +163,7 @@ public class Punishment {
         }
     }
 
-    private void announce(int cWarnings){
+    private void announce(int cWarnings) {
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
                 getType().getConfSection() + ".Notification",
                 "OPERATOR", getOperator(),
@@ -179,39 +180,44 @@ public class Punishment {
     }
 
     public void delete() {
-        delete(false, true);
+        delete(null, false, true);
     }
 
-    public void delete(boolean massClear, boolean removeCache) {
+    public void delete(String who, boolean massClear, boolean removeCache) {
         if (getType() == PunishmentType.KICK) {
-            System.out.println("!! Failed deleting! You are not able to delete Kicks!");
+            Universal.get().log("!! Failed deleting! You are not able to delete Kicks!");
+            return;
         }
 
         if (id == -1) {
-            System.out.println("!! Failed deleting! The Punishment is not created yet!");
-            System.out.println("!! Failed at: " + toString());
+            Universal.get().log("!! Failed deleting! The Punishment is not created yet!");
+            Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, getId());
 
-        if(removeCache) {
+        if (removeCache) {
             PunishmentManager.get().getLoadedPunishments(false).remove(this);
         }
 
+        if (who != null) {
+            Universal.get().debug(who + " is deleting a punishment");
+        }
+        Universal.get().debug("Deleted punishment " + getId() + " from " + getName() + " punishment reason: " + getReason());
         mi.callRevokePunishmentEvent(this, massClear);
     }
 
     public List<String> getLayout() {
-        boolean isLayout = getReason().matches("@.+") || getReason().matches("~.+");
+        boolean isLayout = getReason().startsWith("@") || getReason().startsWith("~");
 
         return MessageManager.getLayout(
                 isLayout ? mi.getLayouts() : mi.getMessages(),
-                isLayout ? "Message." + getReason().substring(1) : getType().getConfSection() + ".Layout",
+                isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getConfSection() + ".Layout",
                 "OPERATOR", getOperator(),
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
-                "REASON", getReason(),
+                "REASON", (isLayout ? (getReason().contains("@") ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason()),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),
@@ -235,17 +241,17 @@ public class Punishment {
         return duration;
     }
 
-    private String[] getDurationParameter(String... parameter){
+    private String[] getDurationParameter(String... parameter) {
         int length = parameter.length;
-        String[] newParameter = new String[length*2];
-        for (int i = 0; i < length; i+=2) {
+        String[] newParameter = new String[length * 2];
+        for (int i = 0; i < length; i += 2) {
             String name = parameter[i];
             String count = parameter[i + 1];
 
             newParameter[i] = name;
-            newParameter[i+1] = count;
-            newParameter[length+i] = name+name;
-            newParameter[length+i+1] = (count.length() <= 1 ? "0" : "")+count;
+            newParameter[i + 1] = count;
+            newParameter[length + i] = name + name;
+            newParameter[length + i + 1] = (count.length() <= 1 ? "0" : "") + count;
         }
 
         return newParameter;
@@ -265,16 +271,16 @@ public class Punishment {
 
     @Override
     public String toString() {
-        return "Punishment{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", uuid='" + uuid + '\'' +
-                ", reason='" + reason + '\'' +
-                ", operator='" + operator + '\'' +
-                ", start=" + start +
-                ", end=" + end +
-                ", calculation='" + calculation + '\'' +
-                ", type=" + type +
-                '}';
+        return "Punishment{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", uuid='" + uuid + '\''
+                + ", reason='" + reason + '\''
+                + ", operator='" + operator + '\''
+                + ", start=" + start
+                + ", end=" + end
+                + ", calculation='" + calculation + '\''
+                + ", type=" + type
+                + '}';
     }
 }
