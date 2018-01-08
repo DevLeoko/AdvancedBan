@@ -4,6 +4,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.listener.ChatListener;
 import me.leoko.advancedban.bukkit.listener.CommandListener;
 import me.leoko.advancedban.bukkit.listener.ConnectionListener;
+import me.leoko.advancedban.bukkit.listener.InternalListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -16,6 +17,7 @@ public class BukkitMain extends JavaPlugin {
         return instance;
     }
 
+    @Override
     public void onEnable() {
         instance = this;
         Universal.get().setup(new BukkitMethods());
@@ -24,6 +26,7 @@ public class BukkitMain extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(connListener, this);
         this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new CommandListener(), this);
+        this.getServer().getPluginManager().registerEvents(new InternalListener(), this);
 
         for (Player op : Bukkit.getOnlinePlayers()) {
             AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(op.getName(), op.getAddress().getAddress(), op.getUniqueId());
@@ -34,6 +37,7 @@ public class BukkitMain extends JavaPlugin {
         }
     }
 
+    @Override
     public void onDisable() {
         Universal.get().shutdown();
     }

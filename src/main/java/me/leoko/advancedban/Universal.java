@@ -1,6 +1,7 @@
 package me.leoko.advancedban;
 
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import lombok.Getter;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.LogManager;
@@ -33,6 +35,8 @@ public class Universal {
     private MethodInterface mi;
     private LogManager logManager;
     private static boolean redis = false;
+    @Getter
+    private final Gson gson = new Gson();
 
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
