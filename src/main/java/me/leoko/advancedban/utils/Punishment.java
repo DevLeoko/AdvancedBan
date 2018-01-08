@@ -217,7 +217,7 @@ public class Punishment {
                 "OPERATOR", getOperator(),
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
-                "REASON", (isLayout ? (getReason().contains("@") ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason()),
+                "REASON", (isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason()),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),
