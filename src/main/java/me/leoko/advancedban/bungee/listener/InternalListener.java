@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.*;
+import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.ProxyServer;
@@ -48,10 +49,10 @@ public class InternalListener implements Listener {
             case "Punish":
                 JsonObject punishment = universal.getGson().fromJson(in.readUTF(), JsonObject.class);
                 new Punishment(punishment.get("name").getAsString(),
-                        punishment.get("uuid").getAsString(),
+                        UUIDManager.get().getUUID(punishment.get("uuid").getAsString()),
                         punishment.get("reason").getAsString(),
                         punishment.get("operator").getAsString(),
-                        PunishmentType.valueOf(punishment.get("punishmenttype").getAsString()),
+                        PunishmentType.valueOf(punishment.get("punishmenttype").getAsString().toUpperCase()),
                         punishment.get("start").getAsLong(),
                         punishment.get("end").getAsLong(),
                         punishment.get("calculation").getAsString(),
