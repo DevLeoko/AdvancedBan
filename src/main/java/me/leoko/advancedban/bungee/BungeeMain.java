@@ -4,7 +4,6 @@ import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.listener.*;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeMain extends Plugin {
@@ -27,7 +26,7 @@ public class BungeeMain extends Plugin {
             Universal.get().useRedis(true);
             ProxyServer.getInstance().getPluginManager().registerListener(this, new PubSubMessageListener());
             RedisBungee.getApi().registerPubSubChannels("AdvancedBan", "AdvancedBanConnection");
-            ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText("§cAdvancedBan §8» §7RedisBungee detected, hooking into it!"));
+            Universal.get().log("RedisBungee detected, hooking into it!");
         }
     }
 

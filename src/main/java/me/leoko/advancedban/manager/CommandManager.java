@@ -15,6 +15,7 @@ import me.leoko.advancedban.utils.SQLQuery;
  * Created by Leoko @ dev.skamps.eu on 12.07.2016.
  */
 public class CommandManager {
+
     private static CommandManager instance = null;
 
     public static CommandManager get() {
@@ -40,15 +41,16 @@ public class CommandManager {
                             StringBuilder reason = null;
 
                             int reasonBegin = argsLength;
-                            if(args.length > argsLength && args[argsLength].equalsIgnoreCase("-s")){
+                            if (args.length > argsLength && args[argsLength].equalsIgnoreCase("-s")) {
                                 reasonBegin++;
                                 silent = true;
                             }
 
                             if (args.length > reasonBegin) {
                                 reason = buildReason(args, reasonBegin, sender);
-                                if(reason == null)
+                                if (reason == null) {
                                     return;
+                                }
                             }
 
                             String name = args[0];
@@ -109,14 +111,14 @@ public class CommandManager {
                                 return;
                             }
 
-                            if ((mi.isOnline(args[0]) && Universal.get().hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt")) ||
-                                    Universal.get().isExemptPlayer(args[0])) {
+                            if ((mi.isOnline(args[0]) && Universal.get().hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt"))
+                                    || Universal.get().isExemptPlayer(args[0])) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
                                 return;
                             }
 
-                            if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid)) ||
-                                    (pt.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(uuid))) {
+                            if ((pt.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(uuid))
+                                    || (pt.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(uuid))) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".AlreadyDone", true, "NAME", args[0]);
                                 return;
                             }
@@ -191,30 +193,31 @@ public class CommandManager {
                 if (Universal.get().hasPerms(sender, "ab.changeReason")) {
                     Punishment punishment;
                     int reasonStart;
-                    if(args.length > 1 && args[0].matches("[0-9]*")) {
+                    if (args.length > 1 && args[0].matches("[0-9]*")) {
                         punishment = PunishmentManager.get().getPunishment(Integer.parseInt(args[0]));
                         reasonStart = 1;
-                    }else if(args.length > 2 && args[0].toLowerCase().matches("mute|ban")){
+                    } else if (args.length > 2 && args[0].toLowerCase().matches("mute|ban")) {
                         reasonStart = 2;
                         if (!args[1].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
                             args[1] = UUIDManager.get().getUUID(args[1]);
                         }
 
-                        if(args[0].equalsIgnoreCase("ban"))
+                        if (args[0].equalsIgnoreCase("ban")) {
                             punishment = PunishmentManager.get().getBan(args[1]);
-                        else
+                        } else {
                             punishment = PunishmentManager.get().getMute(args[1]);
-                    }else{
+                        }
+                    } else {
                         MessageManager.sendMessage(sender, "ChangeReason.Usage", true);
                         return;
                     }
 
                     StringBuilder reason = buildReason(args, reasonStart, sender);
-                    if(reason != null){
-                        if(punishment != null) {
+                    if (reason != null) {
+                        if (punishment != null) {
                             punishment.updateReason(reason.toString());
                             MessageManager.sendMessage(sender, "ChangeReason.Done", true, "ID", String.valueOf(punishment.getId()));
-                        }else{
+                        } else {
                             MessageManager.sendMessage(sender, "ChangeReason.NotFound", true);
                         }
                     }
@@ -278,7 +281,13 @@ public class CommandManager {
                 if (Universal.get().hasPerms(sender, "ab.check")) {
                     if (args.length == 1) {
                         try {
-                            String uuid = UUIDManager.get().getUUID(args[0].toLowerCase());
+                            String uuid;
+                            Punishment punishment = getPunishment(args[0]);
+                            if (punishment != null && !punishment.isExpired()) {
+                                uuid = UUIDManager.get().getUUID(PunishmentManager.get().getPunishment(Integer.parseInt(args[0])).getName());
+                            } else {
+                                uuid = UUIDManager.get().getUUID(args[0].toLowerCase());
+                            }
                             if (uuid == null) {
                                 MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                                 return;
@@ -288,14 +297,20 @@ public class CommandManager {
                             Punishment mute = PunishmentManager.get().getMute(uuid);
                             Punishment ban = PunishmentManager.get().getBan(uuid);
 
-                            MessageManager.sendMessage(sender, "Check.Header", true, "NAME", args[0]);
+                            MessageManager.sendMessage(sender, "Check.Header", true, "NAME", punishment != null ? punishment.getName() : args[0]);
                             MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid);
                             if (Universal.get().hasPerms(sender, "ab.check.ip")) {
                                 MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
                             }
                             MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
                             MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION", mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");
+                            if (mute != null) {
+                                MessageManager.sendMessage(sender, "Check.MuteReason", false, "REASON", mute.getReason());
+                            }
                             MessageManager.sendMessage(sender, "Check.Ban", false, "DURATION", ban == null ? "§anone" : ban.getType().isTemp() ? "§e" + ban.getDuration(false) : "§cperma");
+                            if (ban != null) {
+                                MessageManager.sendMessage(sender, "Check.BanReason", false, "REASON", ban.getReason());
+                            }
                             MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
                         } catch (NullPointerException exc) {
                             MessageManager.sendMessage(sender, "Check.NotFound", true, "NAME", args[0]);
@@ -312,9 +327,9 @@ public class CommandManager {
                     mi.sendMessage(sender, "§c§lAdvancedBan v2 §cSystemPrefs");
                     mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
                     mi.sendMessage(sender, "§cYour UUID (Intern) §8» §7" + mi.getInternUUID(sender));
-                    if(args.length == 1){
-                        mi.sendMessage(sender, "§c"+args[0]+"'s UUID (Intern) §8» §7" + mi.getInternUUID(args[0]));
-                        mi.sendMessage(sender, "§c"+args[0]+"'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(args[0]));
+                    if (args.length == 1) {
+                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Intern) §8» §7" + mi.getInternUUID(args[0]));
+                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(args[0]));
                     }
                 } else {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
@@ -393,12 +408,12 @@ public class CommandManager {
         });
     }
 
-    private StringBuilder buildReason(String[] args, int reasonBegin, Object sender){
+    private StringBuilder buildReason(String[] args, int reasonBegin, Object sender) {
         MethodInterface mi = Universal.get().getMethods();
         StringBuilder reason = new StringBuilder();
-            for (int i = reasonBegin; i < args.length; i++) {
-                reason.append(" ").append(args[i]);
-            }
+        for (int i = reasonBegin; i < args.length; i++) {
+            reason.append(" ").append(args[i]);
+        }
         if (!args[reasonBegin].matches("@.+") && !args[reasonBegin].matches("~.+")) {
             return new StringBuilder(reason.substring(1));
         } else {
@@ -412,7 +427,7 @@ public class CommandManager {
 
     private void performList(Object sender, int cPage, String confName, List<Punishment> pnts, String name, boolean history) {
         MethodInterface mi = Universal.get().getMethods();
-        if (pnts.size() == 0) {
+        if (pnts.isEmpty()) {
             MessageManager.sendMessage(sender, confName + ".NoEntries", true, "NAME", name);
             return;
         }
@@ -425,7 +440,6 @@ public class CommandManager {
             for (String str : MessageManager.getLayout(mi.getMessages(), confName + ".Header", "PREFIX", MessageManager.getMessage("General.Prefix"), "NAME", name)) {
                 mi.sendMessage(sender, str);
             }
-
 
             SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
             for (int i = (cPage - 1) * 5; i < cPage * 5 && pnts.size() > i; i++) {
@@ -453,5 +467,14 @@ public class CommandManager {
         } else {
             MessageManager.sendMessage(sender, confName + ".OutOfIndex", true, "PAGE", cPage + "");
         }
+    }
+
+    private Punishment getPunishment(String id) {
+        try {
+            Integer.parseInt(id);
+        } catch (NumberFormatException | NullPointerException e) {
+            return null;
+        }
+        return PunishmentManager.get().getPunishment(Integer.parseInt(id));
     }
 }

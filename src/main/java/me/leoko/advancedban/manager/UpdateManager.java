@@ -22,6 +22,28 @@ public class UpdateManager {
 
     public void setup() {
         MethodInterface mi = Universal.get().getMethods();
+        if (!mi.contains(mi.getMessages(), "Check.MuteReason")) {
+            try {
+                File file = new File(mi.getDataFolder(), "Messages.yml");
+                List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
+                int index = lines.indexOf("Check:");
+                lines.add(index + 1, "  MuteReason: \"  &cReason &8\\xbb &7%REASON%\"");
+                FileUtils.writeLines(file, lines);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (!mi.contains(mi.getMessages(), "Check.BanReason")) {
+            try {
+                File file = new File(mi.getDataFolder(), "Messages.yml");
+                List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
+                int index = lines.indexOf("Check:");
+                lines.add(index + 1, "  BanReason: \"  &cReason &8\\xbb &7%REASON%\"");
+                FileUtils.writeLines(file, lines);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
         if (!mi.contains(mi.getMessages(), "Tempipban")) {
             try {
                 FileUtils.writeLines(new File(mi.getDataFolder(), "Messages.yml"), Arrays.asList(
@@ -82,12 +104,20 @@ public class UpdateManager {
                         "# designed to find bugs.",
                         "Debug: false"));
             }
+            if (mi.contains(mi.getConfig(), "Logs Purge Days")) {
+                lines.removeAll(Arrays.asList(
+                        "",
+                        "# This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.",
+                        "# By default is set to 10 days.",
+                        "Logs Purge Days: 10"
+                ));
+            }
             if (!mi.contains(mi.getConfig(), "Log Purge Days")) {
                 lines.addAll(Arrays.asList(
                         "",
                         "# This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.",
                         "# By default is set to 10 days.",
-                        "Logs Purge Days: 10"
+                        "Log Purge Days: 10"
                 ));
             }
             FileUtils.writeLines(file, lines);

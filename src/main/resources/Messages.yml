@@ -230,6 +230,8 @@ Check:
   IP: "&cIP &8\xbb &7%IP%"
   Geo: "&cCountry &8\xbb &7%LOCATION%"
   Mute: "&cMuted &8\xbb &7%DURATION%"
+  MuteReason: "  &cReason &8\xbb &7%REASON%"
   Ban: "&cBanned &8\xbb &7%DURATION%"
+  BanReason: "  &cReason &8\xbb &7%REASON%"
   Warn: "&cWarns &8\xbb &7%COUNT%"
   NotFound: "&cSorry we have not been able to find %NAME%"

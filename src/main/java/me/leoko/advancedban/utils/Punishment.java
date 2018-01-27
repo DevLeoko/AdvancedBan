@@ -129,7 +129,7 @@ public class Punishment {
             final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
             mi.runSync(() -> {
                 mi.executeCommand(finalCmd);
-                Universal.get().log("[AdvancedBan] Executing command: " + finalCmd);
+                Universal.get().log("Executing command: " + finalCmd);
             });
         }
 
@@ -217,7 +217,7 @@ public class Punishment {
                 "OPERATOR", getOperator(),
                 "PREFIX", MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
-                "REASON", (isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason()),
+                "REASON", isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason(),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),
