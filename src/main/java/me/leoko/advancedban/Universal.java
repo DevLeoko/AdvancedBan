@@ -1,6 +1,7 @@
 package me.leoko.advancedban;
 
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +34,7 @@ public class Universal {
     private MethodInterface mi;
     private LogManager logManager;
     private static boolean redis = false;
+    private final Gson gson = new Gson();
 
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
@@ -81,7 +83,7 @@ public class Universal {
         mi.setCommandExecutor("unpunish");
 
         String upt = "You have the newest version";
-        String response = getFromURL("http://dev.skamps.eu/api/abVer.txt");
+        String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");
         if (response == null) {
             upt = "Failed to check for updates :(";
         } else if (!response.equalsIgnoreCase(mi.getVersion())) {
@@ -89,21 +91,23 @@ public class Universal {
         }
 
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
-            System.out.println("\n \n[]=====[Enabling AdvancedBan]=====[]"
-                    + "\n| Information:"
-                    + "\n|   Name: AdvancedBan"
-                    + "\n|   Developer: Leoko"
-                    + "\n|   Version: " + mi.getVersion()
-                    + "\n|   Storage: " + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
-                    + "\n| Support:"
-                    + "\n|   Skype: Leoko33"
-                    + "\n|   Mail: Leoko4433@gmail.com"
-                    + "\n| Update:"
-                    + "\n|   " + upt
-                    + "\n[]================================[]\n ");
+            mi.log("\n \n&8[]=====[&7Enabling AdvancedBan&8]=====[]"
+                    + "\n&8| &cInformation:"
+                    + "\n&8|   &cName: &7AdvancedBan"
+                    + "\n&8|   &cDeveloper: &7Leoko"
+                    + "\n&8|   &cVersion: &7" + mi.getVersion()
+                    + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
+                    + "\n&8| &cSupport:"
+                    + "\n&8|   &cSkype: &7Leoko33"
+                    + "\n&8|   &cMail: &7Leoko4433@gmail.com"
+                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
+                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
+                    + "\n&8| &cUpdate:"
+                    + "\n&8|   &7" + upt
+                    + "\n&8[]================================[]&r\n ");
         } else {
-            System.out.println("Enabling AdvancedBan on Version " + mi.getVersion());
-            System.out.println("Coded by Leoko | Web: Skamps.eu");
+            mi.log("&cEnabling AdvancedBan on Version &7" + mi.getVersion());
+            mi.log("&cCoded by &7Leoko &8| &cWeb: &7Skamps.eu");
         }
     }
 
@@ -111,19 +115,21 @@ public class Universal {
         DatabaseManager.get().shutdown();
 
         if (mi.getBoolean(mi.getConfig(), "DetailedDisableMessage", true)) {
-            System.out.println("\n \n[]=====[Disabling AdvancedBan]=====[]"
-                    + "\n| Information:"
-                    + "\n|   Name: AdvancedBan"
-                    + "\n|   Developer: Leoko"
-                    + "\n|   Version: " + getMethods().getVersion()
-                    + "\n|   Storage: " + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
-                    + "\n| Support:"
-                    + "\n|   Skype: Leoko33"
-                    + "\n|   Mail: Leoko4433@gmail.com"
-                    + "\n[]================================[]\n ");
+            mi.log("\n \n&8[]=====[&7Disabling AdvancedBan&8]=====[]"
+                    + "\n&8| &cInformation:"
+                    + "\n&8|   &cName: &7AdvancedBan"
+                    + "\n&8|   &cDeveloper: &7Leoko"
+                    + "\n&8|   &cVersion: &7" + getMethods().getVersion()
+                    + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
+                    + "\n&8| &cSupport:"
+                    + "\n&8|   &cSkype: &7Leoko33"
+                    + "\n&8|   &cMail: &7Leoko4433@gmail.com"
+                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
+                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
+                    + "\n&8[]================================[]&r\n ");
         } else {
-            System.out.println("Disabling AdvancedBan on Version " + getMethods().getVersion());
-            System.out.println("Coded by Leoko | Web: Skamps.eu");
+            mi.log("&cDisabling AdvancedBan on Version &7" + getMethods().getVersion());
+            mi.log("&cCoded by Leoko &8| &7Web: Skamps.eu");
         }
     }
 
@@ -236,24 +242,25 @@ public class Universal {
     }
 
     public void log(String msg) {
-        mi.log(msg);
+        mi.log("§8[§cAdvancedBan§8] §7" + msg);
         debugToFile(msg);
     }
 
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            log("§cDebug: §7" + msg.toString());
+            mi.log("§8[§cAdvancedBan§8] §cDebug: §7" + msg.toString());
         }
+        debugToFile(msg);
     }
-    
+
     public void debug(SQLException ex) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            log("§cDebug: §7An error has ocurred with the database, the error code is: '" + ex.getErrorCode() + "'");
-            log("§7The state of the sql is: " + ex.getSQLState());
-            log("§7Error message: " + ex.getMessage());
+            debug("§7An error has ocurred with the database, the error code is: '" + ex.getErrorCode() + "'");
+            debug("§7The state of the sql is: " + ex.getSQLState());
+            debug("§7Error message: " + ex.getMessage());
         }
     }
-    
+
     private void debugToFile(Object msg) {
         File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
@@ -270,8 +277,12 @@ public class Universal {
         try {
             FileUtils.writeStringToFile(debugFile, ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
-            System.out.print("An error has ocurred writing to 'debug.log' file.");
+            System.out.print("An error has ocurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
         }
+    }
+    
+    public Gson getGson() {
+    	return gson;
     }
 }

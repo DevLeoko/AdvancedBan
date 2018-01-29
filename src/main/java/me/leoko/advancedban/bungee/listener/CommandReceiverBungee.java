@@ -1,5 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
+import me.leoko.advancedban.bungee.BungeeMain;
 import me.leoko.advancedban.manager.CommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -12,9 +13,9 @@ public class CommandReceiverBungee extends Command {
     public CommandReceiverBungee(String name) {
         super(name);
     }
-
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        CommandManager.get().onCommand(sender, getName(), args);
+    
+    public void execute(final CommandSender sender, final String[] args) {
+    	args[0] = (BungeeMain.get().getProxy().getPlayer(args[0]) != null ? BungeeMain.get().getProxy().getPlayer(args[0]).getName() : args[0]);
+        CommandManager.get().onCommand(sender, this.getName(), args);
     }
 }

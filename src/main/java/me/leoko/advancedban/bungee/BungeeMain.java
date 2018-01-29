@@ -18,15 +18,15 @@ public class BungeeMain extends Plugin {
     public void onEnable() {
         instance = this;
         Universal.get().setup(new BungeeMethods());
-
         ProxyServer.getInstance().getPluginManager().registerListener(this, new ConnectionListenerBungee());
         ProxyServer.getInstance().getPluginManager().registerListener(this, new ChatListenerBungee());
         ProxyServer.getInstance().getPluginManager().registerListener(this, new InternalListener());
+        ProxyServer.getInstance().registerChannel("AdvancedBan");
         if (ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null) {
             Universal.get().useRedis(true);
             ProxyServer.getInstance().getPluginManager().registerListener(this, new PubSubMessageListener());
             RedisBungee.getApi().registerPubSubChannels("AdvancedBan", "AdvancedBanConnection");
-            ProxyServer.getInstance().getConsole().sendMessage("§cAdvancedBan §8» §7RedisBungee detected, hooking into it!");
+            Universal.get().log("RedisBungee detected, hooking into it!");
         }
     }
 

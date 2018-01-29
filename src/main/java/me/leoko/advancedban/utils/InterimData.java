@@ -31,8 +31,8 @@ public class InterimData {
     public void accept() {
         PunishmentManager.get().getLoadedPunishments(false).addAll(punishments);
         PunishmentManager.get().getLoadedHistory().addAll(history);
-	PunishmentManager.get().addCached(name);
-	PunishmentManager.get().addCached(ip);
-	PunishmentManager.get().addCached(uuid);
+        PunishmentManager.get().addCached(name);
+        PunishmentManager.get().addCached(ip);
+        PunishmentManager.get().addCached(uuid);
     }
 }

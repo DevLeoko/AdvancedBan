@@ -156,11 +156,9 @@ public class DatabaseManager {
             }
             return null;
         } catch (SQLException ex) {
-            //TODO change here and below...
-//            System.out.println("AdvancedBan <> Failed due to exception: " + e.getMessage());
             Universal.get().log(
                     "An unexpected error has ocurred executing an Statement in the database\n"
-                    + "Please check the debug.log file in the plugin's folder and report this"
+                    + "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
                     + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
             );
             Universal.get().debug("Query: \n" + sql);

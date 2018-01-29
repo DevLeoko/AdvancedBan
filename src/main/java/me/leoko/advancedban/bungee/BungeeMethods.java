@@ -5,6 +5,15 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -16,23 +25,13 @@ import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -391,16 +390,16 @@ public class BungeeMethods implements MethodInterface {
                 RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " " + str);
             });
         } else {
-            ProxyServer.getInstance().getPlayers().stream().filter((pp) -> (hasPerms(pp, perm))).forEachOrdered((pp) -> {
+            ProxyServer.getInstance().getPlayers().stream().filter((pp) -> (Universal.get().hasPerms(pp, perm))).forEachOrdered((pp) -> {
                 notification.forEach((str) -> {
                     sendMessage(pp, str);
                 });
             });
         }
     }
-    
+
     @Override
     public void log(String msg) {
-        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText("§8[§cAdvancedBan§8] §7" + msg));
+        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg.replaceAll("&", "§")));
     }
 }
