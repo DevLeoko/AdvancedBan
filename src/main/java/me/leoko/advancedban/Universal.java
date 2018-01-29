@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import lombok.Getter;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.LogManager;
@@ -35,7 +34,6 @@ public class Universal {
     private MethodInterface mi;
     private LogManager logManager;
     private static boolean redis = false;
-    @Getter
     private final Gson gson = new Gson();
 
     public static Universal get() {
@@ -282,5 +280,9 @@ public class Universal {
             System.out.print("An error has ocurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
         }
+    }
+    
+    public Gson getGson() {
+    	return gson;
     }
 }

@@ -24,9 +24,10 @@ public class CommandManager {
 
     public void onCommand(final Object sender, final String cmd, final String[] args) {
         Universal.get().getMethods().runAsync(() -> {
-            if (args.length > 0) {
-                args[0] = args[0].toLowerCase();
-            }
+        	String lowerArg = "";
+        	if (args.length > 0) {
+        		lowerArg = args[0].toLowerCase();
+        	}
 
             PunishmentType pt = PunishmentType.fromCommandName(cmd);
             MethodInterface mi = Universal.get().getMethods();
@@ -53,20 +54,20 @@ public class CommandManager {
                                 }
                             }
 
-                            String name = args[0];
+                            String name = lowerArg;
                             String uuid;
                             if (pt != PunishmentType.IP_BAN && pt != PunishmentType.TEMP_IP_BAN) {
-                                uuid = UUIDManager.get().getUUID(args[0]);
+                                uuid = UUIDManager.get().getUUID(lowerArg);
                                 if (uuid == null) {
                                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                                     return;
                                 }
                             } else {
-                                if (args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
-                                    uuid = args[0];
+                                if (lowerArg.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+                                    uuid = lowerArg;
                                 } else {
-                                    if (Universal.get().getIps().containsKey(args[0].toLowerCase())) {
-                                        uuid = Universal.get().getIps().get(args[0].toLowerCase());
+                                    if (Universal.get().getIps().containsKey(lowerArg.toLowerCase())) {
+                                        uuid = Universal.get().getIps().get(lowerArg.toLowerCase());
                                     } else {
                                         MessageManager.sendMessage(sender, "Ipban.IpNotCashed", true, "NAME", args[0]);
                                         return;
@@ -106,13 +107,13 @@ public class CommandManager {
                                 }
                             }
 
-                            if (!mi.isOnline(args[0]) && pt == PunishmentType.KICK) {
+                            if (!mi.isOnline(lowerArg) && pt == PunishmentType.KICK) {
                                 MessageManager.sendMessage(sender, "Kick.NotOnline", true, "NAME", args[0]);
                                 return;
                             }
 
-                            if ((mi.isOnline(args[0]) && Universal.get().hasPerms(mi.getPlayer(args[0]), "ab." + pt.getName() + ".exempt"))
-                                    || Universal.get().isExemptPlayer(args[0])) {
+                            if ((mi.isOnline(lowerArg) && Universal.get().hasPerms(mi.getPlayer(lowerArg), "ab." + pt.getName() + ".exempt"))
+                                    || Universal.get().isExemptPlayer(lowerArg)) {
                                 MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
                                 return;
                             }
@@ -123,7 +124,7 @@ public class CommandManager {
                                 return;
                             }
 
-                            new Punishment(name, uuid, reason != null ? reason.toString() : null, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create(silent);
+                            new Punishment(args[0], uuid, reason != null ? reason.toString() : null, mi.getName(sender), isTemp && end == -1 ? PunishmentType.BAN : pt, TimeManager.getTime(), end, isTemp && args[1].matches("#.+") ? args[1].substring(1) : null, -1).create(silent);
                             MessageManager.sendMessage(sender, pt.getBasic().getConfSection() + ".Done", true, "NAME", args[0]);
                         } else {
                             MessageManager.sendMessage(sender, pt.getConfSection() + ".Usage", true);
@@ -139,9 +140,9 @@ public class CommandManager {
                 if (Universal.get().hasPerms(sender, "ab." + (pt == null ? "all" : pt.getName()) + ".undo")) {
                     if (args.length == 1 || (pt == PunishmentType.WARNING && args.length == 2)) {
                         if (pt != null && pt != PunishmentType.WARNING) {
-                            String uuid = args[0];
-                            if (!args[0].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
-                                uuid = UUIDManager.get().getUUID(args[0]);
+                            String uuid = lowerArg;
+                            if (!lowerArg.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+                                uuid = UUIDManager.get().getUUID(lowerArg);
                                 if (uuid == null) {
                                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                                     return;
@@ -156,7 +157,7 @@ public class CommandManager {
                                 MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".NotPunished", true, "NAME", args[0]);
                             }
                         } else {
-                            if (pt != null && args[0].equalsIgnoreCase("clear") && args.length == 2) {
+                            if (pt != null && lowerArg.equalsIgnoreCase("clear") && args.length == 2) {
                                 String uuid = UUIDManager.get().getUUID(args[1]);
                                 if (uuid == null) {
                                     MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
@@ -171,13 +172,13 @@ public class CommandManager {
                                 } else {
                                     MessageManager.sendMessage(sender, "Un" + pt.getConfSection() + ".Clear.Empty", true, "NAME", args[1]);
                                 }
-                            } else if (args[0].matches("[0-9]+")) {
-                                Punishment pnt = pt == null ? PunishmentManager.get().getPunishment(Integer.valueOf(args[0])) : PunishmentManager.get().getWarn(Integer.valueOf(args[0]));
+                            } else if (lowerArg.matches("[0-9]+")) {
+                                Punishment pnt = pt == null ? PunishmentManager.get().getPunishment(Integer.valueOf(lowerArg)) : PunishmentManager.get().getWarn(Integer.valueOf(lowerArg));
                                 if (pnt != null) {
                                     pnt.delete();
-                                    MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Done", true, "ID", args[0]);
+                                    MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Done", true, "ID", lowerArg);
                                 } else {
-                                    MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".NotFound", true, "ID", args[0]);
+                                    MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".NotFound", true, "ID", lowerArg);
                                 }
                             } else {
                                 MessageManager.sendMessage(sender, "Un" + (pt == null ? "Punish" : pt.getConfSection()) + ".Usage", true);
@@ -193,16 +194,16 @@ public class CommandManager {
                 if (Universal.get().hasPerms(sender, "ab.changeReason")) {
                     Punishment punishment;
                     int reasonStart;
-                    if (args.length > 1 && args[0].matches("[0-9]*")) {
-                        punishment = PunishmentManager.get().getPunishment(Integer.parseInt(args[0]));
+                    if (args.length > 1 && lowerArg.matches("[0-9]*")) {
+                        punishment = PunishmentManager.get().getPunishment(Integer.parseInt(lowerArg));
                         reasonStart = 1;
-                    } else if (args.length > 2 && args[0].toLowerCase().matches("mute|ban")) {
+                    } else if (args.length > 2 && lowerArg.toLowerCase().matches("mute|ban")) {
                         reasonStart = 2;
                         if (!args[1].matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
                             args[1] = UUIDManager.get().getUUID(args[1]);
                         }
 
-                        if (args[0].equalsIgnoreCase("ban")) {
+                        if (lowerArg.equalsIgnoreCase("ban")) {
                             punishment = PunishmentManager.get().getBan(args[1]);
                         } else {
                             punishment = PunishmentManager.get().getMute(args[1]);
@@ -226,8 +227,8 @@ public class CommandManager {
                 }
             } else if (cmd.equalsIgnoreCase("banlist")) {
                 if (Universal.get().hasPerms(sender, "ab.banlist")) {
-                    if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
-                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(args[0]), "Banlist", PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150), "nope", false);
+                    if (args.length == 0 || (args.length == 1 && lowerArg.matches("[1-9][0-9]*"))) {
+                        performList(sender, args.length == 0 ? 1 : Integer.valueOf(lowerArg), "Banlist", PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150), "nope", false);
                     } else {
                         MessageManager.sendMessage(sender, "Banlist.Usage", true);
                     }
@@ -237,12 +238,12 @@ public class CommandManager {
             } else if (cmd.equalsIgnoreCase("history")) {
                 if (Universal.get().hasPerms(sender, "ab.history")) {
                     if (args.length == 1 || (args.length == 2 && args[1].matches("[1-9][0-9]*"))) {
-                        String uuid = UUIDManager.get().getUUID(args[0]);
+                        String uuid = UUIDManager.get().getUUID(lowerArg);
                         if (uuid == null) {
                             MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                             return;
                         }
-                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(uuid, null, false), args[0], true);
+                        performList(sender, args.length == 1 ? 1 : Integer.valueOf(args[1]), "History", PunishmentManager.get().getPunishments(uuid, null, false), lowerArg, true);
                     } else {
                         MessageManager.sendMessage(sender, "History.Usage", true);
                     }
@@ -252,12 +253,12 @@ public class CommandManager {
             } else if (cmd.equalsIgnoreCase("warns")) {
                 String name = mi.getName(sender);
                 int page = 1;
-                if (args.length == 0 || (args.length == 1 && args[0].matches("[1-9][0-9]*"))) {
+                if (args.length == 0 || (args.length == 1 && lowerArg.matches("[1-9][0-9]*"))) {
                     if (!Universal.get().hasPerms(sender, "ab.warns.own")) {
                         MessageManager.sendMessage(sender, "General.NoPerms", true);
                         return;
                     } else if (args.length == 1) {
-                        page = Integer.valueOf(args[0]);
+                        page = Integer.valueOf(lowerArg);
                     }
                 } else if (args.length == 1 || (args.length == 2 && args[1].matches("[1-9][0-9]*"))) {
                     if (!Universal.get().hasPerms(sender, "ab.warns.other")) {
@@ -266,7 +267,7 @@ public class CommandManager {
                     } else if (args.length == 2) {
                         page = Integer.valueOf(args[1]);
                     }
-                    name = args[0];
+                    name = lowerArg;
                 } else {
                     MessageManager.sendMessage(sender, "Warns.Usage", true);
                     return;
@@ -282,22 +283,22 @@ public class CommandManager {
                     if (args.length == 1) {
                         try {
                             String uuid;
-                            Punishment punishment = getPunishment(args[0]);
+                            Punishment punishment = getPunishment(lowerArg);
                             if (punishment != null && !punishment.isExpired()) {
-                                uuid = UUIDManager.get().getUUID(PunishmentManager.get().getPunishment(Integer.parseInt(args[0])).getName());
+                                uuid = UUIDManager.get().getUUID(PunishmentManager.get().getPunishment(Integer.parseInt(lowerArg)).getName());
                             } else {
-                                uuid = UUIDManager.get().getUUID(args[0].toLowerCase());
+                                uuid = UUIDManager.get().getUUID(lowerArg.toLowerCase());
                             }
                             if (uuid == null) {
                                 MessageManager.sendMessage(sender, "General.FailedFetch", true, "NAME", args[0]);
                                 return;
                             }
-                            String ip = Universal.get().getIps().containsKey(args[0].toLowerCase()) ? Universal.get().getIps().get(args[0]).toLowerCase() : "none cashed";
+                            String ip = Universal.get().getIps().containsKey(lowerArg.toLowerCase()) ? Universal.get().getIps().get(lowerArg).toLowerCase() : "none cashed";
                             String loc = mi.getFromUrlJson("http://freegeoip.net/json/" + ip, "country_name");
                             Punishment mute = PunishmentManager.get().getMute(uuid);
                             Punishment ban = PunishmentManager.get().getBan(uuid);
 
-                            MessageManager.sendMessage(sender, "Check.Header", true, "NAME", punishment != null ? punishment.getName() : args[0]);
+                            MessageManager.sendMessage(sender, "Check.Header", true, "NAME", punishment != null ? punishment.getName() : lowerArg);
                             MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid);
                             if (Universal.get().hasPerms(sender, "ab.check.ip")) {
                                 MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
@@ -328,8 +329,8 @@ public class CommandManager {
                     mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
                     mi.sendMessage(sender, "§cYour UUID (Intern) §8» §7" + mi.getInternUUID(sender));
                     if (args.length == 1) {
-                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Intern) §8» §7" + mi.getInternUUID(args[0]));
-                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(args[0]));
+                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Intern) §8» §7" + mi.getInternUUID(lowerArg));
+                        mi.sendMessage(sender, "§c" + args[0] + "'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(lowerArg));
                     }
                 } else {
                     MessageManager.sendMessage(sender, "General.NoPerms", true);
@@ -349,14 +350,14 @@ public class CommandManager {
                     mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
                     mi.sendMessage(sender, "  §cPrefix §8• §7" + MessageManager.getMessage("General.Prefix"));
                     mi.sendMessage(sender, "§8§l§m-=========================-§r ");
-                } else if (args[0].equalsIgnoreCase("reload")) {
+                } else if (lowerArg.equalsIgnoreCase("reload")) {
                     if (Universal.get().hasPerms(sender, "ab.reload")) {
                         mi.loadFiles();
                         mi.sendMessage(sender, "§a§lAdvancedBan §8§l» §7Reloaded!");
                     } else {
                         MessageManager.sendMessage(sender, "General.NoPerms", true);
                     }
-                } else if (args[0].equalsIgnoreCase("help")) {
+                } else if (lowerArg.equalsIgnoreCase("help")) {
                     if (Universal.get().hasPerms(sender, "ab.help")) {
                         mi.sendMessage(sender, "§8");
                         mi.sendMessage(sender, "§c§lAdvancedBan §7Command-Help");
