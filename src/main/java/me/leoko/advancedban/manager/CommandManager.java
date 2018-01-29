@@ -54,7 +54,6 @@ public class CommandManager {
                                 }
                             }
 
-                            String name = lowerArg;
                             String uuid;
                             if (pt != PunishmentType.IP_BAN && pt != PunishmentType.TEMP_IP_BAN) {
                                 uuid = UUIDManager.get().getUUID(lowerArg);
