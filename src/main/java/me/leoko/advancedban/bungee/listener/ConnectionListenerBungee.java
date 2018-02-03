@@ -17,14 +17,18 @@ public class ConnectionListenerBungee implements Listener {
 
     @EventHandler
     public void onConnection(PreLoginEvent event) {
-        String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
-        if (result != null) {
-            event.setCancelled(true);
-            event.setCancelReason(result);
-        }
-        if (Universal.get().useRedis()) {
-            RedisBungee.getApi().sendChannelMessage("AdvancedBanConnection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
-        }
+        event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
+        Universal.get().getMethods().runAsync(() -> {
+            String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
+            if (result != null) {
+                event.setCancelled(true);
+                event.setCancelReason(result);
+            }
+            if (Universal.get().useRedis()) {
+                RedisBungee.getApi().sendChannelMessage("AdvancedBanConnection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
+            }
+            event.completeIntent((BungeeMain)Universal.get().getMethods().getPlugin());
+        });
     }
 
     @EventHandler
