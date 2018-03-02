@@ -24,10 +24,10 @@ public class CommandManager {
 
     public void onCommand(final Object sender, final String cmd, final String[] args) {
         Universal.get().getMethods().runAsync(() -> {
-        	String lowerArg = "";
-        	if (args.length > 0) {
-        		lowerArg = args[0].toLowerCase();
-        	}
+            String lowerArg = "";
+            if (args.length > 0) {
+                lowerArg = args[0].toLowerCase();
+            }
 
             PunishmentType pt = PunishmentType.fromCommandName(cmd);
             MethodInterface mi = Universal.get().getMethods();
@@ -347,7 +347,7 @@ public class CommandManager {
                         mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.get().useRedis() ? "true" : "false"));
                     }
                     mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
-                    mi.sendMessage(sender, "  §cPrefix §8• §7" + MessageManager.getMessage("General.Prefix"));
+                    mi.sendMessage(sender, "  §cPrefix §8• §7" + (mi.getBoolean(mi.getConfig(), "Disable Prefix") ? "" : MessageManager.getMessage("General.Prefix")));
                     mi.sendMessage(sender, "§8§l§m-=========================-§r ");
                 } else if (lowerArg.equalsIgnoreCase("reload")) {
                     if (Universal.get().hasPerms(sender, "ab.reload")) {
@@ -437,7 +437,7 @@ public class CommandManager {
             }
         }
         if (pnts.size() / 5.0 + 1 > cPage) {
-            for (String str : MessageManager.getLayout(mi.getMessages(), confName + ".Header", "PREFIX", MessageManager.getMessage("General.Prefix"), "NAME", name)) {
+            for (String str : MessageManager.getLayout(mi.getMessages(), confName + ".Header", "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix") ? "" : MessageManager.getMessage("General.Prefix"), "NAME", name)) {
                 mi.sendMessage(sender, str);
             }
 
@@ -445,7 +445,7 @@ public class CommandManager {
             for (int i = (cPage - 1) * 5; i < cPage * 5 && pnts.size() > i; i++) {
                 Punishment pnt = pnts.get(i);
                 for (String str : MessageManager.getLayout(mi.getMessages(), confName + ".Entry",
-                        "PREFIX", MessageManager.getMessage("General.Prefix"),
+                        "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix") ? "" : MessageManager.getMessage("General.Prefix"),
                         "NAME", pnt.getName(),
                         "DURATION", pnt.getDuration(history),
                         "OPERATOR", pnt.getOperator(),

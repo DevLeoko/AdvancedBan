@@ -114,3 +114,6 @@ Debug: false
 # This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.
 # By default is set to 10 days.
 Log Purge Days: 10
+
+# Removes the prefix of the plugin in every message.
+Disable Prefix: false

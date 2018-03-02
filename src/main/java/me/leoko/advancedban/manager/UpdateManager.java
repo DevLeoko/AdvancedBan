@@ -120,6 +120,13 @@ public class UpdateManager {
                         "Log Purge Days: 10"
                 ));
             }
+            if (!mi.contains(mi.getConfig(), "Disable Prefix")) {
+                lines.addAll(Arrays.asList(
+                        "",
+                        "# Removes the prefix of the plugin in every message.",
+                        "Disable Prefix: false"
+                ));
+            }
             FileUtils.writeLines(file, lines);
         } catch (IOException exc) {
             exc.printStackTrace();

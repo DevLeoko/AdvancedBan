@@ -4,10 +4,12 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.*;
+import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
@@ -47,17 +49,28 @@ public class InternalListener implements Listener {
         String channel = in.readUTF();
         switch (channel) {
             case "Punish":
-                JsonObject punishment = universal.getGson().fromJson(in.readUTF(), JsonObject.class);
-                new Punishment(punishment.get("name").getAsString(),
-                        UUIDManager.get().getUUID(punishment.get("uuid").getAsString()),
-                        punishment.get("reason").getAsString(),
-                        punishment.get("operator").getAsString(),
-                        PunishmentType.valueOf(punishment.get("punishmenttype").getAsString().toUpperCase()),
-                        punishment.get("start").getAsLong(),
-                        punishment.get("end").getAsLong(),
-                        punishment.get("calculation").getAsString(),
-                        -1
-                ).create();
+                String message = in.readUTF();
+                try {
+                    JsonObject punishment = universal.getGson().fromJson(message, JsonObject.class);
+                    new Punishment(
+                            punishment.get("name").getAsString(),
+                            UUIDManager.get().getUUID(punishment.get("uuid").getAsString()),
+                            punishment.get("reason").getAsString(),
+                            punishment.get("operator") != null ? punishment.get("operator").getAsString() : "CONSOLE",
+                            PunishmentType.valueOf(punishment.get("punishmenttype").getAsString().toUpperCase()),
+                            TimeManager.getTime(),
+                            TimeManager.getTime() + punishment.get("end").getAsLong(),
+                            punishment.get("calculation") != null ? punishment.get("calculation").getAsString() : null,
+                            -1
+                    ).create();
+                    universal.log("A punishment was created using PluginMessaging listener.");
+                    universal.debug(punishment.toString());
+                } catch (JsonSyntaxException | NullPointerException ex) {
+                    universal.log("An exception as ocurred while reading a punishment from plugin messaging channel.");
+                    universal.debug("Message: " + message);
+                    universal.log("StackTrace:");
+                    ex.printStackTrace();
+                }
                 break;
             default:
                 universal.debug("Unknown channel for tag \"AdvancedBan\"");
