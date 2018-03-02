@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,8 +204,10 @@ public class Universal {
             return "[AdvancedBan] Failed to fetch your UUID";
         }
 
-        getIps().remove(name);
-        getIps().put(name, ip);
+        if (ip != null) {
+            getIps().remove(name);
+            getIps().put(name, ip);
+        }
 
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
         Punishment pt = interimData.getBan();
@@ -275,14 +278,14 @@ public class Universal {
             logManager.checkLastLog(false);
         }
         try {
-            FileUtils.writeStringToFile(debugFile, ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
+            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
             System.out.print("An error has ocurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
         }
     }
-    
+
     public Gson getGson() {
-    	return gson;
+        return gson;
     }
 }
