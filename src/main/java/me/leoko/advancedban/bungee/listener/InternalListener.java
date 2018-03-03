@@ -58,7 +58,7 @@ public class InternalListener implements Listener {
                             punishment.get("reason").getAsString(),
                             punishment.get("operator") != null ? punishment.get("operator").getAsString() : "CONSOLE",
                             PunishmentType.valueOf(punishment.get("punishmenttype").getAsString().toUpperCase()),
-                            TimeManager.getTime(),
+                            punishment.get("start") != null ? punishment.get("start").getAsLong() : TimeManager.getTime(),
                             TimeManager.getTime() + punishment.get("end").getAsLong(),
                             punishment.get("calculation") != null ? punishment.get("calculation").getAsString() : null,
                             -1
