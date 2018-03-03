@@ -49,7 +49,7 @@ public class MessageManager {
     }
 
     public static void sendMessage(Object sender, String path, boolean prefix, String... parameters) {
-        mi.sendMessage(sender, (prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix") ? getMessage("General.Prefix") + " " : "") + getMessage(path, parameters));
+        mi.sendMessage(sender, (prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? getMessage("General.Prefix") + " " : "") + getMessage(path, parameters));
     }
 
     private static String replace(String str, String... parameters) {
