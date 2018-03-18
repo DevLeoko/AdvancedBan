@@ -46,7 +46,7 @@ public class Universal {
         UUIDManager.get().setup();
 
         try {
-            DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
+            DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false), mi.getBoolean(mi.getConfig(), "UseMariaDBDriver", false));
         } catch (Exception ex) {
             log("Failed enabling database-manager...");
             debug(ex.getMessage());
