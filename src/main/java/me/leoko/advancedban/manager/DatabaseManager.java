@@ -28,7 +28,7 @@ public class DatabaseManager {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
 
-    public void setup(boolean useMySQLServer) {
+    public void setup(boolean useMySQLServer, boolean useMariaDBDriver) {
         MethodInterface mi = Universal.get().getMethods();
 
         if (useMySQLServer) {
@@ -55,7 +55,7 @@ public class DatabaseManager {
                 password = mi.getString(mi.getMySQLFile(), "MySQL.Password", "Unknown");
                 port = mi.getInteger(mi.getMySQLFile(), "MySQL.Port", 3306);
 
-                connectMySQLServer();
+                connectMySQLServer(useMariaDBDriver);
             }
         }
 
@@ -100,21 +100,39 @@ public class DatabaseManager {
         }
     }
 
-    private void connectMySQLServer() {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true", usrName, password);
-        } catch (SQLException exc) {
-            Universal.get().log(
-                    " \n"
-                    + " MySQL-Error\n"
-                    + " Could not connect to MySQL-Server!\n"
-                    + " Disabling plugin!\n"
-                    + " Check your MySQL.yml\n"
-                    + " Skype: Leoko33\n"
-                    + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues \n"
-                    + " \n"
-            );
-            failedMySQL = true;
+    private void connectMySQLServer(boolean useMariaDBDriver) {
+        if (useMariaDBDriver) {
+            try {
+                connection = DriverManager.getConnection("jdbc:mariadb://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true", usrName, password);
+            } catch (SQLException exc) {
+                Universal.get().log(
+                        " \n"
+                        + " MariaDB-Error\n"
+                        + " Could not connect to MySQL-Server!\n"
+                        + " Disabling plugin!\n"
+                        + " Check your MySQL.yml\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues \n"
+                        + " \n"
+                );
+                failedMySQL = true;
+            }
+        } else {
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true&disableMariaDbDriver", usrName, password);
+            } catch (SQLException exc) {
+                Universal.get().log(
+                        " \n"
+                        + " MySQL-Error\n"
+                        + " Could not connect to MySQL-Server!\n"
+                        + " Disabling plugin!\n"
+                        + " Check your MySQL.yml\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues \n"
+                        + " \n"
+                );
+                failedMySQL = true;
+            }
         }
     }
 

@@ -6,6 +6,13 @@
 
 # If set to false all bans will be saved locally in a HSQLDB-Database
 UseMySQL: false
+# If UseMySQL is set to true and you run a MariaDB server
+# Set this to true to use the MariaDB JDBC Driver over
+# The normal MySQL JConnector. This only works if you have
+# a MariaDB server instead of the Oracle MySQL server.
+# It is heavily recommended to use MariaDB over the Oracle Server
+# See more here: https://mariadb.com/resources/blog/mariadb-java-connector-driver-performance
+UseMariaDBDriver: false
 
 # Set to false if you want to have only short messages in the console
 # On startup and on the shutdown.
