@@ -62,7 +62,7 @@ public class InternalListener implements Listener {
                             TimeManager.getTime() + punishment.get("end").getAsLong(),
                             punishment.get("calculation") != null ? punishment.get("calculation").getAsString() : null,
                             -1
-                    ).create();
+                    ).create(punishment.get("silent") != null ? punishment.get("silent").getAsBoolean() : false);
                     universal.log("A punishment was created using PluginMessaging listener.");
                     universal.debug(punishment.toString());
                 } catch (JsonSyntaxException | NullPointerException ex) {
