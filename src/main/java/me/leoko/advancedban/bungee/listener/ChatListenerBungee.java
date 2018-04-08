@@ -13,8 +13,8 @@ import net.md_5.bungee.event.EventHandler;
  * Created by Leoko @ dev.skamps.eu on 24.07.2016.
  */
 public class ChatListenerBungee implements Listener {
-	
-	@EventHandler
+
+    @EventHandler
     public void onChat(ChatEvent event) {
         if (!(event.getSender() instanceof ProxiedPlayer)) {
             return;
@@ -29,9 +29,18 @@ public class ChatListenerBungee implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
+        String cursor = event.getCursor().toLowerCase();
+        if (!(cursor.startsWith("/ban ") || cursor.startsWith("/ban-ip ") || cursor.startsWith("/banip ")
+                || cursor.startsWith("/check ") || cursor.startsWith("/history ") || cursor.startsWith("/ipban ")
+                || cursor.startsWith("/kick ") || cursor.startsWith("/mute ") || cursor.startsWith("/tempban ")
+                || cursor.startsWith("/tempipban ") || cursor.startsWith("/tempmute ") || cursor.startsWith("/tempwarn ")
+                || cursor.startsWith("/tipban ") || cursor.startsWith("/unmute ") || cursor.startsWith("/unwarn ")
+                || cursor.startsWith("/warn "))) {
+            return;
+        }
         if (event.getSender() instanceof ProxiedPlayer) { // Check if the player has permission for tab complete
             ProxiedPlayer pp = (ProxiedPlayer) event.getSender();
             boolean deny = false;
@@ -51,20 +60,10 @@ public class ChatListenerBungee implements Listener {
                 return;
             }
         }
-        String cursor = event.getCursor().toLowerCase();
-        
-        if (!(cursor.startsWith("/ban ") || cursor.startsWith("/ban-ip ") || cursor.startsWith("/banip ") 
-        		|| cursor.startsWith("/check ") || cursor.startsWith("/history ") || cursor.startsWith("/ipban ") 
-        		|| cursor.startsWith("/kick ") || cursor.startsWith("/mute ") || cursor.startsWith("/tempban ") 
-        		|| cursor.startsWith("/tempipban ") || cursor.startsWith("/tempmute ") || cursor.startsWith("/tempwarn ") 
-        		|| cursor.startsWith("/tipban ") || cursor.startsWith("/unmute ") || cursor.startsWith("/unwarn ") 
-        		|| cursor.startsWith("/warn "))) {
-            return;
-        }
-        
+
         String[] split = cursor.split(" ");
         String partialPlayerName = split[split.length - 1];
-        
+
         for (ProxiedPlayer p : BungeeMain.get().getProxy().getPlayers()) {
             if (p.getName().toLowerCase().startsWith(partialPlayerName)) {
                 event.getSuggestions().add(p.getName());
