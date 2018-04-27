@@ -114,3 +114,13 @@ Debug: false
 # This is the amount of days that we should keep plugin logs in the plugins/AdvancedBan/logs folder.
 # By default is set to 10 days.
 Log Purge Days: 10
+Commands:
+      ban: ""
+      tempban: ""
+      ipban: ""
+      ban-ip: ""
+      banip: ""
+      tempipban: ""
+      tipban: ""
+      kick: ""
+      warn: ""
