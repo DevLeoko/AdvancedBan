@@ -57,16 +57,15 @@ public class Universal {
 
         mi.setCommandExecutor("advancedban");
         mi.setCommandExecutor("change-reason");
-        mi.setCommandExecutor("ban");
-        mi.setCommandExecutor("tempban");
-        mi.setCommandExecutor("ipban");
-        mi.setCommandExecutor("ban-ip");
-        mi.setCommandExecutor("banip");
-        mi.setCommandExecutor("tempipban");
-        mi.setCommandExecutor("tipban");
-        mi.setCommandExecutor("banip");
-        mi.setCommandExecutor("kick");
-        mi.setCommandExecutor("warn");
+        if(!config.getstring(Commands.ban).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.ipban).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.ban-ip).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.tempipban).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.tipban).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.banip).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.kick).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.warn).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
+        if(!config.getstring(Commands.tempban).equals""){mi.setCommandExecutor(config.getstring(commands.ban));}
         mi.setCommandExecutor("tempwarn");
         mi.setCommandExecutor("mute");
         mi.setCommandExecutor("tempmute");
