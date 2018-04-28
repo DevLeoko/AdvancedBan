@@ -7,23 +7,23 @@ commands:
   AdvancedBan:
     description: Information about the Plugin
   ban:
-    description: Ban a user permanently
+    description: Ban a user permanently / CAN BE CHANGED
   tempban:
-    description: Ban a user temporarily
+    description: Ban a user temporarily / CAN BE CHANGED
   ipban:
-    description: Ban a user by IP
+    description: Ban a user by IP / CAN BE CHANGED
     aliases: [banip, ban-ip]
   tempipban:
-    description: Ban a user temporarily by IP
+    description: Ban a user temporarily by IP / CAN BE CHANGED
     aliases: [tipban]
   kick:
-    description: Kick a user
+    description: Kick a user / CAN BE CHANGED
   warn:
-    description: Warn a user permanently
+    description: Warn a user permanently / CAN BE CHANGED
   tempwarn:
-    description: Warn a user temporarily
+    description: Warn a user temporarily / CAN BE CHANGED
   mute:
-    description: Mute a user permanently
+    description: Mute a user permanently / CAN BE CHANGED
   tempmute:
     description: Mute a user temporarily
   banlist:
