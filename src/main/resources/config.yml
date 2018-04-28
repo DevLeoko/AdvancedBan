@@ -115,6 +115,7 @@ Debug: false
 # By default is set to 10 days.
 Log Purge Days: 10
 Commands:
+#If set to "" Command disabled
       ban: "ban"
       tempban: "tempban"
       ipban: "ipban"
