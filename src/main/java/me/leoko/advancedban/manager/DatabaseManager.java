@@ -61,7 +61,22 @@ public class DatabaseManager {
 
         useMySQL = useMySQLServer && !failedMySQL;
 
-        if (!useMySQL) {
+        if (useMySQL) {
+            try {
+                migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT);
+                migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_HISTORY_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT_HISTORY);
+            } catch (SQLException ex) {
+                Universal.get().log(
+                        " \n"
+                        + " MySQL-Error\n"
+                        + " Could not migrate old tables!\n"
+                        + " Disabling plugin!\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                        + " \n"
+                );
+            }
+        } else {
             try {
                 Class.forName("org.hsqldb.jdbc.JDBCDriver");
             } catch (ClassNotFoundException ex) {
@@ -183,5 +198,15 @@ public class DatabaseManager {
 
     public boolean isUseMySQL() {
         return useMySQL;
+    }
+
+    private void migrateIfNeccessary(SQLQuery detectionQuery, SQLQuery migrationQuery) throws SQLException {
+        try(final ResultSet result = executeResultStatement(detectionQuery, dbName)) {
+            if (!result.next()) return;
+
+            if ("varchar".equalsIgnoreCase(result.getString("DATA_TYPE"))) {
+                executeStatement(migrationQuery);
+            }
+        }
     }
 }

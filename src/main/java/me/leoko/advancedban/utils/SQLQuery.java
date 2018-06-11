@@ -133,6 +133,61 @@ public enum SQLQuery {
     SELECT_ALL_PUNISHMENTS_HISTORY_LIMIT(
             "SELECT * FROM `PunishmentHistory` ORDER BY `start` DESC LIMIT ?",
             "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
+    ),
+    
+    DETECT_PUNISHMENT_MIGRATION_STATUS(
+            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = 'Punishments' AND `COLUMN_NAME` = 'punishmentType'",
+            ""
+    ),
+    DETECT_PUNISHMENT_HISTORY_MIGRATION_STATUS(
+            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = 'PunishmentHistory' AND `COLUMN_NAME` = 'punishmentType'",
+            ""
+    ),
+
+    MIGRATE_PUNISHMENT(
+            "ALTER TABLE `Punishments`" + 
+            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `uuid` `uuid` VARCHAR(35) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 
+            "CHANGE `start` `start_old` BIGINT NOT NULL," + 
+            "CHANGE `end` `end_old` BIGINT NOT NULL," + 
+            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
+            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`;" + 
+
+            "UPDATE `Punishments` SET" + 
+            "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
+            "`end` = FROM_UNIXTIME(`end_old` * 0.001);" + 
+
+            "ALTER TABLE `Punishments`" + 
+            "DROP `start_old`," + 
+            "DROP `end_old`;",
+
+            ""
+    ),
+    MIGRATE_PUNISHMENT_HISTORY(
+            "ALTER TABLE `PunishmentHistory`" + 
+            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `uuid` `uuid` VARCHAR(35) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 
+            "CHANGE `start` `start_old` BIGINT NOT NULL," + 
+            "CHANGE `end` `end_old` BIGINT NOT NULL," + 
+            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
+            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`;" + 
+
+            "UPDATE `PunishmentHistory` SET" + 
+            "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
+            "`end` = FROM_UNIXTIME(`end_old` * 0.001);" + 
+
+            "ALTER TABLE `PunishmentHistory`" + 
+            "DROP `start_old`," + 
+            "DROP `end_old`;",
+            ""
     );
 
     private static final String mysqlAsterix =
