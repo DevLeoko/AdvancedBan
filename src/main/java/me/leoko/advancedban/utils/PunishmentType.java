@@ -1,5 +1,8 @@
 package me.leoko.advancedban.utils;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
@@ -52,6 +55,10 @@ public enum PunishmentType {
             default:
                 return null;
         }
+    }
+
+    public static String getAsMysqlEnum() {
+        return Arrays.stream(values()).map(Enum::name).collect(Collectors.joining("', '", "ENUM('", "')"));
     }
 
     public String getName() {
