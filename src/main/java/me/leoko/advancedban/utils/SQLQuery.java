@@ -20,7 +20,7 @@ public enum SQLQuery {
             "PRIMARY KEY (`id`)," + 
             "KEY `uuid` (`uuid`)," + 
             "KEY `start` (`start`)" + 
-            ") DEFAULT CHARSET=UTF8",
+            ") DEFAULT CHARSET=utf8mb4",
 
             "CREATE TABLE IF NOT EXISTS Punishments (" +
             "id INTEGER IDENTITY PRIMARY KEY," +
@@ -47,7 +47,7 @@ public enum SQLQuery {
             "PRIMARY KEY (`id`)," + 
             "KEY `uuid` (`uuid`)," + 
             "KEY `start` (`start`)" + 
-            ") DEFAULT CHARSET=UTF8",
+            ") DEFAULT CHARSET=utf8mb4",
 
             "CREATE TABLE IF NOT EXISTS PunishmentHistory (" +
             "id INTEGER IDENTITY PRIMARY KEY," +
