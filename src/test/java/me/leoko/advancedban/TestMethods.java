@@ -297,4 +297,9 @@ public class TestMethods implements MethodInterface {
     public void log(String msg) {
         System.out.println("Logging: " + msg);
     }
+
+    @Override
+    public boolean isUnitTesting() {
+        return true;
+    }
 }
