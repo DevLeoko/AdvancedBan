@@ -7,17 +7,20 @@ import me.leoko.advancedban.manager.DatabaseManager;
  */
 public enum SQLQuery {
     CREATE_TABLE_PUNISHMENT(
-            "CREATE TABLE IF NOT EXISTS `Punishments` ("+
-            "`id` int NOT NULL AUTO_INCREMENT," +
-            "`name` VARCHAR(16) NULL DEFAULT NULL," +
-            "`uuid` VARCHAR(35) NULL DEFAULT NULL," +
-            "`reason` VARCHAR(100) NULL DEFAULT NULL," +
-            "`operator` VARCHAR(16) NULL DEFAULT NULL," +
-            "`punishmentType` VARCHAR(16) NULL DEFAULT NULL," +
-            "`start` LONG DEFAULT NULL," +
-            "`end` LONG DEFAULT NULL," +
-            "`calculation` VARCHAR(50) NULL DEFAULT NULL," +
-            "PRIMARY KEY (`id`))",
+            "CREATE TABLE IF NOT EXISTS `Punishments` (" +
+            "`id` INT NOT NULL AUTO_INCREMENT," +
+            "`name` VARCHAR(16) NOT NULL," +
+            "`uuid` VARCHAR(35) NOT NULL," +
+            "`reason` TEXT NOT NULL," +
+            "`operator` VARCHAR(16) NOT NULL," +
+            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
+            "`start` TIMESTAMP(3) NOT NULL," +
+            "`end` TIMESTAMP(3) NULL DEFAULT NULL," +
+            "`calculation` TINYTEXT NULL DEFAULT NULL," +
+            "PRIMARY KEY (`id`)," + 
+            "KEY `uuid` (`uuid`)," + 
+            "KEY `start` (`start`)" + 
+            ") DEFAULT CHARSET=UTF8",
 
             "CREATE TABLE IF NOT EXISTS Punishments (" +
             "id INTEGER IDENTITY PRIMARY KEY," +
@@ -32,16 +35,19 @@ public enum SQLQuery {
     ),
     CREATE_TABLE_PUNISHMENT_HISTORY(
             "CREATE TABLE IF NOT EXISTS `PunishmentHistory` (" +
-            "`id` int NOT NULL AUTO_INCREMENT," +
-            "`name` VARCHAR(16) NULL DEFAULT NULL," +
-            "`uuid` VARCHAR(35) NULL DEFAULT NULL," +
-            "`reason` VARCHAR(100) NULL DEFAULT NULL," +
-            "`operator` VARCHAR(16) NULL DEFAULT NULL," +
-            "`punishmentType` VARCHAR(16) NULL DEFAULT NULL," +
-            "`start` LONG DEFAULT NULL," +
-            "`end` LONG DEFAULT NULL," +
-            "`calculation` VARCHAR(50) NULL DEFAULT NULL," +
-            "PRIMARY KEY (`id`))",
+            "`id` INT NOT NULL AUTO_INCREMENT," +
+            "`name` VARCHAR(16) NOT NULL," +
+            "`uuid` VARCHAR(35) NOT NULL," +
+            "`reason` TEXT NOT NULL," +
+            "`operator` VARCHAR(16) NOT NULL," +
+            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
+            "`start` TIMESTAMP(3) NOT NULL," +
+            "`end` TIMESTAMP(3) NULL DEFAULT NULL," +
+            "`calculation` TINYTEXT NULL DEFAULT NULL," +
+            "PRIMARY KEY (`id`)," + 
+            "KEY `uuid` (`uuid`)," + 
+            "KEY `start` (`start`)" + 
+            ") DEFAULT CHARSET=UTF8",
 
             "CREATE TABLE IF NOT EXISTS PunishmentHistory (" +
             "id INTEGER IDENTITY PRIMARY KEY," +
