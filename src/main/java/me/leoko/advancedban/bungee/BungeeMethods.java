@@ -402,4 +402,9 @@ public class BungeeMethods implements MethodInterface {
     public void log(String msg) {
         ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg.replaceAll("&", "§")));
     }
+
+    @Override
+    public boolean isUnitTesting() {
+        return false;
+    }
 }
