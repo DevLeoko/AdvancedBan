@@ -155,7 +155,9 @@ public enum SQLQuery {
             "CHANGE `end` `end_old` BIGINT NOT NULL," + 
             "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
             "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
-            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`;" + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`," +
+            "ADD INDEX (`uuid`)," +
+            "ADD INDEX (`start`);" +
 
             "UPDATE `Punishments` SET" + 
             "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
@@ -178,7 +180,9 @@ public enum SQLQuery {
             "CHANGE `end` `end_old` BIGINT NOT NULL," + 
             "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
             "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
-            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`;" + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`," +
+            "ADD INDEX (`uuid`)," +
+            "ADD INDEX (`start`);" +
 
             "UPDATE `PunishmentHistory` SET" + 
             "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
