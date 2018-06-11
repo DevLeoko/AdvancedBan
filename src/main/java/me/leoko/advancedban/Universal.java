@@ -87,7 +87,7 @@ public class Universal {
         String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");
         if (response == null) {
             upt = "Failed to check for updates :(";
-        } else if (!response.equalsIgnoreCase(mi.getVersion())) {
+        } else if ((!mi.getVersion().startsWith(response))) {
             upt = "There is a new version available! [" + response + "]";
         }
 
