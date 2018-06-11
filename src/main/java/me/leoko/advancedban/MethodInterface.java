@@ -108,4 +108,6 @@ public interface MethodInterface {
     void notify(String perm, List<String> notification);
     
     void log(String msg);
+
+    boolean isUnitTesting();
 }

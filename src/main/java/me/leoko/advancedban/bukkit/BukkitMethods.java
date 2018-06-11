@@ -372,4 +372,9 @@ public class BukkitMethods implements MethodInterface {
     public void log(String msg) {
         Bukkit.getServer().getConsoleSender().sendMessage(msg.replaceAll("&", "§"));
     }
+
+    @Override
+    public boolean isUnitTesting() {
+        return false;
+    }
 }
