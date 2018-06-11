@@ -22,6 +22,9 @@ public class UpdateManager {
 
     public void setup() {
         MethodInterface mi = Universal.get().getMethods();
+
+        if(mi.isUnitTesting()) return;
+
         if (!mi.contains(mi.getMessages(), "Check.MuteReason")) {
             try {
                 File file = new File(mi.getDataFolder(), "Messages.yml");
