@@ -63,7 +63,7 @@ public enum SQLQuery {
     INSERT_PUNISHMENT(
             "INSERT INTO `Punishments` " +
             "(`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "VALUES (?, ?, ?, ?, ?, FROM_UNIXTIME(? * 0.001), FROM_UNIXTIME(? * 0.001), ?)",
 
             "INSERT INTO Punishments " +
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
@@ -72,14 +72,14 @@ public enum SQLQuery {
     INSERT_PUNISHMENT_HISTORY(
             "INSERT INTO `PunishmentHistory` " +
             "(`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "VALUES (?, ?, ?, ?, ?, FROM_UNIXTIME(? * 0.001), FROM_UNIXTIME(? * 0.001), ?)",
 
             "INSERT INTO PunishmentHistory " +
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     ),
     SELECT_EXACT_PUNISHMENT(
-            "SELECT * FROM `Punishments` WHERE `uuid` = ? AND `start` = ?",
+            "SELECT * FROM `Punishments` WHERE `uuid` = ? AND `start` = FROM_UNIXTIME(? * 0.001)",
             "SELECT * FROM Punishments WHERE uuid = ? AND start = ?"
     ),
     DELETE_PUNISHMENT(
@@ -87,7 +87,7 @@ public enum SQLQuery {
             "DELETE FROM Punishments WHERE id = ?"
     ),
     DELETE_OLD_PUNISHMENTS(
-            "DELETE FROM `Punishments` WHERE `end` <= ? AND `end` != -1",
+            "DELETE FROM `Punishments` WHERE `end` <= FROM_UNIXTIME(? * 0.001) AND `end` IS NOT NULL",
             "DELETE FROM Punishments WHERE end <= ? AND end != -1"
     ),
     SELECT_USER_PUNISHMENTS(
@@ -135,11 +135,14 @@ public enum SQLQuery {
             "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
     );
 
+    private static final String mysqlAsterix =
+            "`id`, `name`, `uuid`, `reason`, `operator`, `punishmentType`, CAST(UNIX_TIMESTAMP(`start`) * 1000 AS INT) AS `start`, CAST(IFNULL(UNIX_TIMESTAMP(`end`) * 1000, -1) AS INT) AS `end`, `calculation`";
+
     private String mysql;
     private String hsqldb;
 
     SQLQuery(String mysql, String hsqldb) {
-        this.mysql = mysql;
+        this.mysql = mysql.replace("*", mysqlAsterix);
         this.hsqldb = hsqldb;
     }
 
