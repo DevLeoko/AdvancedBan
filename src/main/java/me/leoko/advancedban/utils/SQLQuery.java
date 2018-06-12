@@ -8,56 +8,56 @@ import me.leoko.advancedban.manager.DatabaseManager;
 public enum SQLQuery {
     CREATE_TABLE_PUNISHMENT(
             "CREATE TABLE IF NOT EXISTS `Punishments` (" +
-            "`id` INT NOT NULL AUTO_INCREMENT," +
-            "`name` VARCHAR(16) NOT NULL," +
-            "`uuid` VARCHAR(32) NOT NULL," +
-            "`reason` TEXT NOT NULL," +
-            "`operator` VARCHAR(16) NOT NULL," +
-            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
-            "`start` TIMESTAMP(3) NOT NULL," +
-            "`end` TIMESTAMP(3) NULL DEFAULT NULL," +
-            "`calculation` TINYTEXT NULL DEFAULT NULL," +
-            "PRIMARY KEY (`id`)," + 
-            "KEY `uuid` (`uuid`)," + 
+            "`id` INT NOT NULL AUTO_INCREMENT, " +
+            "`name` VARCHAR(16) NOT NULL, " +
+            "`uuid` VARCHAR(32) NOT NULL, " +
+            "`reason` TEXT NOT NULL, " +
+            "`operator` VARCHAR(16) NOT NULL, " +
+            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL, " +
+            "`start` TIMESTAMP(3) NOT NULL, " +
+            "`end` TIMESTAMP(3) NULL DEFAULT NULL, " +
+            "`calculation` TINYTEXT NULL DEFAULT NULL, " +
+            "PRIMARY KEY (`id`), " + 
+            "KEY `uuid` (`uuid`), " + 
             "KEY `start` (`start`)" + 
             ") DEFAULT CHARSET=utf8mb4",
 
             "CREATE TABLE IF NOT EXISTS Punishments (" +
-            "id INTEGER IDENTITY PRIMARY KEY," +
-            "name VARCHAR(16)," +
-            "uuid VARCHAR(35)," +
-            "reason VARCHAR(100)," +
-            "operator VARCHAR(16)," +
-            "punishmentType VARCHAR(16)," +
-            "start BIGINT," +
-            "end BIGINT," +
+            "id INTEGER IDENTITY PRIMARY KEY, " +
+            "name VARCHAR(16), " +
+            "uuid VARCHAR(32), " +
+            "reason VARCHAR(100), " +
+            "operator VARCHAR(16), " +
+            "punishmentType VARCHAR(16), " +
+            "start BIGINT, " +
+            "end BIGINT, " +
             "calculation VARCHAR(50))"
     ),
     CREATE_TABLE_PUNISHMENT_HISTORY(
             "CREATE TABLE IF NOT EXISTS `PunishmentHistory` (" +
-            "`id` INT NOT NULL AUTO_INCREMENT," +
-            "`name` VARCHAR(16) NOT NULL," +
-            "`uuid` VARCHAR(32) NOT NULL," +
-            "`reason` TEXT NOT NULL," +
-            "`operator` VARCHAR(16) NOT NULL," +
-            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
-            "`start` TIMESTAMP(3) NOT NULL," +
-            "`end` TIMESTAMP(3) NULL DEFAULT NULL," +
-            "`calculation` TINYTEXT NULL DEFAULT NULL," +
-            "PRIMARY KEY (`id`)," + 
-            "KEY `uuid` (`uuid`)," + 
+            "`id` INT NOT NULL AUTO_INCREMENT, " +
+            "`name` VARCHAR(16) NOT NULL, " +
+            "`uuid` VARCHAR(32) NOT NULL, " +
+            "`reason` TEXT NOT NULL, " +
+            "`operator` VARCHAR(16) NOT NULL, " +
+            "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL, " +
+            "`start` TIMESTAMP(3) NOT NULL, " +
+            "`end` TIMESTAMP(3) NULL DEFAULT NULL, " +
+            "`calculation` TINYTEXT NULL DEFAULT NULL, " +
+            "PRIMARY KEY (`id`), " + 
+            "KEY `uuid` (`uuid`), " + 
             "KEY `start` (`start`)" + 
             ") DEFAULT CHARSET=utf8mb4",
 
             "CREATE TABLE IF NOT EXISTS PunishmentHistory (" +
-            "id INTEGER IDENTITY PRIMARY KEY," +
-            "name VARCHAR(16)," +
-            "uuid VARCHAR(35)," +
-            "reason VARCHAR(100)," +
-            "operator VARCHAR(16)," +
-            "punishmentType VARCHAR(16)," +
-            "start BIGINT," +
-            "end BIGINT," +
+            "id INTEGER IDENTITY PRIMARY KEY, " +
+            "name VARCHAR(16), " +
+            "uuid VARCHAR(32), " +
+            "reason VARCHAR(100), " +
+            "operator VARCHAR(16), " +
+            "punishmentType VARCHAR(16), " +
+            "start BIGINT, " +
+            "end BIGINT, " +
             "calculation VARCHAR(50))"
     ),
     INSERT_PUNISHMENT(
@@ -145,51 +145,51 @@ public enum SQLQuery {
     ),
 
     MIGRATE_PUNISHMENT(
-            "ALTER TABLE `Punishments`" + 
-            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 
-            "CHANGE `start` `start_old` BIGINT NOT NULL," + 
-            "CHANGE `end` `end_old` BIGINT NOT NULL," + 
-            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
-            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
-            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`," +
-            "ADD INDEX (`uuid`)," +
-            "ADD INDEX (`start`);" +
+            "ALTER TABLE `Punishments` " + 
+            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL, " + 
+            "CHANGE `start` `start_old` BIGINT NOT NULL, " + 
+            "CHANGE `end` `end_old` BIGINT NOT NULL, " + 
+            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL, " + 
+            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`, " + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`, " +
+            "ADD INDEX (`uuid`), " +
+            "ADD INDEX (`start`);\n" +
 
-            "UPDATE `Punishments` SET" + 
-            "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
-            "`end` = FROM_UNIXTIME(`end_old` * 0.001);" + 
+            "UPDATE `Punishments` SET " + 
+            "`start` = FROM_UNIXTIME(`start_old` * 0.001), " + 
+            "`end` = FROM_UNIXTIME(`end_old` * 0.001);\n" + 
 
-            "ALTER TABLE `Punishments`" + 
-            "DROP `start_old`," + 
+            "ALTER TABLE `Punishments` " + 
+            "DROP `start_old`, " + 
             "DROP `end_old`;",
 
             ""
     ),
     MIGRATE_PUNISHMENT_HISTORY(
-            "ALTER TABLE `PunishmentHistory`" + 
-            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 
-            "CHANGE `start` `start_old` BIGINT NOT NULL," + 
-            "CHANGE `end` `end_old` BIGINT NOT NULL," + 
-            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL," + 
-            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`," + 
-            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`," +
-            "ADD INDEX (`uuid`)," +
-            "ADD INDEX (`start`);" +
+            "ALTER TABLE `PunishmentHistory` " + 
+            "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL, " + 
+            "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL,"  + 
+            "CHANGE `start` `start_old` BIGINT NOT NULL, " + 
+            "CHANGE `end` `end_old` BIGINT NOT NULL, " + 
+            "CHANGE `calculation` `calculation` TINYTEXT CHARACTER SET utf8mb4 NULL DEFAULT NULL, " + 
+            "ADD `start` TIMESTAMP(3) NOT NULL AFTER `start_old`, " + 
+            "ADD `end` TIMESTAMP(3) NULL DEFAULT NULL AFTER `end_old`, " +
+            "ADD INDEX (`uuid`), " +
+            "ADD INDEX (`start`);\n" +
 
-            "UPDATE `PunishmentHistory` SET" + 
-            "`start` = FROM_UNIXTIME(`start_old` * 0.001)," + 
-            "`end` = FROM_UNIXTIME(`end_old` * 0.001);" + 
+            "UPDATE `PunishmentHistory` SET " + 
+            "`start` = FROM_UNIXTIME(`start_old` * 0.001), " + 
+            "`end` = FROM_UNIXTIME(`end_old` * 0.001);\n" + 
 
-            "ALTER TABLE `PunishmentHistory`" + 
-            "DROP `start_old`," + 
+            "ALTER TABLE `PunishmentHistory` " + 
+            "DROP `start_old`, " + 
             "DROP `end_old`;",
             ""
     );
@@ -201,7 +201,7 @@ public enum SQLQuery {
     private String hsqldb;
 
     SQLQuery(String mysql, String hsqldb) {
-        this.mysql = mysql.replace("*", mysqlAsterix);
+        this.mysql = mysql.replace("SELECT *", "SELECT " + mysqlAsterix);
         this.hsqldb = hsqldb;
     }
 

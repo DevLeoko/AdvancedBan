@@ -117,7 +117,7 @@ public class DatabaseManager {
 
     private void connectMySQLServer() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8", usrName, password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?verifyServerCertificate=false&useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8&allowMultiQueries=true", usrName, password);
         } catch (SQLException exc) {
             Universal.get().log(
                     " \n"
