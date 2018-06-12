@@ -129,6 +129,8 @@ public class UUIDManager {
             System.out.println("!! Could not find key '" + key + "' in the servers response");
             System.out.println("!! Response: " + request.getResponseMessage());
         } else {
+            uuid = uuid.replace("-", "");
+
             if (activeUUIDs.containsKey(name)) {
                 activeUUIDs.remove(name);
             }

@@ -10,7 +10,7 @@ public enum SQLQuery {
             "CREATE TABLE IF NOT EXISTS `Punishments` (" +
             "`id` INT NOT NULL AUTO_INCREMENT," +
             "`name` VARCHAR(16) NOT NULL," +
-            "`uuid` VARCHAR(35) NOT NULL," +
+            "`uuid` VARCHAR(32) NOT NULL," +
             "`reason` TEXT NOT NULL," +
             "`operator` VARCHAR(16) NOT NULL," +
             "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
@@ -37,7 +37,7 @@ public enum SQLQuery {
             "CREATE TABLE IF NOT EXISTS `PunishmentHistory` (" +
             "`id` INT NOT NULL AUTO_INCREMENT," +
             "`name` VARCHAR(16) NOT NULL," +
-            "`uuid` VARCHAR(35) NOT NULL," +
+            "`uuid` VARCHAR(32) NOT NULL," +
             "`reason` TEXT NOT NULL," +
             "`operator` VARCHAR(16) NOT NULL," +
             "`punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," +
@@ -147,7 +147,7 @@ public enum SQLQuery {
     MIGRATE_PUNISHMENT(
             "ALTER TABLE `Punishments`" + 
             "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `uuid` `uuid` VARCHAR(35) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 
@@ -172,7 +172,7 @@ public enum SQLQuery {
     MIGRATE_PUNISHMENT_HISTORY(
             "ALTER TABLE `PunishmentHistory`" + 
             "CHANGE `name` `name` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
-            "CHANGE `uuid` `uuid` VARCHAR(35) CHARACTER SET utf8mb4 NOT NULL," + 
+            "CHANGE `uuid` `uuid` VARCHAR(32) CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `reason` `reason` TEXT CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `operator` `operator` VARCHAR(16) CHARACTER SET utf8mb4 NOT NULL," + 
             "CHANGE `punishmentType` `punishmentType` " + PunishmentType.getAsMysqlEnum() + " NOT NULL," + 

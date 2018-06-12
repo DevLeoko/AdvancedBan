@@ -40,16 +40,18 @@ public class PunishmentManager {
     }
 
     public InterimData load(String name, String uuid, String ip) {
-	Set<Punishment> punishments = new HashSet<>();
-	Set<Punishment> history = new HashSet<>();
+    	Set<Punishment> punishments = new HashSet<>();
+    	Set<Punishment> history = new HashSet<>();
+    	final String trimmedUuid = uuid.replace("-", "");
+	
         try {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
+            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, trimmedUuid, ip);
             while (rs.next()) {
                 punishments.add(getPunishmentFromResultSet(rs));
             }
             rs.close();
 
-            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip);
+            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, trimmedUuid, ip);
             while (rs.next()) {
                 history.add(getPunishmentFromResultSet(rs));
             }
@@ -58,7 +60,7 @@ public class PunishmentManager {
             universal.log("An error has ocurred loading the punishments from the database.");
             universal.debug(ex);
         }
-        return new InterimData(uuid, name, ip, punishments, history);
+        return new InterimData(trimmedUuid, name, ip, punishments, history);
     }
 
     public void discard(String name) {
@@ -88,11 +90,12 @@ public class PunishmentManager {
 
     public List<Punishment> getPunishments(String uuid, PunishmentType put, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
+        final String trimmedUuid = uuid.replace("-", "");
 
-        if (isCached(uuid)) {
+        if (isCached(trimmedUuid)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();) {
                 Punishment pt = iterator.next();
-                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(uuid)) {
+                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(trimmedUuid)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -102,7 +105,7 @@ public class PunishmentManager {
                 }
             }
         } else {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, uuid);
+            ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, trimmedUuid);
             try {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
@@ -112,7 +115,7 @@ public class PunishmentManager {
                 }
                 rs.close();
             } catch (SQLException ex) {
-                universal.log("An error has ocurred getting the punishments for " + uuid);
+                universal.log("An error has ocurred getting the punishments for " + trimmedUuid);
                 universal.debug(ex);
             }
         }
@@ -189,10 +192,12 @@ public class PunishmentManager {
     }
 
     public int getCalculationLevel(String uuid, String layout) {
-        if (isCached(uuid)) {
-            return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
+        final String trimmedUuid = uuid.replace("-", "");
+
+        if (isCached(trimmedUuid)) {
+            return (int) history.stream().filter(pt -> pt.getUuid().equals(trimmedUuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
         } else {
-            ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout);
+            ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, trimmedUuid, layout);
             int i = 0;
             try {
                 while (resultSet.next()) {
@@ -200,7 +205,7 @@ public class PunishmentManager {
                 }
                 resultSet.close();
             } catch (SQLException ex) {
-                universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
+                universal.log("An error has ocurred getting the level for the layout '" + layout + "' for '" + trimmedUuid + "'");
                 universal.debug(ex);
             }
             return i;
