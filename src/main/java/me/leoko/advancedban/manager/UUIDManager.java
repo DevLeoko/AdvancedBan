@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class UUIDManager {
+    private static final Pattern uuidPattern = Pattern.compile("[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}", Pattern.CASE_INSENSITIVE);
     private static UUIDManager instance = null;
     private FetcherMode mode;
     private final Map<String, String> activeUUIDs = new HashMap<>();
@@ -47,14 +49,17 @@ public class UUIDManager {
 
     public String getInitialUUID(String name) {
         name = name.toLowerCase();
-        if(mode == FetcherMode.DISABLED)
+        if (mode == FetcherMode.DISABLED)
             return name;
 
-        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+        if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             String internUUID = mi.getInternUUID(name);
-            if(mode == FetcherMode.INTERN || internUUID != null)
+            if (mode == FetcherMode.INTERN || internUUID != null)
                 return internUUID;
         }
+
+        if (uuidPattern.matcher(name).matches())
+            return name.replace("-", "");
 
         String uuid = null;
         try {
@@ -129,6 +134,8 @@ public class UUIDManager {
             System.out.println("!! Could not find key '" + key + "' in the servers response");
             System.out.println("!! Response: " + request.getResponseMessage());
         } else {
+            uuid = uuid.replace("-", "");
+
             if (activeUUIDs.containsKey(name)) {
                 activeUUIDs.remove(name);
             }

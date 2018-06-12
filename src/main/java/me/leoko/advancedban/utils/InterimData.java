@@ -12,7 +12,7 @@ public class InterimData {
     private final Set<Punishment> punishments, history;
 
     public InterimData(String uuid, String name, String ip, Set<Punishment> punishments, Set<Punishment> history) {
-        this.uuid = uuid;
+        this.uuid = uuid.replace("-", "");
         this.name = name;
         this.ip = ip;
         this.punishments = punishments;
