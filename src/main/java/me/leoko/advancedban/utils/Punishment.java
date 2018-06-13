@@ -116,7 +116,7 @@ public class Punishment {
                 Universal.get().debug(ex);
             }
         } else {
-            DatabaseManager.get().executeMultipleStatements(SQLQuery.BUMP_PUNISHMENT_AUTO_INCREMENT);
+            DatabaseManager.get().executeMultipleStatements(SQLQuery.BUMP_PUNISHMENT_AUTO_ID);
         }
 
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
