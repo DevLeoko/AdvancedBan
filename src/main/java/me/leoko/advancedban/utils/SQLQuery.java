@@ -156,11 +156,11 @@ public enum SQLQuery {
     ),
 
     DETECT_PUNISHMENT_MIGRATION_STATUS(
-            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = 'Punishments' AND `COLUMN_NAME` = 'punishmentType'",
+            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'Punishments' AND `COLUMN_NAME` = 'punishmentType'",
             ""
     ),
     DETECT_PUNISHMENT_HISTORY_MIGRATION_STATUS(
-            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = 'PunishmentHistory' AND `COLUMN_NAME` = 'punishmentType'",
+            "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'PunishmentHistory' AND `COLUMN_NAME` = 'punishmentType'",
             ""
     ),
 

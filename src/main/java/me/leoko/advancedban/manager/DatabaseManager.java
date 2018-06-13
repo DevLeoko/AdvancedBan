@@ -211,7 +211,7 @@ public class DatabaseManager {
     }
 
     private void migrateIfNeccessary(SQLQuery detectionQuery, SQLQuery migrationQuery) throws SQLException {
-        try (final ResultSet result = executeResultStatement(detectionQuery, dbName)) {
+        try (final ResultSet result = executeResultStatement(detectionQuery)) {
             if (!result.next()) return;
 
             if ("varchar".equalsIgnoreCase(result.getString("DATA_TYPE"))) {
