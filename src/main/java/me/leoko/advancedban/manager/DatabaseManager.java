@@ -85,7 +85,7 @@ public class DatabaseManager {
                 return;
             }
             try {
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false", "SA", "");
+                connection = DriverManager.getConnection("jdbc:hsqldb:file:" + getHSQLStorage() + ";hsqldb.lock_file=false", "SA", "");
             } catch (SQLException ex) {
                 Universal.get().log(
                         " \n"
@@ -131,6 +131,10 @@ public class DatabaseManager {
             );
             failedMySQL = true;
         }
+    }
+
+    private String getHSQLStorage() {
+        return Universal.get().getMethods().getDataFolder().getPath() + "/data/storage";
     }
 
     public void executeStatement(SQLQuery sql, Object... parameters) {
