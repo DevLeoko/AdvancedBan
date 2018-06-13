@@ -137,6 +137,15 @@ public class DatabaseManager {
         executeStatement(sql, false, parameters);
     }
 
+    public void executeMultipleStatements(SQLQuery sql) {
+        final String fullQuery = sql.toString();
+        final String[] queries = useMySQL? new String[] {fullQuery} : fullQuery.split(";\n");
+
+        for(final String query : queries) {
+            executeStatement(query, false);
+        }
+    }
+
     public ResultSet executeResultStatement(SQLQuery sql, Object... parameters) {
         return executeStatement(sql, true, parameters);
     }
@@ -205,7 +214,7 @@ public class DatabaseManager {
             if (!result.next()) return;
 
             if ("varchar".equalsIgnoreCase(result.getString("DATA_TYPE"))) {
-                executeStatement(migrationQuery);
+                executeMultipleStatements(migrationQuery);
             }
         }
     }
