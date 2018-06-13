@@ -69,6 +69,13 @@ public enum SQLQuery {
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     ),
+    BUMP_PUNISHMENT_AUTO_INCREMENT(
+            "INSERT INTO `Punishments` (`id`) VALUES (NULL);\n" + 
+            "DELETE FROM `Punishments` WHERE `id` = LAST_INSERT_ID()",
+
+            "INSERT INTO Punishments (id) VALUES (NULL);\n" + 
+            "DELETE FROM Punishments WHERE id = IDENTITY()"
+    ),
     INSERT_PUNISHMENT_HISTORY(
             "INSERT INTO `PunishmentHistory` " +
             "(`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +

@@ -115,6 +115,8 @@ public class Punishment {
             } catch (SQLException ex) {
                 Universal.get().debug(ex);
             }
+        } else {
+            DatabaseManager.get().executeStatement(SQLQuery.BUMP_PUNISHMENT_AUTO_INCREMENT);
         }
 
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
