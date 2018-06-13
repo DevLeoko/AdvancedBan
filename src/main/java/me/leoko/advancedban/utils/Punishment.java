@@ -27,7 +27,7 @@ public class Punishment {
 
     public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id) {
         this.name = name;
-        this.uuid = uuid;
+        this.uuid = uuid.replace("-", "");
         this.reason = reason;
         this.operator = operator;
         this.type = type;
