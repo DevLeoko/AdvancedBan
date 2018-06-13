@@ -69,7 +69,7 @@ public enum SQLQuery {
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     ),
-    BUMP_PUNISHMENT_AUTO_INCREMENT(
+    BUMP_PUNISHMENT_AUTO_ID(
             "INSERT INTO `Punishments` (`id`) VALUES (NULL);\n" + 
             "DELETE FROM `Punishments` WHERE `id` = LAST_INSERT_ID()",
 
@@ -141,7 +141,20 @@ public enum SQLQuery {
             "SELECT * FROM `PunishmentHistory` ORDER BY `start` DESC LIMIT ?",
             "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
     ),
-    
+
+    SELECT_HIGHEST_ID(
+            "SELECT `id` FROM `PunishmentHistory` ORDER BY `id` DESC LIMIT 1",
+            "SELECT id FROM PunishmentHistory ORDER BY id DESC LIMIT 1"
+    ),
+    SET_PUNISHMENT_AUTO_ID(
+            "ALTER TABLE `Punishments` AUTO_INCREMENT = ?",
+            "ALTER TABLE Punishments ALTER COLUMN id RESTART WITH ?"
+    ),
+    SET_PUNISHMENT_HISTORY_AUTO_ID(
+            "ALTER TABLE `PunishmentHistory` AUTO_INCREMENT = ?",
+            "ALTER TABLE PunishmentHistory ALTER COLUMN id RESTART WITH ?"
+    ),
+
     DETECT_PUNISHMENT_MIGRATION_STATUS(
             "SELECT `DATA_TYPE` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = 'Punishments' AND `COLUMN_NAME` = 'punishmentType'",
             ""
