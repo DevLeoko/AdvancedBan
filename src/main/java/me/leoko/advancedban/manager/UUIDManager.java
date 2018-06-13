@@ -85,7 +85,7 @@ public class UUIDManager {
             System.out.println("!! Make sure that the name is spelled correctly and if it is change your UUID-Fetcher settings!");
         }
 
-        return uuid;
+        return uuid.replace("-", "");
     }
 
     public String getUUID(String name) {
