@@ -142,9 +142,11 @@ public enum SQLQuery {
             "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
     ),
 
-    SELECT_HIGHEST_ID(
-            "SELECT `id` FROM `PunishmentHistory` ORDER BY `id` DESC LIMIT 1",
-            "SELECT id FROM PunishmentHistory ORDER BY id DESC LIMIT 1"
+    SELECT_NEXT_AUTO_ID(
+            "SELECT `AUTO_INCREMENT` FROM `information_schema`.`TABLES` " + 
+            "WHERE `TABLE_SCHEMA` = DATABASE() AND (`TABLE_NAME` = 'Punishments' OR `TABLE_NAME` = 'PunishmentHistory') ORDER BY `AUTO_INCREMENT` DESC LIMIT 1",
+            "SELECT IDENTITY_START FROM INFORMATION_SCHEMA.COLUMNS " + 
+            "WHERE (TABLE_NAME = 'PUNISHMENTS' OR TABLE_NAME = 'PUNISHMENTHISTORY') AND COLUMN_NAME = 'ID' ORDER BY IDENTITY_START DESC LIMIT 1"
     ),
     SET_PUNISHMENT_AUTO_ID(
             "ALTER TABLE `Punishments` AUTO_INCREMENT = ?",

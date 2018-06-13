@@ -221,9 +221,9 @@ public class DatabaseManager {
     }
 
     private int getNextAutoId() {
-        try (final ResultSet result = executeResultStatement(SQLQuery.SELECT_HIGHEST_ID)) {
+        try (final ResultSet result = executeResultStatement(SQLQuery.SELECT_NEXT_AUTO_ID)) {
             if (result.next()) {
-                return result.getInt("id") + 1;
+                return result.getInt(1);
             }
         } catch (SQLException ex) {
             Universal.get().log(
