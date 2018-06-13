@@ -96,6 +96,7 @@ public class Universal {
                     + "\n&8| &cInformation:"
                     + "\n&8|   &cName: &7AdvancedBan"
                     + "\n&8|   &cDeveloper: &7Leoko"
+                    + "\n&8|   &cContributors: &7Beelzebu&c, &7BrainStone&c, &7ItzSomebody&c, &7BillyGalbreath&c, &7ZombieHDGaming&c, &7dutchy1001&c, &7and many others..."
                     + "\n&8|   &cVersion: &7" + mi.getVersion()
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n&8| &cSupport:"
@@ -120,6 +121,7 @@ public class Universal {
                     + "\n&8| &cInformation:"
                     + "\n&8|   &cName: &7AdvancedBan"
                     + "\n&8|   &cDeveloper: &7Leoko"
+                    + "\n&8|   &cContributors: &7Beelzebu&c, &7BrainStone&c, &7ItzSomebody&c, &7BillyGalbreath&c, &7ZombieHDGaming&c, &7dutchy1001&c, &7and many others..."
                     + "\n&8|   &cVersion: &7" + getMethods().getVersion()
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n&8| &cSupport:"
