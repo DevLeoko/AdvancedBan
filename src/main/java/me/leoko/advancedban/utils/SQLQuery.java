@@ -213,6 +213,7 @@ public enum SQLQuery {
             "ALTER TABLE `PunishmentHistory` " + 
             "DROP `start_old`, " + 
             "DROP `end_old`;",
+
             ""
     );
 

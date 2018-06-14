@@ -1,15 +1,19 @@
 package me.leoko.advancedban.manager;
 
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.SQLQuery;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.utils.SQLQuery;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 
 public class DatabaseManager {
 
@@ -65,6 +69,8 @@ public class DatabaseManager {
             try {
                 migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT);
                 migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_HISTORY_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT_HISTORY);
+
+                migrateHSQL();
             } catch (SQLException ex) {
                 Universal.get().log(
                         " \n"
@@ -75,6 +81,7 @@ public class DatabaseManager {
                         + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
                         + " \n"
                 );
+                Universal.get().debug(ex);
             }
         } else {
             try {
@@ -96,6 +103,7 @@ public class DatabaseManager {
                         + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
                         + " \n"
                 );
+                Universal.get().debug(ex);
             }
         }
 
@@ -246,5 +254,25 @@ public class DatabaseManager {
 
         executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID, nextId);
         executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID, nextId);
+    }
+
+    private void migrateHSQL() throws SQLException {
+        try {
+            final File hsqlScript = new File(getHSQLStorage() + ".script");
+
+            if (!hsqlScript.exists()) return;
+
+            final Pattern dataPattern = Pattern.compile(
+                    "^INSERT INTO (?<table>PUNISHMENTHISTORY|PUNISHMENTS) VALUES\\((?<id>\\d+),'(?<name>\\w{1,16})','(?<uuid>[0-9a-f]{32}|\\w{1,16})','(?<reason>\\w+)','(?<operator>\\w{1,16})','(?<type>BAN|TEMP_BAN|IP_BAN|TEMP_IP_BAN|MUTE|TEMP_MUTE|WARNING|TEMP_WARNING|KICK)',(?<start>\\d+),(?<end>-1|\\d+),(?:(?<calculationnull>NULL)|'(?<calculation>\\w+)')\\)$",
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+            try (final Scanner fileScanner = new Scanner(hsqlScript, StandardCharsets.UTF_8.name())) {
+                while(fileScanner.findInLine(dataPattern) != null) {
+                    final MatchResult match = fileScanner.match();
+                }
+            }
+        } catch (Exception e) {
+            throw new SQLException("Migration failed", e);
+        }
     }
 }
