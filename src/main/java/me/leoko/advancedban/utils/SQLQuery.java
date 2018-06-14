@@ -149,12 +149,12 @@ public enum SQLQuery {
             "WHERE (TABLE_NAME = 'PUNISHMENTS' OR TABLE_NAME = 'PUNISHMENTHISTORY') AND COLUMN_NAME = 'ID' ORDER BY IDENTITY_START DESC LIMIT 1"
     ),
     SET_PUNISHMENT_AUTO_ID(
-            "ALTER TABLE `Punishments` AUTO_INCREMENT = ?",
-            "ALTER TABLE Punishments ALTER COLUMN id RESTART WITH ?"
+            "ALTER TABLE `Punishments` AUTO_INCREMENT = ",
+            "ALTER TABLE Punishments ALTER COLUMN id RESTART WITH "
     ),
     SET_PUNISHMENT_HISTORY_AUTO_ID(
-            "ALTER TABLE `PunishmentHistory` AUTO_INCREMENT = ?",
-            "ALTER TABLE PunishmentHistory ALTER COLUMN id RESTART WITH ?"
+            "ALTER TABLE `PunishmentHistory` AUTO_INCREMENT = ",
+            "ALTER TABLE PunishmentHistory ALTER COLUMN id RESTART WITH "
     ),
 
     DETECT_PUNISHMENT_MIGRATION_STATUS(
