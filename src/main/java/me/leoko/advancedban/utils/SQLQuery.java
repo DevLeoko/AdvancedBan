@@ -145,16 +145,15 @@ public enum SQLQuery {
     SELECT_NEXT_AUTO_ID(
             "SELECT `AUTO_INCREMENT` FROM `information_schema`.`TABLES` " + 
             "WHERE `TABLE_SCHEMA` = DATABASE() AND (`TABLE_NAME` = 'Punishments' OR `TABLE_NAME` = 'PunishmentHistory') ORDER BY `AUTO_INCREMENT` DESC LIMIT 1",
-            "SELECT IDENTITY_START FROM INFORMATION_SCHEMA.COLUMNS " + 
-            "WHERE (TABLE_NAME = 'PUNISHMENTS' OR TABLE_NAME = 'PUNISHMENTHISTORY') AND COLUMN_NAME = 'ID' ORDER BY IDENTITY_START DESC LIMIT 1"
+            ""
     ),
     SET_PUNISHMENT_AUTO_ID(
-            "ALTER TABLE `Punishments` AUTO_INCREMENT = ",
-            "ALTER TABLE Punishments ALTER COLUMN id RESTART WITH "
+            "ALTER TABLE `Punishments` AUTO_INCREMENT = ?",
+            ""
     ),
     SET_PUNISHMENT_HISTORY_AUTO_ID(
-            "ALTER TABLE `PunishmentHistory` AUTO_INCREMENT = ",
-            "ALTER TABLE PunishmentHistory ALTER COLUMN id RESTART WITH "
+            "ALTER TABLE `PunishmentHistory` AUTO_INCREMENT = ?",
+            ""
     ),
 
     DETECT_PUNISHMENT_MIGRATION_STATUS(

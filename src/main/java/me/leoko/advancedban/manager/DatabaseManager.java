@@ -109,7 +109,10 @@ public class DatabaseManager {
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
-        syncAutoId();
+
+        if (useMySQL) {
+            syncAutoId();
+        }
     }
 
     public void shutdown() {
