@@ -101,6 +101,10 @@ public class DatabaseManager {
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
+
+        if (useMySQL) {
+            syncAutoId();
+        }
     }
 
     public void shutdown() {
@@ -210,12 +214,36 @@ public class DatabaseManager {
     }
 
     private void migrateIfNeccessary(SQLQuery detectionQuery, SQLQuery migrationQuery) throws SQLException {
-        try(final ResultSet result = executeResultStatement(detectionQuery, dbName)) {
+        try (final ResultSet result = executeResultStatement(detectionQuery)) {
             if (!result.next()) return;
 
             if ("varchar".equalsIgnoreCase(result.getString("DATA_TYPE"))) {
                 executeMultipleStatements(migrationQuery);
             }
         }
+    }
+
+    private int getNextAutoId() {
+        try (final ResultSet result = executeResultStatement(SQLQuery.SELECT_NEXT_AUTO_ID)) {
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Universal.get().log(
+                    "An unexpected error has ocurred while trying to retrieve the highest id\n"
+                    + "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
+                    + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
+            );
+            Universal.get().debug(ex);
+        }
+        
+        return useMySQL ? 1 : 0;
+    }
+
+    private void syncAutoId() {
+        final int nextId = getNextAutoId();
+
+        executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID.toString(), false, nextId);
+        executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID.toString(), false, nextId);
     }
 }
