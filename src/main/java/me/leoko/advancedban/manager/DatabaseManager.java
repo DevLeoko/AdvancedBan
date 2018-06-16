@@ -288,46 +288,48 @@ public class DatabaseManager {
         int id;
         int maxId = 0;
 
-        try (final Connection hsqlConnection = connectHSQL()) {
-            try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS_HISTORY.getHsqldb(), true)) {
-                while(result.next()) {
-                    id = result.getInt("id") + idOffset;
-                    executeStatement(
-                            SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
-                            id,
-                            result.getString("name"),
-                            result.getString("uuid"),
-                            result.getString("reason"),
-                            result.getString("operator"),
-                            result.getString("punishmentType"),
-                            result.getLong("start"),
-                            result.getLong("end"),
-                            result.getString("calculation")
-                    );
+        try {
+            try (final Connection hsqlConnection = connectHSQL()) {
+                try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS_HISTORY.getHsqldb(), true)) {
+                    while(result.next()) {
+                        id = result.getInt("id") + idOffset;
+                        executeStatement(
+                                SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
+                                id,
+                                result.getString("name"),
+                                result.getString("uuid"),
+                                result.getString("reason"),
+                                result.getString("operator"),
+                                result.getString("punishmentType"),
+                                result.getLong("start"),
+                                result.getLong("end"),
+                                result.getString("calculation")
+                        );
 
-                    if (id > maxId)
-                        maxId = id;
+                        if (id > maxId)
+                            maxId = id;
+                    }
                 }
-            }
 
-            try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS.getHsqldb(), true)) {
-                while(result.next()) {
-                    id = result.getInt("id") + idOffset;
-                    executeStatement(
-                            SQLQuery.INSERT_PUNISHMENT_WITH_ID,
-                            id,
-                            result.getString("name"),
-                            result.getString("uuid"),
-                            result.getString("reason"),
-                            result.getString("operator"),
-                            result.getString("punishmentType"),
-                            result.getInt("start"),
-                            result.getInt("end"),
-                            result.getString("calculation")
-                    );
+                try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS.getHsqldb(), true)) {
+                    while(result.next()) {
+                        id = result.getInt("id") + idOffset;
+                        executeStatement(
+                                SQLQuery.INSERT_PUNISHMENT_WITH_ID,
+                                id,
+                                result.getString("name"),
+                                result.getString("uuid"),
+                                result.getString("reason"),
+                                result.getString("operator"),
+                                result.getString("punishmentType"),
+                                result.getInt("start"),
+                                result.getInt("end"),
+                                result.getString("calculation")
+                        );
 
-                    if (id > maxId)
-                        maxId = id;
+                        if (id > maxId)
+                            maxId = id;
+                    }
                 }
             }
 
@@ -337,6 +339,8 @@ public class DatabaseManager {
                 throw new IOException("Could not rename file");
             }
         } catch (Exception e) {
+            e.printStackTrace();
+
             throw new SQLException("Migration failed", e);
         }
     }
