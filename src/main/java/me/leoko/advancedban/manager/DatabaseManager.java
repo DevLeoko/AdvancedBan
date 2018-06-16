@@ -182,6 +182,10 @@ public class DatabaseManager {
     }
 
     public ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+        return executeStatement(connection, sql, result, parameters);
+    }
+
+    private ResultSet executeStatement(Connection connection, String sql, boolean result, Object... parameters) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -266,19 +270,70 @@ public class DatabaseManager {
     private void syncAutoId() {
         final int nextId = getNextAutoId();
 
+        syncAutoId(nextId);
+    }
+
+    private void syncAutoId(int nextId) {
         executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID.toString() + nextId, false);
         executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID.toString() + nextId, false);
     }
 
     private void migrateHSQL() throws SQLException {
-        final File hsqlScript = new File(connectHSQL() + ".script");
+        final File dataDir = Universal.get().getMethods().getDataFolder();
+        final File hsqlScript = new File(dataDir, "/data/storage.script");
 
         if (!hsqlScript.exists()) return;
 
-        try (final Connection hsqlConnection = connectHSQL()) {
-            ;
+        final int idOffset = getNextAutoId();
+        int id;
+        int maxId = 0;
 
-            if (!hsqlScript.getParentFile().renameTo(new File(Universal.get().getMethods().getDataFolder(), "/data.old"))) {
+        try (final Connection hsqlConnection = connectHSQL()) {
+            try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS_HISTORY.getHsqldb(), true)) {
+                while(result.next()) {
+                    id = result.getInt("id") + idOffset;
+                    executeStatement(
+                            SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
+                            id,
+                            result.getString("name"),
+                            result.getString("uuid"),
+                            result.getString("reason"),
+                            result.getString("operator"),
+                            result.getString("punishmentType"),
+                            result.getInt("start"),
+                            result.getInt("end"),
+                            result.getString("calculation")
+                    );
+
+                    if (id > maxId)
+                        maxId = id;
+                }
+            }
+
+            try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS.getHsqldb(), true)) {
+                while(result.next()) {
+                    id = result.getInt("id") + idOffset;
+                    executeStatement(
+                            SQLQuery.INSERT_PUNISHMENT_WITH_ID,
+                            id,
+                            result.getString("name"),
+                            result.getString("uuid"),
+                            result.getString("reason"),
+                            result.getString("operator"),
+                            result.getString("punishmentType"),
+                            result.getInt("start"),
+                            result.getInt("end"),
+                            result.getString("calculation")
+                    );
+
+                    if (id > maxId)
+                        maxId = id;
+                }
+            }
+
+            syncAutoId(idOffset + maxId);
+
+            if (!hsqlScript.getParentFile().renameTo(new File(dataDir, "/data.old"))) {
                 throw new IOException("Could not rename file");
             }
         } catch (Exception e) {
