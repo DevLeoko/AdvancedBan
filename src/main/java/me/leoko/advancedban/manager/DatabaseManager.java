@@ -300,8 +300,8 @@ public class DatabaseManager {
                             result.getString("reason"),
                             result.getString("operator"),
                             result.getString("punishmentType"),
-                            result.getInt("start"),
-                            result.getInt("end"),
+                            result.getLong("start"),
+                            result.getLong("end"),
                             result.getString("calculation")
                     );
 
