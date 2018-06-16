@@ -5,15 +5,11 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.SQLQuery;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
 
 public class DatabaseManager {
 
@@ -69,14 +65,11 @@ public class DatabaseManager {
             try {
                 migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT);
                 migrateIfNeccessary(SQLQuery.DETECT_PUNISHMENT_HISTORY_MIGRATION_STATUS, SQLQuery.MIGRATE_PUNISHMENT_HISTORY);
-
-                migrateHSQL();
             } catch (SQLException ex) {
                 Universal.get().log(
                         " \n"
                         + " MySQL-Error\n"
                         + " Could not migrate old tables!\n"
-                        + " Disabling plugin!\n"
                         + " Skype: Leoko33\n"
                         + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
                         + " \n"
@@ -84,33 +77,27 @@ public class DatabaseManager {
                 Universal.get().debug(ex);
             }
         } else {
-            try {
-                Class.forName("org.hsqldb.jdbc.JDBCDriver");
-            } catch (ClassNotFoundException ex) {
-                Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
-                Universal.get().debug(ex.getMessage());
-                return;
-            }
-            try {
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:" + getHSQLStorage() + ";hsqldb.lock_file=false", "SA", "");
-            } catch (SQLException ex) {
-                Universal.get().log(
-                        " \n"
-                        + " HSQLDB-Error\n"
-                        + " Could not connect to HSQLDB-Server!\n"
-                        + " Disabling plugin!\n"
-                        + " Skype: Leoko33\n"
-                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
-                        + " \n"
-                );
-                Universal.get().debug(ex);
-            }
+            connection = connectHSQL();
         }
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
 
         if (useMySQL) {
+            try {
+                migrateHSQL();
+            } catch (SQLException ex) {
+                Universal.get().log(
+                        " \n"
+                        + " MySQL-Error\n"
+                        + " Could not migrate HSQLDB!\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                        + " \n"
+                );
+                Universal.get().debug(ex);
+            }
+
             syncAutoId();
         }
     }
@@ -145,8 +132,32 @@ public class DatabaseManager {
         }
     }
 
-    private String getHSQLStorage() {
-        return Universal.get().getMethods().getDataFolder().getPath() + "/data/storage";
+    private Connection connectHSQL() {
+        try {
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        } catch (ClassNotFoundException ex) {
+            Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
+            Universal.get().debug(ex.getMessage());
+
+            return null;
+        }
+
+        try {
+            return DriverManager.getConnection("jdbc:hsqldb:file:" + Universal.get().getMethods().getDataFolder().getPath() + "/data/storage" + ";hsqldb.lock_file=false", "SA", "");
+        } catch (SQLException ex) {
+            Universal.get().log(
+                    " \n"
+                    + " HSQLDB-Error\n"
+                    + " Could not connect to HSQLDB-Server!\n"
+                    + " Disabling plugin!\n"
+                    + " Skype: Leoko33\n"
+                    + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                    + " \n"
+            );
+            Universal.get().debug(ex);
+        }
+
+        return null;
     }
 
     public void executeStatement(SQLQuery sql, Object... parameters) {
@@ -260,19 +271,15 @@ public class DatabaseManager {
     }
 
     private void migrateHSQL() throws SQLException {
-        try {
-            final File hsqlScript = new File(getHSQLStorage() + ".script");
+        final File hsqlScript = new File(connectHSQL() + ".script");
 
-            if (!hsqlScript.exists()) return;
+        if (!hsqlScript.exists()) return;
 
-            final Pattern dataPattern = Pattern.compile(
-                    "^INSERT INTO (?<table>PUNISHMENTHISTORY|PUNISHMENTS) VALUES\\((?<id>\\d+),'(?<name>\\w{1,16})','(?<uuid>[0-9a-f]{32}|\\w{1,16})','(?<reason>\\w+)','(?<operator>\\w{1,16})','(?<type>BAN|TEMP_BAN|IP_BAN|TEMP_IP_BAN|MUTE|TEMP_MUTE|WARNING|TEMP_WARNING|KICK)',(?<start>\\d+),(?<end>-1|\\d+),(?:(?<calculationnull>NULL)|'(?<calculation>\\w+)')\\)$",
-                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        try (final Connection hsqlConnection = connectHSQL()) {
+            ;
 
-            try (final Scanner fileScanner = new Scanner(hsqlScript, StandardCharsets.UTF_8.name())) {
-                while(fileScanner.findInLine(dataPattern) != null) {
-                    final MatchResult match = fileScanner.match();
-                }
+            if (!hsqlScript.getParentFile().renameTo(new File(Universal.get().getMethods().getDataFolder(), "/data.old"))) {
+                throw new IOException("Could not rename file");
             }
         } catch (Exception e) {
             throw new SQLException("Migration failed", e);
