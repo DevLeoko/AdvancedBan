@@ -1,15 +1,16 @@
 package me.leoko.advancedban.manager;
 
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.SQLQuery;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.utils.SQLQuery;
 
 public class DatabaseManager {
 
@@ -70,39 +71,34 @@ public class DatabaseManager {
                         " \n"
                         + " MySQL-Error\n"
                         + " Could not migrate old tables!\n"
-                        + " Disabling plugin!\n"
                         + " Skype: Leoko33\n"
                         + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
                         + " \n"
                 );
+                Universal.get().debug(ex);
             }
         } else {
-            try {
-                Class.forName("org.hsqldb.jdbc.JDBCDriver");
-            } catch (ClassNotFoundException ex) {
-                Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
-                Universal.get().debug(ex.getMessage());
-                return;
-            }
-            try {
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false", "SA", "");
-            } catch (SQLException ex) {
-                Universal.get().log(
-                        " \n"
-                        + " HSQLDB-Error\n"
-                        + " Could not connect to HSQLDB-Server!\n"
-                        + " Disabling plugin!\n"
-                        + " Skype: Leoko33\n"
-                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
-                        + " \n"
-                );
-            }
+            connection = connectHSQL();
         }
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
 
         if (useMySQL) {
+            try {
+                migrateHSQL();
+            } catch (SQLException ex) {
+                Universal.get().log(
+                        " \n"
+                        + " MySQL-Error\n"
+                        + " Could not migrate HSQLDB!\n"
+                        + " Skype: Leoko33\n"
+                        + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                        + " \n"
+                );
+                Universal.get().debug(ex);
+            }
+
             syncAutoId();
         }
     }
@@ -137,6 +133,34 @@ public class DatabaseManager {
         }
     }
 
+    private Connection connectHSQL() {
+        try {
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        } catch (ClassNotFoundException ex) {
+            Universal.get().log("§cERROR: failed to load HSQLDB JDBC driver.");
+            Universal.get().debug(ex.getMessage());
+
+            return null;
+        }
+
+        try {
+            return DriverManager.getConnection("jdbc:hsqldb:file:" + Universal.get().getMethods().getDataFolder().getPath() + "/data/storage" + ";hsqldb.lock_file=false", "SA", "");
+        } catch (SQLException ex) {
+            Universal.get().log(
+                    " \n"
+                    + " HSQLDB-Error\n"
+                    + " Could not connect to HSQLDB-Server!\n"
+                    + " Disabling plugin!\n"
+                    + " Skype: Leoko33\n"
+                    + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
+                    + " \n"
+            );
+            Universal.get().debug(ex);
+        }
+
+        return null;
+    }
+
     public void executeStatement(SQLQuery sql, Object... parameters) {
         executeStatement(sql, false, parameters);
     }
@@ -159,6 +183,10 @@ public class DatabaseManager {
     }
 
     public ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+        return executeStatement(connection, sql, result, parameters);
+    }
+
+    private ResultSet executeStatement(Connection connection, String sql, boolean result, Object... parameters) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -243,7 +271,76 @@ public class DatabaseManager {
     private void syncAutoId() {
         final int nextId = getNextAutoId();
 
+        syncAutoId(nextId);
+    }
+
+    private void syncAutoId(int nextId) {
         executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID.toString(), false, nextId);
         executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID.toString(), false, nextId);
+    }
+
+    private void migrateHSQL() throws SQLException {
+        final File dataDir = Universal.get().getMethods().getDataFolder();
+        final File hsqlScript = new File(dataDir, "/data/storage.script");
+
+        if (!hsqlScript.exists()) return;
+
+        final int idOffset = getNextAutoId();
+        int id;
+        int maxId = 0;
+
+        try {
+            try (final Connection hsqlConnection = connectHSQL()) {
+                try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS_HISTORY.getHsqldb(), true)) {
+                    while(result.next()) {
+                        id = result.getInt("id") + idOffset;
+                        executeStatement(
+                                SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
+                                id,
+                                result.getString("name"),
+                                result.getString("uuid"),
+                                result.getString("reason"),
+                                result.getString("operator"),
+                                result.getString("punishmentType"),
+                                result.getLong("start"),
+                                result.getLong("end"),
+                                result.getString("calculation")
+                        );
+
+                        if (id > maxId)
+                            maxId = id;
+                    }
+                }
+
+                try (final ResultSet result = executeStatement(hsqlConnection, SQLQuery.SELECT_ALL_PUNISHMENTS.getHsqldb(), true)) {
+                    while(result.next()) {
+                        id = result.getInt("id") + idOffset;
+                        executeStatement(
+                                SQLQuery.INSERT_PUNISHMENT_WITH_ID,
+                                id,
+                                result.getString("name"),
+                                result.getString("uuid"),
+                                result.getString("reason"),
+                                result.getString("operator"),
+                                result.getString("punishmentType"),
+                                result.getInt("start"),
+                                result.getInt("end"),
+                                result.getString("calculation")
+                        );
+
+                        if (id > maxId)
+                            maxId = id;
+                    }
+                }
+
+                executeStatement(hsqlConnection, "SHUTDOWN", false);
+            }
+
+            syncAutoId(idOffset + maxId);
+
+            Files.move(hsqlScript.getParentFile().toPath(), new File(dataDir, "/data.old").toPath());
+        } catch (Exception e) {
+            throw new SQLException("Migration failed: " + e.getMessage(), e);
+        }
     }
 }

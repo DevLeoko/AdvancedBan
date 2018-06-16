@@ -69,6 +69,13 @@ public enum SQLQuery {
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     ),
+    INSERT_PUNISHMENT_WITH_ID(
+            "INSERT INTO `Punishments` " +
+            "(`id`, `name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +
+            "VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(? * 0.001), FROM_UNIXTIME(? * 0.001), ?)",
+
+            ""
+    ),
     BUMP_PUNISHMENT_AUTO_ID(
             "INSERT INTO `Punishments` (`id`) VALUES (NULL);\n" + 
             "DELETE FROM `Punishments` WHERE `id` = LAST_INSERT_ID()",
@@ -84,6 +91,13 @@ public enum SQLQuery {
             "INSERT INTO PunishmentHistory " +
             "(name, uuid, reason, operator, punishmentType, start, end, calculation) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    INSERT_PUNISHMENT_HISTORY_WITH_ID(
+            "INSERT INTO `PunishmentHistory` " +
+            "(`id`, `name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +
+            "VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(? * 0.001), FROM_UNIXTIME(? * 0.001), ?)",
+
+            ""
     ),
     SELECT_EXACT_PUNISHMENT(
             "SELECT * FROM `Punishments` WHERE `uuid` = ? AND `start` = FROM_UNIXTIME(? * 0.001)",
@@ -212,6 +226,7 @@ public enum SQLQuery {
             "ALTER TABLE `PunishmentHistory` " + 
             "DROP `start_old`, " + 
             "DROP `end_old`;",
+
             ""
     );
 
@@ -229,5 +244,13 @@ public enum SQLQuery {
     @Override
     public String toString() {
         return DatabaseManager.get().isUseMySQL() ? mysql : hsqldb;
+    }
+
+    public String getMysql() {
+        return mysql;
+    }
+
+    public String getHsqldb() {
+        return hsqldb;
     }
 }
