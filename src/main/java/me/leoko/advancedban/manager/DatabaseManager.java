@@ -5,6 +5,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.SQLQuery;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -331,17 +332,15 @@ public class DatabaseManager {
                             maxId = id;
                     }
                 }
+
+                executeStatement(hsqlConnection, "SHUTDOWN", false);
             }
 
             syncAutoId(idOffset + maxId);
 
-            if (!hsqlScript.getParentFile().renameTo(new File(dataDir, "/data.old"))) {
-                throw new IOException("Could not rename file");
-            }
+            Files.move(hsqlScript.getParentFile().toPath(), new File(dataDir, "/data.old").toPath());
         } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new SQLException("Migration failed", e);
+            throw new SQLException("Migration failed: " + e.getMessage(), e);
         }
     }
 }
