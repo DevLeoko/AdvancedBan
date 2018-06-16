@@ -243,7 +243,7 @@ public class DatabaseManager {
     private void syncAutoId() {
         final int nextId = getNextAutoId();
 
-        executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID.toString() + nextId, false);
-        executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID.toString() + nextId, false);
+        executeStatement(SQLQuery.SET_PUNISHMENT_AUTO_ID.toString(), false, nextId);
+        executeStatement(SQLQuery.SET_PUNISHMENT_HISTORY_AUTO_ID.toString(), false, nextId);
     }
 }
