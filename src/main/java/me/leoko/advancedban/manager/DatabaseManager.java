@@ -285,6 +285,8 @@ public class DatabaseManager {
 
         if (!hsqlScript.exists()) return;
 
+        Universal.get().log("Starting migration from HSQLDB to MySQL...");
+
         final int idOffset = getNextAutoId();
         int id;
         int maxId = 0;
@@ -336,11 +338,13 @@ public class DatabaseManager {
                 executeStatement(hsqlConnection, "SHUTDOWN", false);
             }
 
-            syncAutoId(idOffset + maxId);
+            syncAutoId(idOffset + maxId + 1);
 
             Files.move(hsqlScript.getParentFile().toPath(), new File(dataDir, "/data.old").toPath());
         } catch (Exception e) {
             throw new SQLException("Migration failed: " + e.getMessage(), e);
         }
+
+        Universal.get().log("Migration completed!");
     }
 }
