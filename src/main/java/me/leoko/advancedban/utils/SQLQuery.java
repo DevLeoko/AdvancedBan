@@ -231,7 +231,7 @@ public enum SQLQuery {
     );
 
     private static final String mysqlAsterix =
-            "`id`, `name`, `uuid`, `reason`, `operator`, `punishmentType`, CAST(UNIX_TIMESTAMP(`start`) * 1000 AS INT) AS `start`, CAST(IFNULL(UNIX_TIMESTAMP(`end`) * 1000, -1) AS INT) AS `end`, `calculation`";
+            "`id`, `name`, `uuid`, `reason`, `operator`, `punishmentType`, CONVERT(UNIX_TIMESTAMP(`start`) * 1000, SIGNED INTEGER) AS `start`, CONVERT(IFNULL(UNIX_TIMESTAMP(`end`) * 1000, -1), SIGNED INTEGER) AS `end`, `calculation`";
 
     private String mysql;
     private String hsqldb;
