@@ -300,7 +300,7 @@ public class DatabaseManager {
                                 SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
                                 id,
                                 result.getString("name"),
-                                result.getString("uuid"),
+                                result.getString("uuid").replace("-", ""),
                                 result.getString("reason"),
                                 result.getString("operator"),
                                 result.getString("punishmentType"),
@@ -321,12 +321,12 @@ public class DatabaseManager {
                                 SQLQuery.INSERT_PUNISHMENT_WITH_ID,
                                 id,
                                 result.getString("name"),
-                                result.getString("uuid"),
+                                result.getString("uuid").replace("-", ""),
                                 result.getString("reason"),
                                 result.getString("operator"),
                                 result.getString("punishmentType"),
-                                result.getInt("start"),
-                                result.getInt("end"),
+                                result.getLong("start"),
+                                result.getLong("end"),
                                 result.getString("calculation")
                         );
 
