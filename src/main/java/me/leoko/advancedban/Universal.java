@@ -2,18 +2,6 @@ package me.leoko.advancedban;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.LogManager;
@@ -24,6 +12,20 @@ import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -264,6 +266,7 @@ public class Universal {
             debug("§7The state of the sql is: " + ex.getSQLState());
             debug("§7Error message: " + ex.getMessage());
         }
+        debugToFile(ex);
     }
 
     private void debugToFile(Object msg) {
@@ -280,7 +283,9 @@ public class Universal {
             logManager.checkLastLog(false);
         }
         try {
-            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
+            final String msgAsString = (msg instanceof Throwable)? getStackTrace((Throwable) msg) : msg.toString();
+
+            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + ChatColor.stripColor(msgAsString) + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
             System.out.print("An error has ocurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
@@ -289,5 +294,14 @@ public class Universal {
 
     public Gson getGson() {
         return gson;
+    }
+    
+    private String getStackTrace(Throwable exception) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+
+        exception.printStackTrace(printWriter);
+
+        return stringWriter.toString();
     }
 }
