@@ -338,7 +338,7 @@ public class DatabaseManager {
                 executeStatement(hsqlConnection, "SHUTDOWN", false);
             }
 
-            syncAutoId(idOffset + maxId + 1);
+            syncAutoId(maxId + 1);
 
             Files.move(hsqlScript.getParentFile().toPath(), new File(dataDir, "/data.old").toPath());
         } catch (Exception e) {
