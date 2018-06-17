@@ -285,6 +285,8 @@ public class DatabaseManager {
 
         if (!hsqlScript.exists()) return;
 
+        Universal.get().log("Starting migration from HSQLDB to MySQL...");
+
         final int idOffset = getNextAutoId();
         int id;
         int maxId = 0;
@@ -298,7 +300,7 @@ public class DatabaseManager {
                                 SQLQuery.INSERT_PUNISHMENT_HISTORY_WITH_ID,
                                 id,
                                 result.getString("name"),
-                                result.getString("uuid"),
+                                result.getString("uuid").replace("-", ""),
                                 result.getString("reason"),
                                 result.getString("operator"),
                                 result.getString("punishmentType"),
@@ -319,12 +321,12 @@ public class DatabaseManager {
                                 SQLQuery.INSERT_PUNISHMENT_WITH_ID,
                                 id,
                                 result.getString("name"),
-                                result.getString("uuid"),
+                                result.getString("uuid").replace("-", ""),
                                 result.getString("reason"),
                                 result.getString("operator"),
                                 result.getString("punishmentType"),
-                                result.getInt("start"),
-                                result.getInt("end"),
+                                result.getLong("start"),
+                                result.getLong("end"),
                                 result.getString("calculation")
                         );
 
@@ -336,11 +338,13 @@ public class DatabaseManager {
                 executeStatement(hsqlConnection, "SHUTDOWN", false);
             }
 
-            syncAutoId(idOffset + maxId);
+            syncAutoId(maxId + 1);
 
             Files.move(hsqlScript.getParentFile().toPath(), new File(dataDir, "/data.old").toPath());
         } catch (Exception e) {
             throw new SQLException("Migration failed: " + e.getMessage(), e);
         }
+
+        Universal.get().log("Migration completed!");
     }
 }
