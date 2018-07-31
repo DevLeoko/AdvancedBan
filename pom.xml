@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.leoko.advancedban</groupId>
     <artifactId>AdvancedBan</artifactId>
-    <version>2.1.7-${build}</version>
+    <version>2.1.6-${build}</version>
     <packaging>jar</packaging>
     <properties>
         <build>SNAPSHOT</build>
@@ -14,10 +14,6 @@
         <trimStackTrace>true</trimStackTrace>
     </properties>
     <repositories>
-        <repository>
-            <id>nekohtml-repo</id>
-            <url>https://mvnrepository.com/artifact/net.sourceforge.nekohtml/nekohtml/</url>
-        </repository>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -33,10 +29,6 @@
         <repository>
             <id>md_5-snapshots</id>
             <url>http://repo.md-5.net/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>lucko_me-repo</id>
-            <url>https://ci.lucko.me/plugin/repository/everything/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -55,13 +47,8 @@
         <dependency>
             <groupId>com.imaginarycode.minecraft</groupId>
             <artifactId>RedisBungee</artifactId>
-            <version>0.4</version>
+            <version>0.3.6-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-            <version>1.9.22</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
