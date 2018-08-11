@@ -293,7 +293,7 @@ public class CommandManager {
                                 return;
                             }
                             String ip = Universal.get().getIps().containsKey(lowerArg.toLowerCase()) ? Universal.get().getIps().get(lowerArg).toLowerCase() : "none cashed";
-                            String loc = mi.getFromUrlJson("http://freegeoip.net/json/" + ip, "country_name");
+                            String loc = mi.getFromUrlJson("https://geoip.tools/v1/json/?q=" + ip, "country_name");
                             Punishment mute = PunishmentManager.get().getMute(uuid);
                             Punishment ban = PunishmentManager.get().getBan(uuid);
 
