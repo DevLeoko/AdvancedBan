@@ -8,10 +8,10 @@ import me.leoko.advancedban.utils.CommandUtils;
 
 import java.util.Optional;
 
-public abstract class UnpunishmentTypeCommand extends AbstractCommand {
+public abstract class UnpunishmentTypeCommand extends PunishmentTypeCommand {
 
     UnpunishmentTypeCommand(PunishmentType type, String... aliases) {
-        super("un" + type.getName(), type.getPerms() + ".undo", "Un" + type.getConfSection(), aliases);
+        super(type, aliases);
     }
 
     @Override

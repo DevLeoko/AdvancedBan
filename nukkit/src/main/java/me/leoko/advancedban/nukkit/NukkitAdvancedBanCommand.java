@@ -13,6 +13,7 @@ public class NukkitAdvancedBanCommand extends Command {
 
     public NukkitAdvancedBanCommand(AbstractCommand command, AdvancedBan advancedBan) {
         super(command.getName());
+        this.setAliases(command.getAliases());
         this.command = command;
         this.advancedBan = advancedBan;
     }

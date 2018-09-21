@@ -22,7 +22,7 @@ public class NukkitAdvancedBan extends AdvancedBan {
     private final NukkitAdvancedBanPlugin plugin;
 
     NukkitAdvancedBan(NukkitAdvancedBanPlugin plugin) {
-        super(UUIDManager.FetcherMode.INTERNAL);
+        super(UUIDManager.FetcherMode.INTERNAL, false);
         this.plugin = plugin;
     }
 

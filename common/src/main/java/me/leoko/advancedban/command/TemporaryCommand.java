@@ -4,13 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanCommandSender;
-import me.leoko.advancedban.AdvancedBanPlayer;
 import me.leoko.advancedban.punishment.Punishment;
 import me.leoko.advancedban.punishment.PunishmentType;
-import me.leoko.advancedban.utils.CommandUtils;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public abstract class TemporaryCommand extends PunishmentTypeCommand {
 
@@ -39,7 +36,12 @@ public abstract class TemporaryCommand extends PunishmentTypeCommand {
                 }
             }
 
-            Object identifier = CommandUtils.getIdentifier(sender, getType(), args[0]);
+            Optional identifier = getIdentifier(sender, args[0]);
+
+            if (!identifier.isPresent()) {
+                sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[0]);
+                return true;
+            }
 
             final long start = advancedBan.getTimeManager().getTime();
             long end = start;
@@ -49,7 +51,7 @@ public abstract class TemporaryCommand extends PunishmentTypeCommand {
                     sender.sendCustomMessage("General.LayoutNotFound", true, "NAME", args[1].substring(1));
                     return true;
                 }
-                int i = advancedBan.getPunishmentManager().getCalculationLevel(identifier, args[1].substring(1));
+                int i = advancedBan.getPunishmentManager().getCalculationLevel(identifier.get(), args[1].substring(1));
                 JsonNode timeNode = layout.get(layout.size() <= i ? layout.size() - 1 : i);
 
                 if (timeNode.getNodeType() != JsonNodeType.STRING) {
@@ -80,24 +82,8 @@ public abstract class TemporaryCommand extends PunishmentTypeCommand {
                 }
             }
 
-            if (identifier instanceof UUID) {
-                Optional<AdvancedBanPlayer> player = advancedBan.getPlayer((UUID) identifier);
-
-                if (player.isPresent() && player.get().hasPermission("ab." + getType().getName() + ".exempt") || advancedBan.getConfiguration().getExemptPlayers().contains(args[0])) {
-                    sender.sendCustomMessage(getType().getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
-                    return true;
-                }
-
-                if (!player.isPresent() && getType() == PunishmentType.KICK) {
-                    sender.sendCustomMessage("Kick.NotOnline", true, "NAME", args[0]);
-                    return true;
-                }
-
-                if ((getType().getBasic() == PunishmentType.MUTE && advancedBan.getPunishmentManager().isMuted(identifier))
-                        || (getType().getBasic() == PunishmentType.BAN && advancedBan.getPunishmentManager().isBanned(identifier))) {
-                    sender.sendCustomMessage(getType().getBasic().getConfSection() + ".AlreadyDone", true, "NAME", args[0]);
-                    return true;
-                }
+            if (!canPunish(sender, identifier, args[0])) {
+                return true;
             }
 
             Punishment punishment = new Punishment(advancedBan, identifier, args[0], sender.getName(), null,

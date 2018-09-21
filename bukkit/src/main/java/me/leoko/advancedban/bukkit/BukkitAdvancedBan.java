@@ -24,7 +24,7 @@ public class BukkitAdvancedBan extends AdvancedBan {
     private final BukkitAdvancedBanPlugin plugin;
 
     BukkitAdvancedBan(BukkitAdvancedBanPlugin plugin) {
-        super(UUIDManager.FetcherMode.MIXED);
+        super(UUIDManager.FetcherMode.MIXED, true);
         this.plugin = plugin;
     }
 

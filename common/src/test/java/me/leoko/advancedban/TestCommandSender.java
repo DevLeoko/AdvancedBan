@@ -1,6 +1,6 @@
+package me.leoko.advancedban;
+
 import lombok.RequiredArgsConstructor;
-import me.leoko.advancedban.AdvancedBan;
-import me.leoko.advancedban.AdvancedBanCommandSender;
 
 @RequiredArgsConstructor
 public class TestCommandSender implements AdvancedBanCommandSender {

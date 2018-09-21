@@ -1,9 +1,7 @@
-package me.leoko.advancedban.utils;
+package me.leoko.advancedban.punishment;
 
 import lombok.RequiredArgsConstructor;
-import me.leoko.advancedban.punishment.Punishment;
-import me.leoko.advancedban.punishment.PunishmentManager;
-import me.leoko.advancedban.punishment.PunishmentType;
+import me.leoko.advancedban.manager.PunishmentManager;
 
 import java.net.InetAddress;
 import java.util.Optional;

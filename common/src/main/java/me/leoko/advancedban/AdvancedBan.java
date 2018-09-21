@@ -6,15 +6,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.leoko.advancedban.command.AbstractCommand;
-import me.leoko.advancedban.command.CommandManager;
 import me.leoko.advancedban.configuration.Configuration;
 import me.leoko.advancedban.configuration.Layouts;
 import me.leoko.advancedban.configuration.Messages;
 import me.leoko.advancedban.configuration.MySQLConfiguration;
 import me.leoko.advancedban.manager.*;
+import me.leoko.advancedban.punishment.InterimData;
 import me.leoko.advancedban.punishment.Punishment;
-import me.leoko.advancedban.punishment.PunishmentManager;
-import me.leoko.advancedban.utils.InterimData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +40,7 @@ public abstract class AdvancedBan {
     @Getter(value = AccessLevel.NONE)
     private final Map<Object, InetAddress> addresses = Collections.synchronizedMap(new HashMap<>());
     private final UUIDManager.FetcherMode mode;
+    private final boolean mojangAuthed;
     private final CommandManager commandManager = new CommandManager(this);
     private final PunishmentManager punishmentManager = new PunishmentManager(this);
     private final DatabaseManager databaseManager = new DatabaseManager(this);
@@ -57,12 +56,13 @@ public abstract class AdvancedBan {
     @Getter(value = AccessLevel.NONE)
     private MySQLConfiguration mySQLConfiguration = null;
 
-    protected AdvancedBan(UUIDManager.FetcherMode mode) {
+    protected AdvancedBan(UUIDManager.FetcherMode mode, boolean mojangAuthed) {
         if (instance != null) {
             throw new IllegalStateException("AdvancedBan has already been initialized");
         }
         instance = this;
         this.mode = mode;
+        this.mojangAuthed = mojangAuthed;
     }
 
     public static AdvancedBan get() {
@@ -249,6 +249,7 @@ public abstract class AdvancedBan {
     }
 
     public Optional<InetAddress> getAddress(Object value) {
+        if (value instanceof InetAddress) return Optional.of((InetAddress) value);
         return Optional.ofNullable(addresses.get(value));
     }
 

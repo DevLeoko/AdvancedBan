@@ -46,7 +46,7 @@ public class UUIDManager {
             uuid = advancedBan.getInternalUUID(name);
         }
 
-        if (!uuid.isPresent()) {
+        if (!uuid.isPresent() && advancedBan.isMojangAuthed()) {
             String url = advancedBan.getConfiguration().getUuidFetcher().getRestApi().getUrl();
             String key = advancedBan.getConfiguration().getUuidFetcher().getRestApi().getKey();
             try {
@@ -57,7 +57,7 @@ public class UUIDManager {
             }
         }
 
-        if (!uuid.isPresent()) {
+        if (!uuid.isPresent() && advancedBan.isMojangAuthed()) {
             advancedBan.getLogger().debug("Trying to fetch UUID form BackUp-API...");
             String url = advancedBan.getConfiguration().getUuidFetcher().getBackupApi().getUrl();
             String key = advancedBan.getConfiguration().getUuidFetcher().getBackupApi().getKey();

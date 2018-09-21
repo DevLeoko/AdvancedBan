@@ -1,6 +1,7 @@
 package me.leoko.advancedban.configuration;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
@@ -24,17 +25,14 @@ public class Layouts {
     public JsonNode getLayout(String key) {
         try {
             String[] nodes = key.split("\\.");
-            if (nodes.length < 2) {
-                return null;
-            }
 
             JsonNode finalNode = node;
             for (String node : nodes) {
-                finalNode = finalNode.get(node);
+                finalNode = finalNode.path(node);
             }
             return finalNode;
         } catch (Exception e) {
-            return null;
+            return MissingNode.getInstance();
         }
     }
 }

@@ -4,7 +4,7 @@ import me.leoko.advancedban.punishment.PunishmentType;
 
 public class TempWarningCommand extends TemporaryCommand {
 
-    TempWarningCommand() {
+    public TempWarningCommand() {
         super(PunishmentType.TEMP_WARNING);
     }
 }

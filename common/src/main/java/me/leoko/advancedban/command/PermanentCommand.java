@@ -2,13 +2,10 @@ package me.leoko.advancedban.command;
 
 import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanCommandSender;
-import me.leoko.advancedban.AdvancedBanPlayer;
 import me.leoko.advancedban.punishment.Punishment;
 import me.leoko.advancedban.punishment.PunishmentType;
-import me.leoko.advancedban.utils.CommandUtils;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public abstract class PermanentCommand extends PunishmentTypeCommand {
 
@@ -37,29 +34,15 @@ public abstract class PermanentCommand extends PunishmentTypeCommand {
                 }
             }
 
-            Optional identifier = CommandUtils.getIdentifier(sender.getAdvancedBan(), args[0]);
+            Optional identifier = getIdentifier(sender, args[0]);
+
             if (!identifier.isPresent()) {
+                sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[0]);
                 return true;
             }
 
-            if (identifier.get() instanceof UUID) {
-                Optional<AdvancedBanPlayer> player = advancedBan.getPlayer((UUID) identifier.get());
-
-                if (player.isPresent() && player.get().hasPermission("ab." + getType().getName() + ".exempt") || advancedBan.getConfiguration().getExemptPlayers().contains(args[0])) {
-                    sender.sendCustomMessage(getType().getBasic().getConfSection() + ".Exempt", true, "NAME", args[0]);
-                    return true;
-                }
-
-                if (!player.isPresent() && getType() == PunishmentType.KICK) {
-                    sender.sendCustomMessage("Kick.NotOnline", true, "NAME", args[0]);
-                    return true;
-                }
-
-                if ((getType().getBasic() == PunishmentType.MUTE && advancedBan.getPunishmentManager().isMuted(identifier.get()))
-                        || (getType().getBasic() == PunishmentType.BAN && advancedBan.getPunishmentManager().isBanned(identifier.get()))) {
-                    sender.sendCustomMessage(getType().getBasic().getConfSection() + ".AlreadyDone", true, "NAME", args[0]);
-                    return true;
-                }
+            if (!canPunish(sender, identifier.get(), args[0])) {
+                return true;
             }
 
             Punishment punishment = new Punishment(advancedBan, identifier.get(), args[0], sender.getName(), null,

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import lombok.experimental.UtilityClass;
 import me.leoko.advancedban.AdvancedBan;
 
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -13,20 +12,25 @@ import java.util.Optional;
 
 @UtilityClass
 public class GeoLocation {
-    private static final String URL = "http://freegeoip.net/json/";
+    private static final char[] URL_1 = "https://ipapi.co/".toCharArray();
+    private static final char[] URL_2 = "/json/".toCharArray();
     private static final String KEY = "country_name";
 
     public static Optional<String> getLocation(InetAddress address) {
         if (address == null) {
             return Optional.empty();
         }
-        String url = URL + address.getHostAddress();
+        StringBuilder url = new StringBuilder();
+        url.append(URL_1).append(address.getHostAddress()).append(URL_2);
 
         try {
-            HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
+            HttpURLConnection request = (HttpURLConnection) new URL(url.toString()).openConnection();
+            request.setConnectTimeout(2000);
+            request.setReadTimeout(2000);
             request.connect();
+            System.out.println("Connect");
 
-            JsonNode json = AdvancedBan.JSON_MAPPER.readTree(new InputStreamReader(request.getInputStream()));
+            JsonNode json = AdvancedBan.JSON_MAPPER.readTree(request.getInputStream());
 
             if (!json.has(KEY)) {
                 return Optional.empty();
@@ -38,7 +42,7 @@ public class GeoLocation {
             }
             return Optional.ofNullable(key.textValue());
         } catch (Exception e) {
-            return Optional.empty();
+            throw new RuntimeException("Unable to get geo location info", e);
         }
     }
 }

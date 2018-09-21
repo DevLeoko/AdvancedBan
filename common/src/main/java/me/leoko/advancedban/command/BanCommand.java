@@ -4,7 +4,7 @@ import me.leoko.advancedban.punishment.PunishmentType;
 
 public class BanCommand extends PermanentCommand {
 
-    BanCommand() {
+    public BanCommand() {
         super(PunishmentType.BAN);
     }
 }

@@ -1,7 +1,6 @@
 package me.leoko.advancedban.manager;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanCommandSender;
@@ -27,18 +26,18 @@ public class MessageManager {
     public String getMessage(String path, Object... parameters) {
         JsonNode message = advancedBan.getMessages().getMessage(path);
         String str;
-        if (message == null || message.isMissingNode() || message.textValue() == null) {
+        if (message.isTextual()) {
+            str = replace(message.textValue(), parameters).replace('&', '§');
+        } else {
             str = "Failed! See console for details!";
             advancedBan.getLogger().warn("Unregistered message used. Please check Message.yml");
-        } else {
-            str = replace(message.textValue(), parameters).replace('&', '§');
         }
         return str;
     }
 
     public List<String> getMessageList(String path, Object... parameters) {
         JsonNode messages = advancedBan.getMessages().getMessage(path);
-        if (messages != null && messages.getNodeType() == JsonNodeType.ARRAY) {
+        if (messages.isArray()) {
             List<String> messageList = new ArrayList<>();
             messages.forEach(element -> messageList.add(replace(element.textValue(), parameters).replace('&', '§')));
             return messageList;
@@ -49,7 +48,7 @@ public class MessageManager {
 
     public List<String> getLayout(String path, Object... parameters) {
         JsonNode layout = advancedBan.getLayouts().getLayout(path);
-        if (layout != null && layout.getNodeType() == JsonNodeType.ARRAY) {
+        if (layout.isArray()) {
             List<String> messages = new ArrayList<>();
             layout.forEach(element -> messages.add(replace(element.textValue(), parameters).replace('&', '§')));
             return messages;

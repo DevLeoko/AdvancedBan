@@ -1,6 +1,5 @@
 package me.leoko.advancedban.manager;
 
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanManager;
@@ -41,19 +40,19 @@ public class UpdateManager implements AdvancedBanManager {
         boolean checkTempIpBan = false;
 
         try {
-            checkMuteReason = advancedBan.getMessages().getMessage("Check.MuteReason").getNodeType() != JsonNodeType.STRING;
+            checkMuteReason = advancedBan.getMessages().getMessage("Check.MuteReason").isMissingNode();
         } catch (Exception e) {
             //ignore
         }
 
         try {
-            checkBanReason = advancedBan.getMessages().getMessage("Check.BanReason").getNodeType() != JsonNodeType.STRING;
+            checkBanReason = advancedBan.getMessages().getMessage("Check.BanReason").isMissingNode();
         } catch (Exception e) {
             //ignore
         }
 
         try {
-            checkTempIpBan = advancedBan.getMessages().getMessage("Tempipban").getNodeType() != JsonNodeType.STRING;
+            checkTempIpBan = advancedBan.getMessages().getMessage("Tempipban").isMissingNode();
         } catch (Exception e) {
             //ignore
         }
@@ -112,7 +111,7 @@ public class UpdateManager implements AdvancedBanManager {
             List<String> lines = Files.readAllLines(configPath);
             boolean change = false;
 
-            if (lines.indexOf("EnableAllPermissionNodes") == -1) {
+            if (startsWith(lines, "EnableAllPermissionNodes:") == -1) {
                 lines.remove("  # Disable for cracked servers");
 
                 int indexOf = lines.indexOf("UUID-Fetcher:");

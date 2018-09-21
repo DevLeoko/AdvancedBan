@@ -7,7 +7,6 @@ import me.leoko.advancedban.configuration.MySQLConfiguration;
 import me.leoko.advancedban.utils.SQLQuery;
 
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -91,7 +90,6 @@ public class DatabaseManager implements AdvancedBanManager {
     }
 
     public ResultSet executeStatement(String sql, boolean result, Object... parameters) {
-        advancedBan.getLogger().info("Statement array: " + Arrays.toString(parameters));
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (int i = 0; i < parameters.length; i++) {
                 Object param = parameters[i];

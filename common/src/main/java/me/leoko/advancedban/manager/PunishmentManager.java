@@ -1,9 +1,11 @@
-package me.leoko.advancedban.punishment;
+package me.leoko.advancedban.manager;
 
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanPlayer;
-import me.leoko.advancedban.utils.InterimData;
+import me.leoko.advancedban.punishment.InterimData;
+import me.leoko.advancedban.punishment.Punishment;
+import me.leoko.advancedban.punishment.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
 
 import java.net.InetAddress;

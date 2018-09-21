@@ -4,7 +4,7 @@ import me.leoko.advancedban.punishment.PunishmentType;
 
 public class WarningCommand extends PermanentCommand {
 
-    WarningCommand() {
+    public WarningCommand() {
         super(PunishmentType.WARNING);
     }
 }

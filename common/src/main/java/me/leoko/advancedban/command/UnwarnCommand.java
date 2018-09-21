@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class UnwarnCommand extends UnpunishmentTypeCommand {
 
-    UnwarnCommand() {
+    public UnwarnCommand() {
         super(PunishmentType.WARNING);
     }
 

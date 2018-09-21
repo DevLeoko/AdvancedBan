@@ -4,7 +4,7 @@ import me.leoko.advancedban.punishment.PunishmentType;
 
 public class TempMuteCommand extends TemporaryCommand {
 
-    TempMuteCommand() {
+    public TempMuteCommand() {
         super(PunishmentType.TEMP_MUTE);
     }
 }

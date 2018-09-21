@@ -14,14 +14,14 @@
         <module>nukkit</module>
         <module>bungee</module>
         <module>bukkit</module>
+        <module>all</module>
     </modules>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <skipTests>false</skipTests>
-        <trimStackTrace>true</trimStackTrace>
+        <junit.version>5.3.1</junit.version>
         <advancedban.name>AdvancedBan</advancedban.name>
     </properties>
 
@@ -46,13 +46,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.0-RC2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.0-RC2</version>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>0.1.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

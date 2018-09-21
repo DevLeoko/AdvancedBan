@@ -31,7 +31,7 @@ public class BungeeAdvancedBan extends AdvancedBan {
     private Optional<RedisBungeeAPI> redisBungee = Optional.empty();
 
     BungeeAdvancedBan(BungeeAdvancedBanPlugin plugin) {
-        super(UUIDManager.FetcherMode.INTERNAL);
+        super(UUIDManager.FetcherMode.INTERNAL, true);
         this.plugin = plugin;
     }
 

@@ -4,7 +4,7 @@ import me.leoko.advancedban.punishment.PunishmentType;
 
 public class MuteCommand extends PermanentCommand {
 
-    MuteCommand() {
+    public MuteCommand() {
         super(PunishmentType.MUTE);
     }
 }

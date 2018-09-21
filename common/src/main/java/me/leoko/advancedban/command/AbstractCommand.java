@@ -104,7 +104,7 @@ public abstract class AbstractCommand {
             return reason.substring(1);
         } else {
             JsonNode layout = sender.getAdvancedBan().getLayouts().getLayout("Message." + args[reasonBegin].substring(1));
-            if (layout == null || layout.getNodeType() != JsonNodeType.STRING) {
+            if (layout.getNodeType() != JsonNodeType.STRING) {
                 sender.sendCustomMessage("General.LayoutNotFound", true, "NAME", args[reasonBegin].substring(1));
                 return null;
             }

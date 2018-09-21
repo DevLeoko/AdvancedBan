@@ -5,19 +5,18 @@ import me.leoko.advancedban.utils.CommandUtils;
 
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.UUID;
 
 public class HistoryCommand extends AbstractCommand {
 
-    HistoryCommand() {
+    public HistoryCommand() {
         super("history", "ab.history", "History", "hist");
     }
 
     @Override
     public boolean onCommand(AdvancedBanCommandSender sender, String[] args) {
-        if (args.length > 0) {
-            Optional<UUID> uuid = sender.getAdvancedBan().getUuidManager().getUUID(args[0]);
-            if (!uuid.isPresent()) {
+        if (args.length > 0 && args.length <= 2) {
+            Optional identifier = CommandUtils.getIdentifier(sender.getAdvancedBan(), args[0]);
+            if (!identifier.isPresent()) {
                 sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[0]);
                 return true;
             }
@@ -26,7 +25,7 @@ public class HistoryCommand extends AbstractCommand {
                 page = CommandUtils.parseInt(args[1]);
             }
             performList(sender, page.orElse(1),
-                    sender.getAdvancedBan().getPunishmentManager().getPunishments(uuid.get(), null, false),
+                    sender.getAdvancedBan().getPunishmentManager().getPunishments(identifier.get(), null, false),
                     args[0], true);
             return true;
         }

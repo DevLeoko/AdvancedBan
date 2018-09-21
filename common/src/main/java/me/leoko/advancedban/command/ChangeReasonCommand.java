@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class ChangeReasonCommand extends AbstractCommand {
 
-    ChangeReasonCommand() {
+    public ChangeReasonCommand() {
         super("change-reason", "ab.changereason", "ChangeReason", "changereason", "setreason", "modifyreason");
     }
 

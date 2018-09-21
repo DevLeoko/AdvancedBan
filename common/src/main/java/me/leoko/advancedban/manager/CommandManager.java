@@ -1,7 +1,8 @@
-package me.leoko.advancedban.command;
+package me.leoko.advancedban.manager;
 
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
+import me.leoko.advancedban.command.*;
 
 import java.util.HashMap;
 import java.util.Map;

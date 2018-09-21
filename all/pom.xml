@@ -9,45 +9,32 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>advancedban-bungee</artifactId>
-    <name>${advancedban.name}-Bungee</name>
-
-    <repositories>
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+    <artifactId>advancedban-all</artifactId>
+    <name>${advancedban.name}-All</name>
 
     <dependencies>
         <dependency>
             <groupId>me.leoko.advancedban</groupId>
-            <artifactId>advancedban-common</artifactId>
+            <artifactId>advancedban-nukkit</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>me.leoko.advancedban</groupId>
+            <artifactId>advancedban-bukkit</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.imaginarycode.minecraft</groupId>
-            <artifactId>RedisBungee</artifactId>
-            <version>0.3.6-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bungeecord</artifactId>
-            <version>1.2</version>
+            <groupId>me.leoko.advancedban</groupId>
+            <artifactId>advancedban-bungee</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${advancedban.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>

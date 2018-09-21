@@ -9,7 +9,7 @@ import java.util.OptionalInt;
 
 public class UnpunishCommand extends AbstractCommand {
 
-    UnpunishCommand() {
+    public UnpunishCommand() {
         super("unpunish", "ab.all", "UnPunish");
     }
 

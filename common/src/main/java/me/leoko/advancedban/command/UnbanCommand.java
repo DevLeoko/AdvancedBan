@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class UnbanCommand extends UnpunishmentTypeCommand {
 
-    UnbanCommand() {
+    public UnbanCommand() {
         super(PunishmentType.BAN);
     }
 

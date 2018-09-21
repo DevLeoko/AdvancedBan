@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class UnmuteCommand extends UnpunishmentTypeCommand {
 
-    UnmuteCommand() {
+    public UnmuteCommand() {
         super(PunishmentType.MUTE, "unsilence");
     }
 

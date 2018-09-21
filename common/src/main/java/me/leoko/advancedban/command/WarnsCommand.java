@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public class WarnsCommand extends AbstractCommand {
 
-    WarnsCommand() {
-        super("warnings", null, "Warns", "warns");
+    public WarnsCommand() {
+        super("warns", null, "Warns", "warnings");
     }
 
     @Override

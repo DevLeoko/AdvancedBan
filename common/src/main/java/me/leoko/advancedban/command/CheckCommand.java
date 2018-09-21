@@ -2,6 +2,7 @@ package me.leoko.advancedban.command;
 
 import me.leoko.advancedban.AdvancedBanCommandSender;
 import me.leoko.advancedban.punishment.Punishment;
+import me.leoko.advancedban.utils.CommandUtils;
 import me.leoko.advancedban.utils.GeoLocation;
 
 import java.net.InetAddress;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 public class CheckCommand extends AbstractCommand {
 
-    CheckCommand() {
+    public CheckCommand() {
         super("check", "ab.check", "Check");
     }
 
@@ -40,12 +41,17 @@ public class CheckCommand extends AbstractCommand {
         if (punishment.isPresent()) {
             identifier = punishment.get().getIdentifier();
         } else {
-            Optional<UUID> other = sender.getAdvancedBan().getUuidManager().getUUID(args[0]);
+            Optional other = CommandUtils.getIdentifier(sender.getAdvancedBan(), args[0]);
             if (!other.isPresent()) {
-                sender.sendCustomMessage("Genral.FailedFetch", true, "NAME", args[0]);
+                sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[0]);
                 return false;
             }
             identifier = other.get();
+        }
+
+        if (identifier instanceof InetAddress && !sender.hasPermission("ab.check.ip")) {
+            sendPermissionMessage(sender);
+            return true;
         }
 
         Optional<InetAddress> address = sender.getAdvancedBan().getAddress(identifier);
@@ -57,7 +63,7 @@ public class CheckCommand extends AbstractCommand {
         Optional<Punishment> ban = sender.getAdvancedBan().getPunishmentManager().getBan(identifier);
 
         sender.sendCustomMessage("Check.Header", true, "NAME", punishment.map(Punishment::getName).orElse(args[0]));
-        sender.sendCustomMessage("Check.UUID", false, "UUID", identifier);
+        sender.sendCustomMessage("Check.UUID", false, "UUID", identifier instanceof UUID ? identifier : "N/A");
         if (sender.hasPermission("ab.check.ip")) {
             sender.sendCustomMessage("Check.IP", false, "IP", address.map(InetAddress::getHostAddress).orElse("N/A"));
         }

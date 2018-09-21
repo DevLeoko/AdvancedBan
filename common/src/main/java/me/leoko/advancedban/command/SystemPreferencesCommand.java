@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class SystemPreferencesCommand extends AbstractCommand {
 
-    SystemPreferencesCommand() {
+    public SystemPreferencesCommand() {
         super("systempreferences", "ab.check", null, "sp", "systemprefs");
     }
 

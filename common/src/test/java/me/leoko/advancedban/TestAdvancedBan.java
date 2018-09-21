@@ -1,45 +1,40 @@
-import me.leoko.advancedban.AdvancedBan;
+package me.leoko.advancedban;
+
 import me.leoko.advancedban.command.AbstractCommand;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.punishment.Punishment;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Created by Leo on 07.08.2017.
  */
 public class TestAdvancedBan extends AdvancedBan {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
     private Path dataFolder;
 
-    public TestAdvancedBan() {
-        super(UUIDManager.FetcherMode.MIXED);
-        try {
-            folder.create();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        dataFolder = folder.newFolder("base").toPath();
+    public TestAdvancedBan(Path dataFolder) throws IOException {
+        super(UUIDManager.FetcherMode.MIXED, true);
+        this.dataFolder = dataFolder;
+        Files.createDirectories(dataFolder);
     }
 
     @Override
     protected void onRegisterCommand(AbstractCommand command) {
-        Assert.assertNotNull("Command was null", command);
+        assertNotNull(command, "Command was null");
         //Command executors are not being registered for testing
     }
 
     @Override
     protected void log(Level level, String msg) {
-        Assert.assertNotNull("Log level was null", level);
-        Assert.assertNotNull("Message was null", msg);
+        assertNotNull(level, "Log level was null");
+        assertNotNull(msg, "Message was null");
         System.out.println('[' + level.getName() + "] " + msg);
     }
 
@@ -50,7 +45,7 @@ public class TestAdvancedBan extends AdvancedBan {
 
     @Override
     public void executeCommand(String command) {
-        Assert.assertNotNull("Command to execute was null", command);
+        assertNotNull(command, "Command to execute was null");
         // Commands are not executed in test environment
     }
 
@@ -61,25 +56,25 @@ public class TestAdvancedBan extends AdvancedBan {
 
     @Override
     public void scheduleRepeatingAsyncTask(Runnable runnable, long delay, long period) {
-        Assert.assertNotNull("Runnable was null", runnable);
+        assertNotNull(runnable, "Runnable was null");
         // Tasks are not available in test environment
     }
 
     @Override
     public void scheduleAsyncTask(Runnable runnable, long delay) {
-        Assert.assertNotNull("Runnable was null", runnable);
+        assertNotNull(runnable, "Runnable was null");
         // Tasks are not available in test environment
     }
 
     @Override
     public void runAsyncTask(Runnable runnable) {
-        Assert.assertNotNull("Runnable was null", runnable);
+        assertNotNull(runnable, "Runnable was null");
         // Tasks are not available in test environment
     }
 
     @Override
     public void runSyncTask(Runnable runnable) {
-        Assert.assertNotNull("Runnable was null", runnable);
+        assertNotNull(runnable, "Runnable was null");
         // Tasks are not available in test environment
     }
 
@@ -90,13 +85,13 @@ public class TestAdvancedBan extends AdvancedBan {
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        Assert.assertNotNull("Punishment was null", punishment);
+        assertNotNull(punishment, "Punishment was null");
         System.out.println("Called punishment event!");
     }
 
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
-        Assert.assertNotNull("Punishment was null", punishment);
+        assertNotNull(punishment, "Punishment was null");
         System.out.println("Called punishment-revoke event!");
     }
 

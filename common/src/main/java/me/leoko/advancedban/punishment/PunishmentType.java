@@ -6,29 +6,31 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public enum PunishmentType {
-    BAN("Ban", null, false, "ab.ban.perma", "permaban", "banhammer"),
-    TEMP_BAN("Tempban", BAN, true, "ab.ban.temp", "tban"),
-    IP_BAN("Ipban", BAN, false, "ab.ipban.perma"),
-    TEMP_IP_BAN("Tempipban", BAN, true, "ab.ipban.temp", "tipban"),
-    MUTE("Mute", null, false, "ab.mute.perma", "silence"),
-    TEMP_MUTE("Tempmute", MUTE, true, "ab.mute.temp", "tmute", "tempsilence", "tsilence"),
-    WARNING("Warn", null, false, "ab.warn.perma", "caution"),
-    TEMP_WARNING("Tempwarn", WARNING, true, "ab.warn.temp", "twarn", "tempcaution", "tcaution"),
-    KICK("Kick", null, false, "ab.kick.use", "boot");
+    BAN("Ban", null, "ab.ban.perma", false, false, "permaban", "banhammer"),
+    TEMP_BAN("Tempban", BAN, "ab.ban.temp", true, false, "tban"),
+    IP_BAN("Ipban", BAN, "ab.ipban.perma", false, true),
+    TEMP_IP_BAN("Tempipban", BAN, "ab.ipban.temp", true, true, "tipban"),
+    MUTE("Mute", null, "ab.mute.perma", false, false, "silence"),
+    TEMP_MUTE("Tempmute", MUTE, "ab.mute.temp", true, false, "tmute", "tempsilence", "tsilence"),
+    WARNING("Warn", null, "ab.warn.perma", false, false, "caution"),
+    TEMP_WARNING("Tempwarn", WARNING, "ab.warn.temp", true, false, "twarn", "tempcaution", "tcaution"),
+    KICK("Kick", null, "ab.kick.use", false, false, "boot");
 
     private final String name;
     private final String command;
     private final String perms;
     private final PunishmentType basic;
     private final boolean temp;
+    private final boolean ip;
     private String[] aliases;
 
-    PunishmentType(String name, PunishmentType basic, boolean temp, String perms, String... aliases) {
+    PunishmentType(String name, PunishmentType basic, String perms, boolean temp, boolean ip, String... aliases) {
         this.name = name;
         this.command = name.toLowerCase();
         this.basic = basic;
-        this.temp = temp;
         this.perms = perms;
+        this.temp = temp;
+        this.ip = ip;
         this.aliases = aliases;
     }
 
@@ -58,6 +60,10 @@ public enum PunishmentType {
 
     public boolean isTemp() {
         return temp;
+    }
+
+    public boolean isIp() {
+        return ip;
     }
 
     @JsonValue
