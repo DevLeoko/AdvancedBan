@@ -35,7 +35,7 @@ public class UnwarnCommand extends UnpunishmentTypeCommand {
                 }
                 return true;
             } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
-                Optional<UUID> uuid = sender.getAdvancedBan().getUuidManager().getUUID(args[1]);
+                Optional<UUID> uuid = sender.getAdvancedBan().getUuidManager().getUuid(args[1]);
 
                 if (!uuid.isPresent()) {
                     sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[1]);

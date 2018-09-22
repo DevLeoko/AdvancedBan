@@ -35,7 +35,7 @@ public class WarnsCommand extends AbstractCommand {
                 sendPermissionMessage(sender);
                 return true;
             }
-            Optional<UUID> other = sender.getAdvancedBan().getUuidManager().getUUID(args[0]);
+            Optional<UUID> other = sender.getAdvancedBan().getUuidManager().getUuid(args[0]);
             if (!other.isPresent()) {
                 sender.sendCustomMessage("General.FailedFetch", true, "NAME", args[0]);
                 return true;

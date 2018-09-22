@@ -34,7 +34,7 @@ public class UUIDManager {
         }
     }
 
-    public Optional<UUID> getInitialUUID(String name) {
+    public Optional<UUID> getInitialUuid(String name) {
         name = name.toLowerCase();
         Optional<UUID> uuid = Optional.empty();
 
@@ -71,15 +71,15 @@ public class UUIDManager {
         return uuid;
     }
 
-    public Optional<UUID> getUUID(String name) {
+    public Optional<UUID> getUuid(String name) {
         if (activeUUIDs.containsKey(name)) {
             return Optional.ofNullable(activeUUIDs.get(name));
         }
-        return getInitialUUID(name);
+        return getInitialUuid(name);
     }
 
     @SuppressWarnings("resource")
-    public Optional<String> getNameFromUUID(UUID uuid, boolean forceInitial) {
+    public Optional<String> getNameFromUuid(UUID uuid, boolean forceInitial) {
         if (mode == FetcherMode.DISABLED) {
             return Optional.empty();
         }

@@ -20,7 +20,7 @@ public class SystemPreferencesCommand extends AbstractCommand {
         if (args.length == 1) {
             String name = args[0];
             sender.sendMessage("§c" + args[0] + "'s UUID (Internal) §8» §7" + sender.getAdvancedBan().getPlayer(name).map(p -> p.getUniqueId().toString()).orElse("N/A"));
-            sender.sendMessage("§c" + args[0] + "'s UUID (Fetched) §8» §7" + sender.getAdvancedBan().getUuidManager().getUUID(name).map(UUID::toString).orElse("N/A"));
+            sender.sendMessage("§c" + args[0] + "'s UUID (Fetched) §8» §7" + sender.getAdvancedBan().getUuidManager().getUuid(name).map(UUID::toString).orElse("N/A"));
         }
         return true;
     }

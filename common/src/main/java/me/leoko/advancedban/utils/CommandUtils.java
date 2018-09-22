@@ -30,7 +30,7 @@ public class CommandUtils {
         type = type.getBasic();
         Object identifier;
         if (type != PunishmentType.IP_BAN && type != PunishmentType.TEMP_IP_BAN) {
-            Optional<UUID> uuid = sender.getAdvancedBan().getUuidManager().getUUID(stringIdentifier);
+            Optional<UUID> uuid = sender.getAdvancedBan().getUuidManager().getUuid(stringIdentifier);
             if (!uuid.isPresent()) {
                 sender.sendCustomMessage("General.FailedFetch", true, "NAME", stringIdentifier);
                 return true;
@@ -65,7 +65,7 @@ public class CommandUtils {
                 return Optional.empty();
             }
         } else {
-            Optional identifier = advancedBan.getUuidManager().getUUID(arg);
+            Optional identifier = advancedBan.getUuidManager().getUuid(arg);
             if (!identifier.isPresent()) {
                 try {
                     identifier = Optional.of(UUID.fromString(arg));

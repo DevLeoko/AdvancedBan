@@ -55,7 +55,7 @@ public abstract class PunishmentTypeCommand extends AbstractCommand {
         if (getType().isIp()) {
             return CommandUtils.getIdentifier(sender.getAdvancedBan(), arg);
         } else {
-            return sender.getAdvancedBan().getUuidManager().getUUID(arg);
+            return sender.getAdvancedBan().getUuidManager().getUuid(arg);
         }
     }
 }
