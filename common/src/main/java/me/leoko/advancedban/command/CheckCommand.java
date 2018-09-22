@@ -1,5 +1,6 @@
 package me.leoko.advancedban.command;
 
+import me.leoko.advancedban.AdvancedBan;
 import me.leoko.advancedban.AdvancedBanCommandSender;
 import me.leoko.advancedban.punishment.Punishment;
 import me.leoko.advancedban.utils.CommandUtils;
@@ -16,8 +17,8 @@ public class CheckCommand extends AbstractCommand {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static String getPunishmentMapping(Optional<Punishment> punishment) {
-        return punishment.map(pun -> pun.getType().isTemp() ? "\u00A7e" + pun.getDuration(false) : "\u00A7cPermanent")
+    private static String getPunishmentMapping(AdvancedBan advancedBan, Optional<Punishment> punishment) {
+        return punishment.map(pun -> pun.getType().isTemp() ? "\u00A7e" + advancedBan.getPunishmentManager().getDuration(pun, false) : "\u00A7cPermanent")
                 .orElse("\u00A72None");
     }
 
@@ -60,7 +61,7 @@ public class CheckCommand extends AbstractCommand {
             location = GeoLocation.getLocation(address.get());
         }
         Optional<Punishment> mute = sender.getAdvancedBan().getPunishmentManager().getMute(identifier);
-        Optional<Punishment> ban = sender.getAdvancedBan().getPunishmentManager().getBan(identifier);
+        Optional<Punishment> ban = sender.getAdvancedBan().getPunishmentManager().getInterimBan(identifier);
 
         sender.sendCustomMessage("Check.Header", true, "NAME", punishment.map(Punishment::getName).orElse(args[0]));
         sender.sendCustomMessage("Check.UUID", false, "UUID", identifier instanceof UUID ? identifier : "N/A");
@@ -68,9 +69,9 @@ public class CheckCommand extends AbstractCommand {
             sender.sendCustomMessage("Check.IP", false, "IP", address.map(InetAddress::getHostAddress).orElse("N/A"));
         }
         sender.sendCustomMessage("Check.Geo", false, "LOCATION", location.orElse("N/A"));
-        sender.sendCustomMessage("Check.Mute", false, "DURATION", getPunishmentMapping(mute));
+        sender.sendCustomMessage("Check.Mute", false, "DURATION", getPunishmentMapping(sender.getAdvancedBan(), mute));
         mute.ifPresent(presentMute -> sender.sendCustomMessage("Check.MuteReason", false, "REASON", presentMute.getReason()));
-        sender.sendCustomMessage("Check.Ban", false, "DURATION", getPunishmentMapping(mute));
+        sender.sendCustomMessage("Check.Ban", false, "DURATION", getPunishmentMapping(sender.getAdvancedBan(), ban));
         ban.ifPresent(presentBan -> sender.sendCustomMessage("Check.BanReason", false, "REASON", presentBan.getReason()));
         sender.sendCustomMessage("Check.Warn", false, "COUNT", sender.getAdvancedBan().getPunishmentManager().getCurrentWarns(identifier));
         return true;

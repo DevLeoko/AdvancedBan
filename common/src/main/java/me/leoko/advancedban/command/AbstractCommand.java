@@ -57,8 +57,8 @@ public abstract class AbstractCommand {
             return;
         }
         for (Punishment pnt : punishments) {
-            if (pnt.isExpired()) {
-                pnt.delete();
+            if (advancedBan.getPunishmentManager().isExpired(pnt)) {
+                advancedBan.getPunishmentManager().deletePunishment(pnt);
             }
         }
         if (punishments.size() / 5.0 + 1 > cPage) {
@@ -73,11 +73,11 @@ public abstract class AbstractCommand {
                 for (String str : advancedBan.getMessageManager().getMessageList(getConfigSection() + ".Entry",
                         "PREFIX", prefix,
                         "NAME", pnt.getName(),
-                        "DURATION", pnt.getDuration(history),
+                        "DURATION", advancedBan.getPunishmentManager().getDuration(pnt, history),
                         "OPERATOR", pnt.getOperator(),
-                        "REASON", pnt.getReason(),
+                        "REASON", advancedBan.getMessageManager().getReasonOrDefault(pnt.getReason()),
                         "TYPE", pnt.getType().getConfSection(),
-                        "ID", pnt.getId() + "",
+                        "ID", pnt.getId().orElse(-1) + "",
                         "DATE", format.format(new Date(pnt.getStart())))) {
                     sender.sendMessage(str);
 

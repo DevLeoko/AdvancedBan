@@ -45,10 +45,10 @@ public abstract class PermanentCommand extends PunishmentTypeCommand {
                 return true;
             }
 
-            Punishment punishment = new Punishment(advancedBan, identifier.get(), args[0], sender.getName(), null,
+            Punishment punishment = new Punishment(identifier.get(), args[0], sender.getName(), null,
                     advancedBan.getTimeManager().getTime(), -1, getType());
             punishment.setReason(reason);
-            punishment.create(silent);
+            advancedBan.getPunishmentManager().addPunishment(punishment, silent);
             return true;
         }
         return false;

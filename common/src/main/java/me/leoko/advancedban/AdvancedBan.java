@@ -13,6 +13,7 @@ import me.leoko.advancedban.configuration.MySQLConfiguration;
 import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.punishment.InterimData;
 import me.leoko.advancedban.punishment.Punishment;
+import me.leoko.advancedban.punishment.PunishmentManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,15 +140,15 @@ public abstract class AdvancedBan {
     public Optional<String> onPreLogin(String name, UUID uuid, InetAddress address) {
         InterimData interimData = punishmentManager.load(uuid, name, address);
 
-        Optional<Punishment> punishment = interimData.getBan();
+        Optional<Punishment> punishment = punishmentManager.getInterimBan(interimData);
 
         if (!punishment.isPresent()) {
-            interimData.accept(punishmentManager);
+            punishmentManager.acceptData(interimData);
             addresses.put(name, address);
             addresses.put(uuid, address);
         }
 
-        return punishment.map(Punishment::getLayoutBSN);
+        return punishment.map(pun -> AdvancedBan.this.getPunishmentManager().getLayoutBSN(pun));
     }
 
     public void onLogin(AdvancedBanPlayer player) {
@@ -174,7 +175,8 @@ public abstract class AdvancedBan {
     }
 
     public boolean onChat(AdvancedBanPlayer player, String message) {
-        Optional<List<String>> layout = punishmentManager.getMute(player.getUniqueId()).map(Punishment::getLayout);
+        Optional<List<String>> layout = punishmentManager.getMute(player.getUniqueId())
+                .map(pun -> AdvancedBan.this.getPunishmentManager().getLayout(pun));
         if (layout.isPresent()) {
             layout.get().forEach(player::sendMessage);
             return true;
@@ -183,7 +185,8 @@ public abstract class AdvancedBan {
     }
 
     public boolean onCommand(AdvancedBanPlayer player, String command) {
-        Optional<List<String>> layout = punishmentManager.getMute(player.getUniqueId()).map(Punishment::getLayout);
+        Optional<List<String>> layout = punishmentManager.getMute(player.getUniqueId())
+                .map(pun -> AdvancedBan.this.getPunishmentManager().getLayout(pun));
         if (layout.isPresent() && isMutedCommand(command)) {
             layout.get().forEach(player::sendMessage);
             return true;

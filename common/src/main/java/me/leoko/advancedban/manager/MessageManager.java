@@ -8,6 +8,7 @@ import me.leoko.advancedban.AdvancedBanCommandSender;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 13.07.2016.
@@ -65,5 +66,14 @@ public class MessageManager {
         }
         builder.append(getMessage(path, parameters));
         sender.sendMessage(builder.toString());
+    }
+
+    public String getPrefix() {
+        return advancedBan.getConfiguration().isPrefixDisabled() ? "" : advancedBan.getMessageManager().getMessage("General.Prefix");
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public String getReasonOrDefault(Optional<String> reason) {
+        return reason.orElse(advancedBan.getConfiguration().getDefaultReason());
     }
 }

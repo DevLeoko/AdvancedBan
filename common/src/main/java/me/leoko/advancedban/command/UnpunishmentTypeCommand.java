@@ -26,7 +26,7 @@ public abstract class UnpunishmentTypeCommand extends PunishmentTypeCommand {
 
             Optional<Punishment> punishment = getPunishment(sender.getAdvancedBan(), identifier.get());
             if (punishment.isPresent()) {
-                punishment.get().delete(sender.getName(), true, true);
+                sender.getAdvancedBan().getPunishmentManager().deletePunishment(punishment.get(), true);
                 sender.sendCustomMessage(getConfigSection() + ".Done", true, "NAME", args[0]);
             } else {
                 sender.sendCustomMessage(getConfigSection() + ".NotPunished", true, "NAME", args[0]);

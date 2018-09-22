@@ -23,7 +23,7 @@ public class UnpunishCommand extends AbstractCommand {
             Optional<Punishment> punishment = sender.getAdvancedBan().getPunishmentManager().getPunishment(id.getAsInt());
 
             if (punishment.isPresent()) {
-                punishment.get().delete();
+                sender.getAdvancedBan().getPunishmentManager().deletePunishment(punishment.get());
                 sender.sendCustomMessage("UnPunish.Done", true, "ID", args[0]);
             } else {
                 sender.sendCustomMessage("UnPunish.NotFound", true, "ID", args[0]);

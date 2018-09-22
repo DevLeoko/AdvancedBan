@@ -86,10 +86,10 @@ public abstract class TemporaryCommand extends PunishmentTypeCommand {
                 return true;
             }
 
-            Punishment punishment = new Punishment(advancedBan, identifier, args[0], sender.getName(), null,
+            Punishment punishment = new Punishment(identifier, args[0], sender.getName(), null,
                     start, end, getType());
             punishment.setReason(reason);
-            punishment.create(silent);
+            advancedBan.getPunishmentManager().addPunishment(punishment, silent);
             return true;
         }
         return false;

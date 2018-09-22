@@ -1,6 +1,7 @@
 package me.leoko.advancedban;
 
 import me.leoko.advancedban.command.AbstractCommand;
+import me.leoko.advancedban.punishment.InterimData;
 import me.leoko.advancedban.punishment.Punishment;
 import me.leoko.advancedban.punishment.PunishmentType;
 import org.junit.jupiter.api.AfterAll;
@@ -37,31 +38,32 @@ public class PunishmentTest {
         AbstractCommand banCommand = advancedBan.getCommandManager().getCommand("ban").orElseThrow(() -> new AssertionError("Ban command was not found"));
         banCommand.execute(new TestCommandSender("UnitTest", advancedBan), new String[]{"Leoko", "Doing", "some", "unit-testing"});
         assertTrue(advancedBan.getPunishmentManager().isBanned("leoko"), "Punishment from above has failed");
-        assertEquals("Reason should match",
-                advancedBan.getPunishmentManager().getBan("leoko").orElseThrow(() -> new AssertionError("Ban does not exist"))
-                        .getReason(), "Doing some unit-testing");
+        assertEquals(advancedBan.getPunishmentManager().getInterimBan("leoko").orElseThrow(() -> new AssertionError("Ban does not exist"))
+                .getReason().orElseThrow(() -> new AssertionError("Reason does not exist")), "Doing some unit-testing", "Reason should match");
     }
 
     @Test
     public void shouldKeepPunishmentAfterRestart(){
-        Punishment punishment = new Punishment(advancedBan, "leoko", "leoko", "Testing", null, advancedBan.getTimeManager().getTime(), -1, PunishmentType.MUTE);
+        Punishment punishment = new Punishment("leoko", "leoko", "Testing", null, advancedBan.getTimeManager().getTime(), -1, PunishmentType.MUTE);
         punishment.setReason("Persistence test");
-        punishment.create();
-        int id = punishment.getId();
+        advancedBan.getPunishmentManager().addPunishment(punishment);
+        int id = punishment.getId().getAsInt();
         advancedBan.getDatabaseManager().onEnable();
         advancedBan.getDatabaseManager().onDisable();
         Optional<Punishment> punishment1 = advancedBan.getPunishmentManager().getPunishment(id);
         assertTrue(punishment1.isPresent(), "Punishment should exist");
-        assertEquals("Reason should still match", punishment1.orElseThrow(IllegalStateException::new).getReason(), "Persistence test");
+        assertEquals(punishment1.orElseThrow(IllegalStateException::new).getReason()
+                .orElseThrow(() -> new AssertionError("Reason does not exist")), "Persistence test", "Reason should still match");
     }
 
     @Test
     public void shouldWorkWithCachedAndNotCachedPunishments() throws UnknownHostException {
-        Punishment punishment = new Punishment(advancedBan, "cache", "Cache Testing", "Cache Testing", null, advancedBan.getTimeManager().getTime(), -1, PunishmentType.MUTE);
-        punishment.create();
+        Punishment punishment = new Punishment("cache", "Cache Testing", "Cache Testing", null, advancedBan.getTimeManager().getTime(), -1, PunishmentType.MUTE);
+        advancedBan.getPunishmentManager().addPunishment(punishment);
         assertFalse(advancedBan.getPunishmentManager().getLoadedPunishments(false).contains(punishment), "Punishment should not be cached if user is not online");
         assertTrue(advancedBan.getPunishmentManager().isBanned("cache"), "Punishment should be active even if not in cache");
-        advancedBan.getPunishmentManager().load(UUID.randomUUID(), "cache", InetAddress.getLocalHost()).accept(advancedBan.getPunishmentManager());
+        InterimData data = advancedBan.getPunishmentManager().load(UUID.randomUUID(), "cache", InetAddress.getLocalHost());
+        advancedBan.getPunishmentManager().acceptData(data);
         assertTrue(advancedBan.getPunishmentManager().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getIdentifier().equals("cache")), "Punishment should be cached after user is loaded");
         assertTrue(advancedBan.getPunishmentManager().isBanned("cache"), "Punishment should be still active when in cache");
     }

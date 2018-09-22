@@ -54,7 +54,6 @@ public class InternalListener implements Listener {
                 try {
                     PunishInfo info = AdvancedBan.JSON_MAPPER.readValue(message, PunishInfo.class);
                     Punishment punishment = new Punishment(
-                            advancedBan,
                             info.getUuid(),
                             info.getName(),
                             info.getOperator(),
@@ -64,7 +63,7 @@ public class InternalListener implements Listener {
                             info.getType()
                     );
                     punishment.setReason(info.getReason());
-                    punishment.create(info.isSilent());
+                    advancedBan.getPunishmentManager().addPunishment(punishment, info.isSilent());
                     advancedBan.getLogger().info("A punishment was created using PluginMessaging listener.");
                     advancedBan.getLogger().debug("Punishment created: " + punishment.toString());
                 } catch (IOException | NullPointerException ex) {

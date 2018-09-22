@@ -16,7 +16,7 @@ public class BukkitAdvancedBanPlugin extends JavaPlugin {
         advancedBan.onEnable();
         getServer().getPluginManager().registerEvents(new ConnectionListener(advancedBan), this);
         getServer().getPluginManager().registerEvents(new MessageListener(advancedBan), this);
-        getServer().getPluginManager().registerEvents(new InternalListener(), this);
+        getServer().getPluginManager().registerEvents(new InternalListener(advancedBan), this);
 
         for (Player player : getServer().getOnlinePlayers()) {
             advancedBan.onPreLogin(player.getName(), player.getUniqueId(), player.getAddress().getAddress()).ifPresent(player::kickPlayer);

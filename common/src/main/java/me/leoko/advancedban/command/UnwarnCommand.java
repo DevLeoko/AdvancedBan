@@ -28,7 +28,7 @@ public class UnwarnCommand extends UnpunishmentTypeCommand {
 
                 Optional<Punishment> punishment = sender.getAdvancedBan().getPunishmentManager().getWarn(id.getAsInt());
                 if (punishment.isPresent()) {
-                    punishment.get().delete();
+                    sender.getAdvancedBan().getPunishmentManager().deletePunishment(punishment.get());
                     sender.sendCustomMessage(getConfigSection() + ".Done", true, "ID", args[0]);
                 } else {
                     sender.sendCustomMessage(getConfigSection() + ".NotFound", true, "ID", args[0]);
@@ -45,7 +45,7 @@ public class UnwarnCommand extends UnpunishmentTypeCommand {
                 List<Punishment> punishments = sender.getAdvancedBan().getPunishmentManager().getWarns(uuid.get());
                 if (!punishments.isEmpty()) {
                     for (Punishment punishment : punishments) {
-                        punishment.delete(sender.getName(), true, true);
+                        sender.getAdvancedBan().getPunishmentManager().deletePunishment(punishment, true);
                     }
                     sender.sendCustomMessage(getConfigSection() + ".Clear.Done", true, "COUNT", punishments.size());
                 } else {

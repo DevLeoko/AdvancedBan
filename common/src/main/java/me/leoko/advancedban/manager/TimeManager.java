@@ -3,6 +3,8 @@ package me.leoko.advancedban.manager;
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,5 +40,10 @@ public class TimeManager {
             default:
                 return TimeUnit.SECONDS.toMillis(i);
         }
+    }
+
+    public String getDate(long date) {
+        SimpleDateFormat format = new SimpleDateFormat(advancedBan.getConfiguration().getDateFormat());
+        return format.format(new Date(date));
     }
 }

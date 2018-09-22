@@ -6,7 +6,7 @@ import me.leoko.advancedban.utils.SQLQuery;
 public class BanlistCommand extends AbstractCommand {
 
     public BanlistCommand() {
-        super("banlist", "ab.banlist", "Banlist");
+        super("banlist", "ab.banlist", "Banlist", "bans");
     }
 
     @Override

@@ -14,6 +14,6 @@ public class UnbanCommand extends UnpunishmentTypeCommand {
 
     @Override
     public Optional<Punishment> getPunishment(AdvancedBan advancedBan, Object identifier) {
-        return advancedBan.getPunishmentManager().getBan(identifier);
+        return advancedBan.getPunishmentManager().getInterimBan(identifier);
     }
 }
