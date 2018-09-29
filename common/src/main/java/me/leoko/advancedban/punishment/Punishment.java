@@ -5,9 +5,11 @@ import lombok.Data;
 import lombok.Setter;
 
 import javax.annotation.Nonnull;
+import java.net.InetAddress;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.UUID;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -27,6 +29,9 @@ public class Punishment {
     private int id = -1;
 
     public Punishment(@Nonnull Object identifier, String name, String operator, String calculation, long start, long end, @Nonnull PunishmentType type) {
+        if (!(identifier instanceof UUID || identifier instanceof InetAddress)) {
+            throw new IllegalArgumentException("identifier must be UUID or InetAddress");
+        }
         this.identifier = Objects.requireNonNull(identifier);
         this.name = name;
         this.operator = operator;
