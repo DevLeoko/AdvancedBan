@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -17,9 +18,9 @@ import java.util.function.Predicate;
  */
 @RequiredArgsConstructor
 public class PunishmentManager {
-    private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
-    private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
-    private final Set<Object> cached = Collections.synchronizedSet(new HashSet<>());
+    private final Set<Punishment> punishments = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Punishment> history = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Object> cached = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final AdvancedBan advancedBan;
 
     public void onEnable() {
