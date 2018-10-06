@@ -42,7 +42,7 @@ public class GeoLocation {
             }
             return Optional.ofNullable(key.textValue());
         } catch (Exception e) {
-            throw new RuntimeException("Unable to get geo location info", e);
+            throw new IllegalStateException("Unable to get geo location info", e);
         }
     }
 }

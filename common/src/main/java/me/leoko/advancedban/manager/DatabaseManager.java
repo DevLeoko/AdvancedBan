@@ -2,7 +2,6 @@ package me.leoko.advancedban.manager;
 
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
-import me.leoko.advancedban.AdvancedBanManager;
 import me.leoko.advancedban.configuration.MySQLConfiguration;
 import me.leoko.advancedban.utils.SQLQuery;
 
@@ -10,7 +9,7 @@ import java.sql.*;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class DatabaseManager implements AdvancedBanManager {
+public class DatabaseManager {
     private final AdvancedBan advancedBan;
     private MySQLConfiguration.MySQL configuration;
     private Connection connection;

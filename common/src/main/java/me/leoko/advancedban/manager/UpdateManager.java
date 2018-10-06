@@ -2,7 +2,6 @@ package me.leoko.advancedban.manager;
 
 import lombok.RequiredArgsConstructor;
 import me.leoko.advancedban.AdvancedBan;
-import me.leoko.advancedban.AdvancedBanManager;
 import me.leoko.advancedban.utils.SQLQuery;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.util.List;
  * Created by Leo on 07.08.2017.
  */
 @RequiredArgsConstructor
-public class UpdateManager implements AdvancedBanManager {
+public class UpdateManager {
     private final AdvancedBan advancedBan;
 
     private static int startsWith(List<String> lines, String startsWith) {
@@ -28,7 +27,6 @@ public class UpdateManager implements AdvancedBanManager {
         return -1;
     }
 
-    @Override
     public void onEnable() {
         if (advancedBan.isUnitTesting()) return;
 
@@ -164,9 +162,5 @@ public class UpdateManager implements AdvancedBanManager {
             advancedBan.getLogger().warn("Unable to update config.yml. Check logs for more info");
             advancedBan.getLogger().logException(e);
         }
-    }
-
-    @Override
-    public void onDisable() {
     }
 }

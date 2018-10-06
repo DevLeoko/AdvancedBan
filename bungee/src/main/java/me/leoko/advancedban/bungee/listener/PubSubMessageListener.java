@@ -61,6 +61,8 @@ public class PubSubMessageListener implements Listener {
                             player.sendMessage(TextComponent.fromLegacyText(readString(buf)));
                         }
                         break;
+                    default:
+                        advancedBan.getLogger().warn("Unknown pubsub message received!");
                 }
             } finally {
                 if (buf != null) {

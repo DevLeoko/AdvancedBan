@@ -74,7 +74,7 @@ public abstract class AdvancedBan {
         try {
             loadFiles();
         } catch (IOException e) {
-            throw new RuntimeException("Unable to load configuration files", e);
+            throw new IllegalStateException("Unable to load configuration files", e);
         }
         logger.onEnable();
         databaseManager.onEnable();
@@ -85,7 +85,7 @@ public abstract class AdvancedBan {
     }
 
     public final void onDisable() {
-
+        databaseManager.onDisable();
     }
 
     public final void loadFiles() throws IOException {
