@@ -33,9 +33,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.12-R0.1-SNAPSHOT</version>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.13.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -50,6 +50,15 @@
                 <version>2.4</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <relocations combine.children="append">
+                        <relocation>
+                            <pattern>com.fasterxml</pattern>
+                            <shadedPattern>com.ab.fasterxml</shadedPattern>
+                            <includes>
+                                <include>com.fasterxml.**</include>
+                            </includes>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>

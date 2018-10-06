@@ -56,6 +56,15 @@
                 <version>2.4</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <relocations combine.children="append">
+                        <relocation>
+                            <pattern>com.fasterxml</pattern>
+                            <shadedPattern>com.ab.fasterxml</shadedPattern>
+                            <includes>
+                                <include>com.fasterxml.**</include>
+                            </includes>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>
