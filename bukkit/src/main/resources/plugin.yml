@@ -34,7 +34,7 @@ commands:
     description: See your or a user''s warns
   check:
     description: Get all information about a user
-  systemPrefs:
+  systempreferences:
     description: Displays System-Preferences for setting up the plugin
   unwarn:
     description: Deletes a warn
