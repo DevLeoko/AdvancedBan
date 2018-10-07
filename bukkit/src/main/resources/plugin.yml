@@ -2,6 +2,7 @@ name: ${advancedban.name}
 version: ${project.version}
 main: ${project.groupId}.bukkit.BukkitAdvancedBanPlugin
 author: Leoko
+api-version: 1.13
 
 commands:
   AdvancedBan:
