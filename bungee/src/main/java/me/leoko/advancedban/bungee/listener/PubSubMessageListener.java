@@ -63,6 +63,7 @@ public class PubSubMessageListener implements Listener {
                         break;
                     default:
                         advancedBan.getLogger().warn("Unknown pubsub message received!");
+                        break;
                 }
             } finally {
                 if (buf != null) {
