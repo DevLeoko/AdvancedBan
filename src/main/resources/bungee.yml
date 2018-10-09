@@ -1,5 +1,0 @@
-name: ${project.artifactId}
-version: ${project.version}
-main: ${project.groupId}.bungee.BungeeMain
-author: Leoko
-softDepends: [RedisBungee]

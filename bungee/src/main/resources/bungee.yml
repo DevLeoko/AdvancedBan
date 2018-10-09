@@ -1,0 +1,5 @@
+name: ${advancedban.name}
+version: ${project.version}
+main: ${project.groupId}.bungee.BungeeAdvancedBanPlugin
+author: Leoko
+softDepends: [RedisBungee]

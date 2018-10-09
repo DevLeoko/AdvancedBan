@@ -1,0 +1,6 @@
+MySQL:
+  IP: "localhost"
+  DB-Name: "YourDatabase"
+  Username: "root"
+  Password: "pw123"
+  Port: 3306

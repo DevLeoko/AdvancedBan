@@ -1,0 +1,5 @@
+name: ${advancedban.name}
+version: ${project.version}
+api: ["1.0.7"]
+main: ${project.groupId}.nukkit.NukkitAdvancedBanPlugin
+author: Leoko

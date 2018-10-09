@@ -24,47 +24,62 @@ You can use this API in Bukkit/Spigot-Plugins but also in Bungee-Plugins.
 The API-Methods can be accessed trough PunishmentManager.get()
 Here are the currently available methods:
 
-``` Java
-//To get a PlayerUUID use:
-UUIDManager.get().getUUID("NAME");
+```java
 
-PunishmentManager.get().getPunishments(checkExpired);
+// Get AdvancedBan
+AdvancedBan advancedBan = AdvancedBan.get();
+
+
+//To get a PlayerUUID use:
+advancedBan.getUuidManager().getUuid("NAME");
+
+advancedBan.getPunishmentManager().getPunishments(checkExpired);
 // Returns a list of active punishments
 // checkExpired - If it should check for expired punishments & remove them | should be on true
 
-PunishmentManager.get().getPunishments(uuid, type, current);
+advancedBan.getPunishmentManager().getPunishments(uuid, type, current);
 // Returns a list of Punishments
 // uuid - Players uuid | null = all players
 // type - Type of the punishments PunishmentType-Enum | null = all types
 // current - If only currently active punishments should be displayed | true = currently active | false = all
 // Example:
-PunishmentManager.get().getPunishments(UUIDManager.get().getUUID("Leoko"), PunishmentType.WARNING, true);
+advancedBan.getPunishmentManager().getPunishments(UUIDManager.get().getUUID("Leoko"), PunishmentType.WARNING, true);
 // Would return all active Warnings for the player Leoko
 
-PunishmentManager.get().getBan(uuid);
+advancedBan.getPunishmentManager().getBan(uuid);
 // Returns a Punishment of the type Ban, IPBan or Tempban | returns null if player is not banned
 
-PunishmentManager.get().getMute(uuid);
+advancedBan.getPunishmentManager().getMute(uuid);
 // Returns a Punishment of the type Mute or Tempmute | returns null if player is not muted
 
-PunishmentManager.get().getMute(id);
+advancedBan.getPunishmentManager().getMute(id);
 // Returns a Punishment of the type Warn or Tempwarn | returns null if there is no warn with that id
 
-PunishmentManager.get().isBanned/isMuted(uuid);
+advancedBan.getPunishmentManager().isBanned/isMuted(uuid);
 // Returns whether a player is banned or muted
 
-PunishmentManager.get().getCurrentWarns(uuid);
+advancedBan.getPunishmentManager().getCurrentWarns(uuid);
 // Returns the count of a players current warnings
 
-//Create a new Punishment:
-new Punishment(name, uuid, reason, operator, type, start, end, calculation, id).create();
+// Create Punishment
+Punishment punishment = new Punishment(idenifier, name, operator, calculation, start, end, type);
+// identifier - The UUID or IP to be punished
 // name - The users name
-// uuid - The users uuid
-// reason - The punishment reason | Can be null or a layout like "#LayoutName" or a basic reason "Hacking in FFA"
 // operator - The one who banned | You can just use "CONSOLE"
-// type - The Type of the Punishment from the PunishmentType-Enum
+// calculation - TimeLayout | Can just be set to null
 // start - The current time | use TimeManager.getTime()
 // end - The end of the punishment | -1 for perma or TimeManager.getTime() + millisecs for temp
-// calculation - TimeLayout | Can just be set to null
-// id - has to be set to -1
+// type - The Type of the Punishment from the PunishmentType-Enum
+
+// Set reason
+punishment.setReason(reason);
+// reason - The punishment reason | Can be null or a layout like "#LayoutName" or a basic reason "Hacking in FFA"
+
+// Add Punishment
+advancedBan.getPunishmentManager().addPunishment(punishment);
+
+// Change reason and update
+punishment.setReason("New reason");
+
+advancedBan.getPunishmentManager().updatePunishment(punishment);
 ```
