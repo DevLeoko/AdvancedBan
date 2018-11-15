@@ -35,4 +35,4 @@ jobs:
           path: target/surefire-reports
       
       - store_artifacts:
-          path: target/Test.jar
+          path: target/
