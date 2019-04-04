@@ -1,7 +1,7 @@
 package me.leoko.advancedban.bukkit.listener;
 
-import me.leoko.advancedban.bukkit.BukkitMain;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.bukkit.BukkitMain;
 import me.leoko.advancedban.manager.PunishmentManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

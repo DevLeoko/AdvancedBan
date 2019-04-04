@@ -1,7 +1,8 @@
 package me.leoko.advancedban.utils;
 
-import java.util.Set;
 import me.leoko.advancedban.manager.PunishmentManager;
+
+import java.util.Set;
 
 /**
  * Created by Leo on 04.08.2017.
@@ -31,8 +32,18 @@ public class InterimData {
     public void accept() {
         PunishmentManager.get().getLoadedPunishments(false).addAll(punishments);
         PunishmentManager.get().getLoadedHistory().addAll(history);
-        PunishmentManager.get().addCached(name);
-        PunishmentManager.get().addCached(ip);
-        PunishmentManager.get().addCached(uuid);
+        PunishmentManager.get().setCached(this);
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getIp() {
+        return ip;
     }
 }

@@ -5,15 +5,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -32,6 +23,16 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.

@@ -13,16 +13,28 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+/**
+ * The UUID Manager used to resolve and cache the UUIDs.
+ */
 public class UUIDManager {
     private static UUIDManager instance = null;
     private FetcherMode mode;
     private final Map<String, String> activeUUIDs = new HashMap<>();
     private final MethodInterface mi = Universal.get().getMethods();
 
+    /**
+     * Get the uuid manager.
+     *
+     * @return the uuid manager instance
+     */
     public static UUIDManager get() {
         return instance == null ? instance = new UUIDManager() : instance;
     }
 
+    /**
+     * Initially setup the uuid manager by determening which {@link FetcherMode} should be used
+     * based on the configured preference and the servers capabilities.
+     */
     public void setup(){
         if(mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Dynamic", true)){
             if(!mi.isOnlineMode()) {
@@ -45,6 +57,13 @@ public class UUIDManager {
         }
     }
 
+    /**
+     * Initially request the uuid bypassing the cache.<br>
+     * If request succeeds the uuid will be automatically entered into the cache.
+     *
+     * @param name the name
+     * @return the uuid
+     */
     public String getInitialUUID(String name) {
         name = name.toLowerCase();
         if(mode == FetcherMode.DISABLED)
@@ -83,6 +102,12 @@ public class UUIDManager {
         return uuid;
     }
 
+    /**
+     * Get the uuid to a name.
+     *
+     * @param name the name
+     * @return the uuid
+     */
     public String getUUID(String name) {
         if (activeUUIDs.containsKey(name)) {
             return activeUUIDs.get(name);
@@ -90,6 +115,13 @@ public class UUIDManager {
         return getInitialUUID(name);
     }
 
+    /**
+     * Get name from an uuid.
+     *
+     * @param uuid         the uuid
+     * @param forceInitial whether to bypass the cache
+     * @return the name from uuid
+     */
     @SuppressWarnings("resource")
     public String getNameFromUUID(String uuid, boolean forceInitial) {
         if (mode == FetcherMode.DISABLED)
@@ -129,19 +161,48 @@ public class UUIDManager {
             System.out.println("!! Could not find key '" + key + "' in the servers response");
             System.out.println("!! Response: " + request.getResponseMessage());
         } else {
-            if (activeUUIDs.containsKey(name)) {
-                activeUUIDs.remove(name);
-            }
             activeUUIDs.put(name, uuid);
         }
         return uuid;
     }
 
+    /**
+     * Get the {@link FetcherMode} which is used.
+     *
+     * @return the mode
+     */
     public FetcherMode getMode() {
         return mode;
     }
 
+    /**
+     * The fetcher-mode describes how the {@link UUIDManager} resolves UUIDs.
+     */
     public enum FetcherMode{
-        DISABLED, INTERN, MIXED, RESTFUL;
+        /**
+         * No UUID Fetcher is used. The Username will be treated as an UUID.<br>
+         * <b>Recommended for:</b> Servers running in offline mode (cracked).
+         */
+        DISABLED,
+
+        /**
+         * Uses the integrated uuid fetcher from spigot/bungeecord to resolved UUIDs.<br>
+         * <b>Recommended for:</b> None (should not be used as a default setting /
+         * maybe useful to avoid exceeding API rate limits.)
+         */
+        INTERN,
+
+        /**
+         * Tries to resolve the UUID using the {@link #INTERN} fetcher and uses the
+         * {@link #RESTFUL} fetcher as a fallback.<br>
+         * <b>Recommended for:</b> Spigot &amp; Bungeecord Servers running in online mode.
+         */
+        MIXED,
+
+        /**
+         * Resolves the UUID using the REST-Services configured in the config.yml.
+         * <b>Recommended for:</b> Servers in offline mode which still try to keep track of name changes.
+         */
+        RESTFUL
     }
 }

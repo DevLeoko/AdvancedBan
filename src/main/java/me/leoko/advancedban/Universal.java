@@ -2,6 +2,13 @@ package me.leoko.advancedban;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
+import me.leoko.advancedban.bungee.BungeeMethods;
+import me.leoko.advancedban.manager.*;
+import me.leoko.advancedban.utils.InterimData;
+import me.leoko.advancedban.utils.Punishment;
+import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -14,19 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import me.leoko.advancedban.bungee.BungeeMethods;
-import me.leoko.advancedban.manager.DatabaseManager;
-import me.leoko.advancedban.manager.LogManager;
-import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.UUIDManager;
-import me.leoko.advancedban.manager.UpdateManager;
-import me.leoko.advancedban.utils.InterimData;
-import me.leoko.advancedban.utils.Punishment;
-import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.io.FileUtils;
+
 
 /**
- * Created by Leoko @ dev.skamps.eu on 23.07.2016.
+ * This is the server independent entry point of the plugin.
  */
 public class Universal {
 
@@ -37,10 +35,20 @@ public class Universal {
     private static boolean redis = false;
     private final Gson gson = new Gson();
 
+    /**
+     * Get universal.
+     *
+     * @return the universal instance
+     */
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
     }
 
+    /**
+     * Initially sets up the plugin.
+     *
+     * @param mi the mi
+     */
     public void setup(MethodInterface mi) {
         this.mi = mi;
         mi.loadFiles();
@@ -99,8 +107,6 @@ public class Universal {
                     + "\n&8|   &cVersion: &7" + mi.getVersion()
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n&8| &cSupport:"
-                    + "\n&8|   &cSkype: &7Leoko33"
-                    + "\n&8|   &cMail: &7Leoko4433@gmail.com"
                     + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
                     + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
                     + "\n&8| &cUpdate:"
@@ -112,6 +118,9 @@ public class Universal {
         }
     }
 
+    /**
+     * Shutdown.
+     */
     public void shutdown() {
         DatabaseManager.get().shutdown();
 
@@ -123,8 +132,6 @@ public class Universal {
                     + "\n&8|   &cVersion: &7" + getMethods().getVersion()
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n&8| &cSupport:"
-                    + "\n&8|   &cSkype: &7Leoko33"
-                    + "\n&8|   &cMail: &7Leoko4433@gmail.com"
                     + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
                     + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
                     + "\n&8[]================================[]&r\n ");
@@ -134,18 +141,39 @@ public class Universal {
         }
     }
 
+    /**
+     * Gets ips.
+     *
+     * @return the ips
+     */
     public Map<String, String> getIps() {
         return ips;
     }
 
+    /**
+     * Gets methods.
+     *
+     * @return the methods
+     */
     public MethodInterface getMethods() {
         return mi;
     }
 
+    /**
+     * Is bungee boolean.
+     *
+     * @return the boolean
+     */
     public boolean isBungee() {
         return mi instanceof BungeeMethods;
     }
 
+    /**
+     * Gets from url.
+     *
+     * @param surl the surl
+     * @return the from url
+     */
     public String getFromURL(String surl) {
         String response = null;
         try {
@@ -161,6 +189,12 @@ public class Universal {
         return response;
     }
 
+    /**
+     * Is mute command boolean.
+     *
+     * @param cmd the cmd
+     * @return the boolean
+     */
     public boolean isMuteCommand(String cmd) {
         cmd = cmd.contains(":") ? cmd.split(":", 2)[1] : cmd;
         for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) {
@@ -171,6 +205,12 @@ public class Universal {
         return false;
     }
 
+    /**
+     * Is exempt player boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
     public boolean isExemptPlayer(String name) {
         List<String> exempt = getMethods().getStringList(getMethods().getConfig(), "ExemptPlayers");
         if (exempt != null) {
@@ -183,6 +223,11 @@ public class Universal {
         return false;
     }
 
+    /**
+     * Broadcast leoko boolean.
+     *
+     * @return the boolean
+     */
     public boolean broadcastLeoko() {
         File readme = new File(getMethods().getDataFolder(), "readme.txt");
         if (!readme.exists()) {
@@ -197,6 +242,13 @@ public class Universal {
         return true;
     }
 
+    /**
+     * Call connection string.
+     *
+     * @param name the name
+     * @param ip   the ip
+     * @return the string
+     */
     public String callConnection(String name, String ip) {
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
@@ -220,6 +272,13 @@ public class Universal {
         return pt.getLayoutBSN();
     }
 
+    /**
+     * Has perms boolean.
+     *
+     * @param player the player
+     * @param perms  the perms
+     * @return the boolean
+     */
     public boolean hasPerms(Object player, String perms) {
         if (mi.hasPerms(player, perms)) {
             return true;
@@ -236,19 +295,39 @@ public class Universal {
         return false;
     }
 
+    /**
+     * Use redis.
+     *
+     * @param use the use
+     */
     public void useRedis(boolean use) {
         redis = use;
     }
 
+    /**
+     * Use redis boolean.
+     *
+     * @return the boolean
+     */
     public boolean useRedis() {
         return redis;
     }
 
+    /**
+     * Log.
+     *
+     * @param msg the msg
+     */
     public void log(String msg) {
         mi.log("§8[§cAdvancedBan§8] §7" + msg);
         debugToFile(msg);
     }
 
+    /**
+     * Debug.
+     *
+     * @param msg the msg
+     */
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
             mi.log("§8[§cAdvancedBan§8] §cDebug: §7" + msg.toString());
@@ -256,22 +335,28 @@ public class Universal {
         debugToFile(msg);
     }
 
+    /**
+     * Debug.
+     *
+     * @param ex the ex
+     */
     public void debug(SQLException ex) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            debug("§7An error has ocurred with the database, the error code is: '" + ex.getErrorCode() + "'");
+            debug("§7An error has occurred with the database, the error code is: '" + ex.getErrorCode() + "'");
             debug("§7The state of the sql is: " + ex.getSQLState());
             debug("§7Error message: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
     private void debugToFile(Object msg) {
         File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
-            System.out.print("Seems that a problem has ocurred while creating the latest.log file in the startup.");
+            System.out.print("Seems that a problem has occurred while creating the latest.log file in the startup.");
             try {
                 debugFile.createNewFile();
             } catch (IOException ex) {
-                System.out.print("An error has ocurred creating the 'latest.log' file again, check your server.");
+                System.out.print("An error has occurred creating the 'latest.log' file again, check your server.");
                 System.out.print("Error message" + ex.getMessage());
             }
         } else {
@@ -280,11 +365,16 @@ public class Universal {
         try {
             FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
-            System.out.print("An error has ocurred writing to 'latest.log' file.");
+            System.out.print("An error has occurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
         }
     }
 
+    /**
+     * Gets gson.
+     *
+     * @return the gson
+     */
     public Gson getGson() {
         return gson;
     }

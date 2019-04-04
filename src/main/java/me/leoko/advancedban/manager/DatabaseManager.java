@@ -1,16 +1,21 @@
 package me.leoko.advancedban.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.SQLQuery;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.*;
+
+/**
+ * The Database Manager is used to interact directly with the database is use.<br>
+ * Will automatically direct the requests to either MySQL or HSQLDB.
+ * <br><br>
+ * Looking to request {@link me.leoko.advancedban.utils.Punishment Punishments} from the Database?
+ * Use {@link PunishmentManager#getPunishments(SQLQuery, Object...)} or
+ * {@link PunishmentManager#getPunishmentFromResultSet(ResultSet)} for already parsed data.
+ */
 public class DatabaseManager {
 
     private String ip;
@@ -24,10 +29,20 @@ public class DatabaseManager {
 
     private static DatabaseManager instance = null;
 
+    /**
+     * Get the instance of the command manager
+     *
+     * @return the database manager instance
+     */
     public static DatabaseManager get() {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
 
+    /**
+     * Initially connects to the database and sets up the required tables of they don't already exist.
+     *
+     * @param useMySQLServer whether to preferably use MySQL (uses HSQLDB as fallback)
+     */
     public void setup(boolean useMySQLServer) {
         MethodInterface mi = Universal.get().getMethods();
 
@@ -88,6 +103,9 @@ public class DatabaseManager {
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
     }
 
+    /**
+     * Shuts down the HSQLDB if used.
+     */
     public void shutdown() {
         try {
             if (!useMySQL) {
@@ -118,10 +136,23 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Execute a sql statement without any results.
+     *
+     * @param sql        the sql statement
+     * @param parameters the parameters
+     */
     public void executeStatement(SQLQuery sql, Object... parameters) {
         executeStatement(sql, false, parameters);
     }
 
+    /**
+     * Execute a sql statement.
+     *
+     * @param sql        the sql statement
+     * @param parameters the parameters
+     * @return the result set
+     */
     public ResultSet executeResultStatement(SQLQuery sql, Object... parameters) {
         return executeStatement(sql, true, parameters);
     }
@@ -130,7 +161,7 @@ public class DatabaseManager {
         return executeStatement(sql.toString(), result, parameters);
     }
 
-    public ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+    private ResultSet executeStatement(String sql, boolean result, Object... parameters) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -148,8 +179,7 @@ public class DatabaseManager {
             }
 
             if (result) {
-                ResultSet resultSet = statement.executeQuery();
-                return resultSet;
+                return statement.executeQuery();
             } else {
                 statement.execute();
                 statement.close();
@@ -157,7 +187,7 @@ public class DatabaseManager {
             return null;
         } catch (SQLException ex) {
             Universal.get().log(
-                    "An unexpected error has ocurred executing an Statement in the database\n"
+                    "An unexpected error has occurred executing an Statement in the database\n"
                     + "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
                     + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
             );
@@ -167,6 +197,12 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Check whether there is a valid connection to the database.
+     *
+     * @param timeout the timeout for the check
+     * @return whether there is a valid connection
+     */
     public boolean isConnectionValid(int timeout) {
         try {
             return connection.isValid(timeout);
@@ -177,10 +213,21 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Check whether the connection to MySQL failed.
+     *
+     * @return <code>true</code> if MySQL has been specified as the preferred Database and due to some
+     * error HSQLDB is used as the fallback database.
+     */
     public boolean isFailedMySQL() {
         return failedMySQL;
     }
 
+    /**
+     * Check whether MySQL is actually used.
+     *
+     * @return whether MySQL is used
+     */
     public boolean isUseMySQL() {
         return useMySQL;
     }
