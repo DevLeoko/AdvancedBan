@@ -425,11 +425,11 @@ public enum Command {
         }
 
         public void removeArgument(int index) {
-            args = (String[]) ArrayUtils.remove(args, index);
+            args = ArrayUtils.remove(args, index);
         }
 
         public void next() {
-            args = (String[]) ArrayUtils.remove(args, 0);
+            args = ArrayUtils.remove(args, 0);
         }
 
         public boolean hasNext() {

@@ -32,15 +32,14 @@ public class CommandUtils {
         input.next();
         if (name.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
             return name;
-        } else {
-            String ip = Universal.get().getIps().get(name);
-
-            if (ip == null)
-                MessageManager.sendMessage(input.getSender(), "Ipban.IpNotCashed",
-                        true, "NAME", name);
-
-            return ip;
         }
+		String ip = Universal.get().getIps().get(name);
+
+		if (ip == null)
+		    MessageManager.sendMessage(input.getSender(), "Ipban.IpNotCashed",
+		            true, "NAME", name);
+
+		return ip;
     }
 
     // Builds reason from remaining arguments (null if failed)
