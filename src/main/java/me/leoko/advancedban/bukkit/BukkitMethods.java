@@ -45,13 +45,13 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public void loadFiles() {
         if (!configFile.exists()) {
-            ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
+            getPlugin().saveResource("config.yml", true);
         }
         if (!messageFile.exists()) {
-            ((JavaPlugin) getPlugin()).saveResource("Messages.yml", true);
+            getPlugin().saveResource("Messages.yml", true);
         }
         if (!layoutFile.exists()) {
-            ((JavaPlugin) getPlugin()).saveResource("Layouts.yml", true);
+            getPlugin().saveResource("Layouts.yml", true);
         }
 
         config = YamlConfiguration.loadConfiguration(configFile);
@@ -62,7 +62,7 @@ public class BukkitMethods implements MethodInterface {
             //noinspection ResultOfMethodCallIgnored
             configFile.renameTo(new File(getDataFolder(), "oldConfig.yml"));
             configFile = new File(getDataFolder(), "config.yml");
-            ((JavaPlugin) getPlugin()).saveResource("config.yml", true);
+            getPlugin().saveResource("config.yml", true);
             config = YamlConfiguration.loadConfiguration(configFile);
         }
     }
@@ -89,7 +89,7 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public String getVersion() {
-        return ((JavaPlugin) getPlugin()).getDescription().getVersion();
+        return getPlugin().getDescription().getVersion();
     }
 
     @Override
@@ -99,34 +99,34 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public Object getConfig() {
+    public YamlConfiguration getConfig() {
         return config;
     }
 
     @Override
-    public Object getMessages() {
+    public YamlConfiguration getMessages() {
         return messages;
     }
 
     @Override
-    public Object getLayouts() {
+    public YamlConfiguration getLayouts() {
         return layouts;
     }
 
     @Override
     public void setupMetrics() {
-        Metrics metrics = new Metrics((JavaPlugin) getPlugin());
+        Metrics metrics = new Metrics(getPlugin());
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
-    public Object getPlugin() {
+    public JavaPlugin getPlugin() {
         return BukkitMain.get();
     }
 
     @Override
     public File getDataFolder() {
-        return ((JavaPlugin) getPlugin()).getDataFolder();
+        return getPlugin().getDataFolder();
     }
 
     @Override
@@ -149,46 +149,47 @@ public class BukkitMethods implements MethodInterface {
         return ((CommandSender) player).hasPermission(perms);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean isOnline(String name) {
         return Bukkit.getOfflinePlayer(name).isOnline();
     }
 
     @Override
-    public Object getPlayer(String name) {
+    public Player getPlayer(String name) {
         return Bukkit.getPlayer(name);
     }
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if (Bukkit.getPlayer(player) != null && Bukkit.getPlayer(player).isOnline()) {
-            Bukkit.getPlayer(player).kickPlayer(reason);
+        if (getPlayer(player) != null && getPlayer(player).isOnline()) {
+            getPlayer(player).kickPlayer(reason);
         }
     }
 
     @Override
-    public Object[] getOnlinePlayers() {
-        return Bukkit.getOnlinePlayers().toArray();
+    public Player[] getOnlinePlayers() {
+        return Bukkit.getOnlinePlayers().toArray(new Player[] {});
     }
 
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously((JavaPlugin) getPlugin(), rn, l1, l2);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), rn, l1, l2);
     }
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously((JavaPlugin) getPlugin(), rn, l1);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), rn, l1);
     }
 
     @Override
     public void runAsync(Runnable rn) {
-        Bukkit.getScheduler().runTaskAsynchronously((JavaPlugin) getPlugin(), rn);
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), rn);
     }
 
     @Override
     public void runSync(Runnable rn) {
-        Bukkit.getScheduler().runTask((JavaPlugin) getPlugin(), rn);
+        Bukkit.getScheduler().runTask(getPlugin(), rn);
     }
 
     @Override
@@ -216,7 +217,8 @@ public class BukkitMethods implements MethodInterface {
         return player instanceof OfflinePlayer ? ((OfflinePlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public String getInternUUID(String player) {
         return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replaceAll("-", "");
     }
@@ -265,7 +267,7 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public Object getMySQLFile() {
+    public YamlConfiguration getMySQLFile() {
         return mysql;
     }
 
