@@ -17,7 +17,8 @@ import net.md_5.bungee.event.EventPriority;
  */
 public class ConnectionListenerBungee implements Listener {
 
-    @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.LOW)
     public void onConnection(LoginEvent event) {
         event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
         Universal.get().getMethods().runAsync(() -> {
@@ -42,7 +43,8 @@ public class ConnectionListenerBungee implements Listener {
         });
     }
 
-    @EventHandler
+    @SuppressWarnings("deprecation")
+	@EventHandler
     public void onLogin(final PostLoginEvent event) {
         Universal.get().getMethods().scheduleAsync(() -> {
             if (event.getPlayer().getName().equalsIgnoreCase("Leoko")) {
