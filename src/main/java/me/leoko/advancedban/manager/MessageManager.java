@@ -73,14 +73,13 @@ public class MessageManager {
                 list.add(replace(str, parameters).replace('&', '§'));
             }
             return list;
-        } else {
-            System.out.println("!! Message-Error in " + mi.getFileName(file) + "!\n"
-                    + "In order to solve the problem please:"
-                    + "\n  - Check the " + mi.getFileName(file) + "-File for any missing or double \" or '"
-                    + "\n  - Visit yamllint.com to  validate your " + mi.getFileName(file)
-                    + "\n  - Delete the message file and restart the server");
-            return Collections.singletonList("Failed! See console for details!");
         }
+		System.out.println("!! Message-Error in " + mi.getFileName(file) + "!\n"
+		        + "In order to solve the problem please:"
+		        + "\n  - Check the " + mi.getFileName(file) + "-File for any missing or double \" or '"
+		        + "\n  - Visit yamllint.com to  validate your " + mi.getFileName(file)
+		        + "\n  - Delete the message file and restart the server");
+		return Collections.singletonList("Failed! See console for details!");
     }
 
     /**

@@ -57,18 +57,15 @@ public class PunishmentManager {
     public InterimData load(String name, String uuid, String ip) {
 	Set<Punishment> punishments = new HashSet<>();
 	Set<Punishment> history = new HashSet<>();
-        try {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip);
-            while (rs.next()) {
-                punishments.add(getPunishmentFromResultSet(rs));
+        try (ResultSet resultsPunishments = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip); ResultSet resultsHistory = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip)) {
+            
+        	while (resultsPunishments.next()) {
+                punishments.add(getPunishmentFromResultSet(resultsPunishments));
+            } 
+            while (resultsHistory.next()) {
+                history.add(getPunishmentFromResultSet(resultsHistory));
             }
-            rs.close();
-
-            rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip);
-            while (rs.next()) {
-                history.add(getPunishmentFromResultSet(rs));
-            }
-            rs.close();
+            
         } catch (SQLException ex) {
             universal.log("An error has occurred loading the punishments from the database.");
             universal.debug(ex);
@@ -296,21 +293,20 @@ public class PunishmentManager {
     public int getCalculationLevel(String uuid, String layout) {
         if (isCached(uuid)) {
             return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
-        } else {
-            ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout);
-            int i = 0;
-
-            try {
-                while (resultSet.next()) {
-                    i++;
-                }
-                resultSet.close();
-            } catch (SQLException ex) {
-                universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
-                universal.debug(ex);
-            }
-            return i;
         }
+        
+        int i = 0;
+        try (ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout)) {
+        	
+            while (resultSet.next()) {
+            	i++;
+            }
+            
+        } catch (SQLException ex) {
+            universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
+            universal.debug(ex);
+        }
+        return i;
     }
 
     /**
