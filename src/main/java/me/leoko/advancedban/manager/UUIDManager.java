@@ -122,7 +122,6 @@ public class UUIDManager {
      * @param forceInitial whether to bypass the cache
      * @return the name from uuid
      */
-    @SuppressWarnings("resource")
     public String getNameFromUUID(String uuid, boolean forceInitial) {
         if (mode == FetcherMode.DISABLED)
             return uuid;
@@ -141,8 +140,8 @@ public class UUIDManager {
             }
         }
 
-        try {
-            String s = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8").useDelimiter("\\A").next();
+        try (Scanner scanner = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8")) {
+            String s = scanner.useDelimiter("\\A").next();
             s = s.substring(s.lastIndexOf('{'), s.lastIndexOf('}') + 1);
             return mi.parseJSON(s, "name");
         } catch (Exception exc) {
