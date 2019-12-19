@@ -4,11 +4,11 @@
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
 # Do you want your own Plugin or Website? Check out our Dev-Page: http://dev.skamps.eu
 
-# If set to false all bans will be saved locally in a HSQLDB-Database
+# If set to false all bans will be saved locally in an HSQLDB-Database
 UseMySQL: false
 
 # Set to false if you want to have only short messages in the console
-# On startup and on the shutdown.
+# on startup and on the shutdown.
 DetailedEnableMessage: true
 DetailedDisableMessage: true
 
@@ -20,8 +20,9 @@ DefaultReason: "none"
 # You can check the server time with /systemPrefs
 TimeDiff: 0
 
-# This commands will be disabled for muted players
-# A player wouldn't be able to bypass with eg "/minecraft:me"
+# These commands will be disabled for muted players
+# Players won't be able to bypass this with something
+# like "/minecraft:me".
 MuteCommands:
 - 'me'
 - 'say'
@@ -49,8 +50,8 @@ MuteCommands:
 - 'eamsg'
 - 'ehelpop'
 
-# These players will not be able to get punished in any way
-# this also works if the player is offline
+# These players will not be able to get punished in any way.
+# This also works if the player is offline.
 ExemptPlayers:
 - 'Leoko'
 - 'md5'
@@ -60,19 +61,19 @@ ExemptPlayers:
 # The date-format which will be used for the %DATE% variable
 DateFormat: "dd.MM.yyyy-HH:mm"
 
-# This is useful for bungeecord servers or server with permission systems which do not support *-Perms
-# So if you enable this you can use ab.all instead of ab.* or ab.ban.all instead of ab.ban.*
+# This is useful for bungeecord servers or servers with permission systems which do not support
+# *-Permissions. So if you enable this, you can use ab.all instead of ab.* or ab.ban.all instead of ab.ban.*
 # This does not work with negative permissions! e.g. -ab.all would not block all commands for that user.
 EnableAllPermissionNodes: false
 
-# If you use external REST-APIs they will have to respond in JSON
+# If you use external REST-APIs, they will have to respond in JSON
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either use the official MojangAPI or the InternFetcher
-# To check if you can use the intern fetcher do /systemPerfs and compare your uuid
+# To check if you can use the intern fetcher, do /systemPerfs and compare your uuid
 #   to the one you can see online on http://NamesMC.com
-#   if they are similar we recommend using the InternFetcher
+#   if they are similar, we recommend using the InternFetcher
 UUID-Fetcher:
-  # If dynamic it set to true it will override the 'enabled' and 'intern' settings
+  # If dynamic is set to true, it will override the 'enabled' and 'intern' settings
   # and automatically detect the best possible uuid fetcher settings for your server.
   # Our recommendation: don't set dynamic to false if you don't have any problems.
   Dynamic: true
@@ -86,7 +87,7 @@ UUID-Fetcher:
     Key: "uuid"
 
 # These are the commands that will be performed on warns
-# If you skip a number the command from before will be performed
+# If you skip a number, the command from before will be performed
 # You can also use non-AdvancedBan-Commands like 'broadcast' or 'clear %PLAYER%
 # Variables: %PLAYER%, %REASON%, %COUNT%
 WarnActions:
@@ -106,8 +107,8 @@ TempPerms:
   2: 3600
   3: 43200
 
-# With this active will show more information in the console, such as errors, if
-# the plugin works correctly is not recommended to activate it since it is 
+# With this active the plugin will show more information in the console, such as errors. If
+# the plugin works correctly, it is not recommended to activate it since it is 
 # designed to find bugs.
 Debug: false
 
