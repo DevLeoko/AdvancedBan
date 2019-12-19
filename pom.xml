@@ -22,10 +22,11 @@
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <!-- Updated bstats repo -->
         <repository>
-            <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
-        </repository>
+			<id>CodeMC</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
+		</repository>
         <repository>
             <id>md_5-snapshots</id>
             <url>http://repo.md-5.net/content/repositories/snapshots/</url>
@@ -65,13 +66,13 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.2</version>
+            <version>1.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
-            <version>1.2</version>
+            <version>1.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

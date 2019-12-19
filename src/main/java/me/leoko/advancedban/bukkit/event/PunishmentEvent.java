@@ -1,7 +1,6 @@
 package me.leoko.advancedban.bukkit.event;
 
 import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -9,7 +8,9 @@ import org.bukkit.event.HandlerList;
  * Event fired when a punishment is created
  */
 public class PunishmentEvent extends Event {
+	
     private static final HandlerList handlers = new HandlerList();
+    
     private final Punishment punishment;
 
     public PunishmentEvent(Punishment punishment) {
@@ -34,4 +35,5 @@ public class PunishmentEvent extends Event {
     public HandlerList getHandlers() {
         return handlers;
     }
+    
 }

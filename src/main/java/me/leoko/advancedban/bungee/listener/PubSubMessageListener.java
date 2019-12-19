@@ -16,7 +16,8 @@ public class PubSubMessageListener implements Listener {
     
     private static final MethodInterface mi = Universal.get().getMethods();
 
-    @EventHandler
+    @SuppressWarnings("deprecation")
+	@EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
         if (e.getChannel().equals("AdvancedBan")) {
             String[] msg = e.getMessage().split(" ");

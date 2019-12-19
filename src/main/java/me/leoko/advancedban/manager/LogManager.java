@@ -20,6 +20,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Beelzebu
  */
 public class LogManager {
+	
     private final File logsFolder;
 
     public LogManager() {
@@ -71,13 +72,15 @@ public class LogManager {
     }
 
     private void gzipFile(InputStream in, String to) throws IOException {
-        GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(to));
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-        in.close();
-        out.close();
+    	try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(to))) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+    	} finally {
+    		in.close();
+    	}
     }
+    
 }

@@ -14,10 +14,12 @@ public class CommandReceiverBungee extends Command {
         super(name);
     }
     
-    public void execute(final CommandSender sender, final String[] args) {
+    @Override
+	public void execute(final CommandSender sender, final String[] args) {
     	if (args.length > 0) {
     		args[0] = (BungeeMain.get().getProxy().getPlayer(args[0]) != null ? BungeeMain.get().getProxy().getPlayer(args[0]).getName() : args[0]);
     	}
         CommandManager.get().onCommand(sender, this.getName(), args);
     }
+    
 }

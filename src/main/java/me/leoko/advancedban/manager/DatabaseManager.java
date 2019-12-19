@@ -162,8 +162,7 @@ public class DatabaseManager {
     }
 
     private ResultSet executeStatement(String sql, boolean result, Object... parameters) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             for (int i = 0; i < parameters.length; i++) {
                 Object obj = parameters[i];
@@ -180,11 +179,8 @@ public class DatabaseManager {
 
             if (result) {
                 return statement.executeQuery();
-            } else {
-                statement.execute();
-                statement.close();
             }
-            return null;
+			statement.execute();
         } catch (SQLException ex) {
             Universal.get().log(
                     "An unexpected error has occurred executing an Statement in the database\n"
@@ -193,8 +189,8 @@ public class DatabaseManager {
             );
             Universal.get().debug("Query: \n" + sql);
             Universal.get().debug(ex);
-            return null;
         }
+        return null;
     }
 
     /**
@@ -231,4 +227,5 @@ public class DatabaseManager {
     public boolean isUseMySQL() {
         return useMySQL;
     }
+    
 }

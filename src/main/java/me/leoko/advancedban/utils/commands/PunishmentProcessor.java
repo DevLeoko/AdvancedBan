@@ -76,39 +76,33 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         if (time.matches("#.+")) {
             String layout = time.substring(1);
             if (!mi.contains(mi.getLayouts(), "Time." + layout)) {
-                MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound",
-                        true, "NAME", layout);
+                MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound", true, "NAME", layout);
                 return null;
             }
-
             int i = PunishmentManager.get().getCalculationLevel(uuid, layout);
             List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + layout);
-
-
             String timeName = timeLayout.get(Math.min(i, timeLayout.size() - 1));
-            if (timeName.equalsIgnoreCase("perma"))
-                return -1L;
-            else
-                return TimeManager.getTime() + TimeManager.toMilliSec(time);
-        } else {
-            long toAdd = TimeManager.toMilliSec(time);
-            if (!Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur.max")) {
-                long max = -1;
-                for (int i = 10; i >= 1; i--) {
-                    if (Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur." + i) &&
-                            mi.contains(mi.getConfig(), "TempPerms." + i)) {
-                        max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
-                        break;
-                    }
-                }
-                if (max != -1 && toAdd > max) {
-                    MessageManager.sendMessage(input.getSender(), type.getConfSection() + ".MaxDuration",
-                            true, "MAX", max / 1000 + "");
-                    return null;
-                }
+            if (timeName.equalsIgnoreCase("perma")) {
+            	return -1L;
             }
-            return TimeManager.getTime() + toAdd;
+			return TimeManager.getTime() + TimeManager.toMilliSec(time);
         }
+		long toAdd = TimeManager.toMilliSec(time);
+		if (!Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur.max")) {
+		    long max = -1;
+		    for (int i = 10; i >= 1; i--) {
+		        if (Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur." + i) &&
+		                mi.contains(mi.getConfig(), "TempPerms." + i)) {
+		            max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
+		            break;
+		        }
+		    }
+		    if (max != -1 && toAdd > max) {
+		        MessageManager.sendMessage(input.getSender(), type.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
+		        return null;
+		    }
+		}
+		return TimeManager.getTime() + toAdd;
     }
 
     // Checks whether target is exempted from punishment

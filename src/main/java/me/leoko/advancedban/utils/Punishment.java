@@ -113,14 +113,14 @@ public class Punishment {
         if (getType() != PunishmentType.KICK) {
             try {
                 DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
-                ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name());
-                if (rs.next()) {
-                    id = rs.getInt("id");
-                } else {
-                    Universal.get().log("!! Not able to update ID of punishment! Please restart the server to resolve this issue!");
-                    Universal.get().log("!! Failed at: " + toString());
+                try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name())) {
+                	if (rs.next()) {
+                        id = rs.getInt("id");
+                    } else {
+                        Universal.get().log("!! Not able to update ID of punishment! Please restart the server to resolve this issue!");
+                        Universal.get().log("!! Failed at: " + toString());
+                    }
                 }
-                rs.close();
             } catch (SQLException ex) {
                 Universal.get().debug(ex);
             }
