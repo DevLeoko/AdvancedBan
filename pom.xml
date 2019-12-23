@@ -27,8 +27,8 @@
 
     <repositories>
         <repository>
-            <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
+            <id>CodeMC</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
             <id>md_5-snapshots</id>
