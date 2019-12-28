@@ -17,7 +17,7 @@ import java.sql.*;
  * {@link PunishmentManager#getPunishmentFromResultSet(ResultSet)} for already parsed data.
  */
 public class DatabaseManager {
-
+	
     private String ip;
     private String dbName;
     private String usrName;
@@ -161,35 +161,26 @@ public class DatabaseManager {
         return executeStatement(sql.toString(), result, parameters);
     }
 
-    private ResultSet executeStatement(String sql, boolean result, Object... parameters) {
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            for (int i = 0; i < parameters.length; i++) {
-                Object obj = parameters[i];
-                if (obj instanceof Integer) {
-                    statement.setInt(i + 1, (Integer) obj);
-                } else if (obj instanceof String) {
-                    statement.setString(i + 1, (String) obj);
-                } else if (obj instanceof Long) {
-                    statement.setLong(i + 1, (Long) obj);
-                } else {
-                    statement.setObject(i + 1, obj);
-                }
-            }
-
-            if (result) {
-                return statement.executeQuery();
-            }
-			statement.execute();
-        } catch (SQLException ex) {
-            Universal.get().log(
-                    "An unexpected error has occurred executing an Statement in the database\n"
-                    + "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
-                    + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
-            );
-            Universal.get().debug("Query: \n" + sql);
-            Universal.get().debug(ex);
-        }
+    private synchronized ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+    	try (PreparedStatement statement = connection.prepareStatement(sql)) {
+    		
+    		for (int i = 0; i < parameters.length; i++) {
+    			statement.setObject(i + 1, parameters[i]);
+    		}
+   			
+    		if (result) {
+    			return statement.executeQuery();
+    		}
+   			statement.execute();
+    	} catch (SQLException ex) {
+    		Universal.get().log(
+   					"An unexpected error has occurred executing an Statement in the database\n"
+   							+ "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
+    						+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
+    				);
+    		Universal.get().debug("Query: \n" + sql);
+    		Universal.get().debug(ex);
+       	}
         return null;
     }
 
