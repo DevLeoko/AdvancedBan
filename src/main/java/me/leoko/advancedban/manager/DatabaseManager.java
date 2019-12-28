@@ -17,8 +17,6 @@ import java.sql.*;
  * {@link PunishmentManager#getPunishmentFromResultSet(ResultSet)} for already parsed data.
  */
 public class DatabaseManager {
-
-	private final Object lock = new Object();
 	
     private String ip;
     private String dbName;
@@ -163,29 +161,27 @@ public class DatabaseManager {
         return executeStatement(sql.toString(), result, parameters);
     }
 
-    private ResultSet executeStatement(String sql, boolean result, Object... parameters) {
-    	synchronized (lock) {
-    		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-    			
-    			for (int i = 0; i < parameters.length; i++) {
-    				statement.setObject(i + 1, parameters[i]);
-    			}
-    			
-    			if (result) {
-    				return statement.executeQuery();
-    			}
-    			statement.execute();
-    		} catch (SQLException ex) {
-    			Universal.get().log(
-    					"An unexpected error has occurred executing an Statement in the database\n"
-    							+ "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
-    							+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
-    					);
-    			Universal.get().debug("Query: \n" + sql);
-    			Universal.get().debug(ex);
-        	}
-        	return null;
-    	}
+    private synchronized ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+    	try (PreparedStatement statement = connection.prepareStatement(sql)) {
+    		
+    		for (int i = 0; i < parameters.length; i++) {
+    			statement.setObject(i + 1, parameters[i]);
+    		}
+   			
+    		if (result) {
+    			return statement.executeQuery();
+    		}
+   			statement.execute();
+    	} catch (SQLException ex) {
+    		Universal.get().log(
+   					"An unexpected error has occurred executing an Statement in the database\n"
+   							+ "Please check the plugins/AdvancedBan/logs/latest.log file and report this"
+    						+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
+    				);
+    		Universal.get().debug("Query: \n" + sql);
+    		Universal.get().debug(ex);
+       	}
+        return null;
     }
 
     /**
