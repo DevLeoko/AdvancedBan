@@ -168,16 +168,7 @@ public class DatabaseManager {
     		try (PreparedStatement statement = connection.prepareStatement(sql)) {
     			
     			for (int i = 0; i < parameters.length; i++) {
-    				Object obj = parameters[i];
-    				if (obj instanceof Integer) {
-    					statement.setInt(i + 1, (Integer) obj);
-    				} else if (obj instanceof String) {
-    					statement.setString(i + 1, (String) obj);
-    				} else if (obj instanceof Long) {
-    					statement.setLong(i + 1, (Long) obj);
-    				} else {
-    					statement.setObject(i + 1, obj);
-    				}
+    				statement.setObject(i + 1, parameters[i]);
     			}
     			
     			if (result) {
