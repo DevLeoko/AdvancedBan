@@ -8,6 +8,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetFactory;
+import javax.sql.rowset.RowSetProvider;
+
 /**
  * The Database Manager is used to interact directly with the database is use.<br>
  * Will automatically direct the requests to either MySQL or HSQLDB.
@@ -27,6 +31,8 @@ public class DatabaseManager {
     private boolean failedMySQL = false;
     private boolean useMySQL;
 
+    private RowSetFactory factory;
+    
     private static DatabaseManager instance = null;
 
     /**
@@ -117,6 +123,13 @@ public class DatabaseManager {
             Universal.get().debug(ex);
         }
     }
+    
+    private CachedRowSet createCachedRowSet() throws SQLException {
+    	if (factory == null) {
+    		factory = RowSetProvider.newFactory();
+    	}
+    	return factory.createCachedRowSet();
+    }
 
     private void connectMySQLServer() {
         try {
@@ -169,7 +182,9 @@ public class DatabaseManager {
     		}
    			
     		if (result) {
-    			return statement.executeQuery();
+    			CachedRowSet results = createCachedRowSet();
+    			results.populate(statement.executeQuery());
+    			return results;
     		}
    			statement.execute();
     	} catch (SQLException ex) {

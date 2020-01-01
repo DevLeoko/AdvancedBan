@@ -128,15 +128,13 @@ public class PunishmentManager {
                 }
             }
         } else {
-            ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target);
-            try {
+            try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
                     if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
                     }
                 }
-                rs.close();
             } catch (SQLException ex) {
                 universal.log("An error has occurred getting the punishments for " + target);
                 universal.debug(ex);
