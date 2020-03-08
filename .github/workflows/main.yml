@@ -21,13 +21,14 @@ jobs:
     - name: Build with Maven
       run: |
         mvn -B package --file pom.xml
-        rm target/!(Adv*) -r
+        mkdir artifact
+        mv target/Adv*.jar artifact/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
         name: AdvancedBan Jar
-        path: target
+        path: artifact
       
     - name: Generate javadocs
       run: mvn -B javadoc:javadoc --file pom.xml
