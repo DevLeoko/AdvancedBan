@@ -88,13 +88,13 @@ public enum Command {
     UN_BAN("ab." + PunishmentType.BAN.getName() + ".undo",
             "\\S+",
             new RevokeProcessor(PunishmentType.BAN),
-            "Un" + PunishmentType.BAN.getConfSection(".Usage"),
+            "Un" + PunishmentType.BAN.getConfSection("Usage"),
             "unban"),
 
     UN_MUTE("ab." + PunishmentType.MUTE.getName() + ".undo",
             "\\S+",
             new RevokeProcessor(PunishmentType.MUTE),
-            "Un" + PunishmentType.MUTE.getConfSection(".Usage"),
+            "Un" + PunishmentType.MUTE.getConfSection("Usage"),
             "unmute"),
 
     UN_WARN("ab." + PunishmentType.WARNING.getName() + ".undo",
@@ -125,7 +125,7 @@ public enum Command {
                     new RevokeByIdProcessor("Un" + confSection, PunishmentManager.get()::getWarn).accept(input);
                 }
             },
-            "Un" + PunishmentType.WARNING.getConfSection(".Usage"),
+            "Un" + PunishmentType.WARNING.getConfSection("Usage"),
             "unwarn"),
 
     UN_PUNISH("ab.all.undo",
