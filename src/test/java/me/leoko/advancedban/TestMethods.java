@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.fail;
 
@@ -26,7 +27,7 @@ public class TestMethods implements MethodInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        dataFolder = folder.newFolder("base");
+        dataFolder = folder.newFolder(UUID.randomUUID().toString());
     }
 
     @Override
@@ -244,6 +245,9 @@ public class TestMethods implements MethodInterface {
         if(path.equals("DetailedEnableMessage")
                 || path.equals("UUID-Fetcher.Enabled")
                 || path.equals("DetailedDisableMessage")) return false;
+
+        if(path.equals("Debug")) return true;
+
         return def;
     }
 

@@ -1,29 +1,46 @@
 package me.leoko.advancedban.manager;
 
+import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.Universal;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import me.leoko.advancedban.MethodInterface;
-import me.leoko.advancedban.Universal;
-import org.apache.commons.io.FileUtils;
+
 
 /**
- * Created by Leo on 07.08.2017.
+ * The Update Manager used to keep config files up to date and migrate them seamlessly to the newest version.
  */
 public class UpdateManager {
 
     private static UpdateManager instance = null;
 
+    /**
+     * Get the update manager.
+     *
+     * @return the update manager instance
+     */
     public static UpdateManager get() {
         return instance == null ? instance = new UpdateManager() : instance;
     }
 
+    /**
+     * Initially checks which configuration options from the newest version are missing and tries to add them
+     * without altering any old configuration settings.
+     */
     public void setup() {
         MethodInterface mi = Universal.get().getMethods();
 
         if(mi.isUnitTesting()) return;
+
+        if (!mi.contains(mi.getMessages(), "UnBan.Notification")) {
+            addMessage("UnBan:", "  Notification: \"&e&o%OPERATOR% &7unbanned &c&o%NAME%\"", 1);
+            addMessage("UnMute:", "  Notification: \"&e&o%OPERATOR% &7unmuted &c&o%NAME%\"", 1);
+            addMessage("UnWarn:", "  Notification: \"&e&o%OPERATOR% &7unwarned &c&o%NAME%\"", 1);
+        }
 
         if (!mi.contains(mi.getMessages(), "Check.MuteReason")) {
             try {
@@ -36,6 +53,7 @@ public class UpdateManager {
                 ex.printStackTrace();
             }
         }
+
         if (!mi.contains(mi.getMessages(), "Check.BanReason")) {
             try {
                 File file = new File(mi.getDataFolder(), "Messages.yml");
@@ -133,6 +151,18 @@ public class UpdateManager {
             FileUtils.writeLines(file, lines);
         } catch (IOException exc) {
             exc.printStackTrace();
+        }
+    }
+
+    private void addMessage(String search, String insert, int indexOffset) {
+        try {
+            File file = new File(Universal.get().getMethods().getDataFolder(), "Messages.yml");
+            List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
+            int index = lines.indexOf(search);
+            lines.add(index + indexOffset, insert);
+            FileUtils.writeLines(file, lines);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

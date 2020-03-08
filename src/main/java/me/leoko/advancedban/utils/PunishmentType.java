@@ -66,11 +66,19 @@ public enum PunishmentType {
         return name;
     }
 
+    public String getConfSection(String path) {
+        return name+"."+path;
+    }
+
     public PunishmentType getBasic() {
         return basic == null ? this : basic;
     }
 
     public boolean isTemp() {
         return temp;
+    }
+
+    public boolean isIpOrientated() {
+        return this == IP_BAN || this == TEMP_IP_BAN;
     }
 }

@@ -1,6 +1,9 @@
 package me.leoko.advancedban.manager;
 
 import com.google.common.base.Charsets;
+import me.leoko.advancedban.Universal;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,19 +14,17 @@ import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
-import me.leoko.advancedban.Universal;
-import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author Beelzebu
  */
 public class LogManager {
-
-    private final Universal universal = Universal.get();
+	
     private final File logsFolder;
 
     public LogManager() {
+        Universal universal = Universal.get();
         logsFolder = new File(universal.getMethods().getDataFolder(), "logs");
         if (!logsFolder.exists()) {
             logsFolder.mkdirs();
@@ -64,20 +65,22 @@ public class LogManager {
                     latestLog.delete();
                     latestLog.createNewFile();
                 } catch (IOException ex) {
-                    Logger.getLogger(LogManager.class.getName()).log(Level.WARNING, "An unexpected error has ocurred while trying to compress the latest log file. {0}", ex.getMessage());
+                    Logger.getLogger(LogManager.class.getName()).log(Level.WARNING, "An unexpected error has occurred while trying to compress the latest log file. {0}", ex.getMessage());
                 }
             }
         }
     }
 
     private void gzipFile(InputStream in, String to) throws IOException {
-        GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(to));
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-        in.close();
-        out.close();
+    	try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(to))) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+    	} finally {
+    		in.close();
+    	}
     }
+    
 }

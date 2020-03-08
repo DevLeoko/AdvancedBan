@@ -25,19 +25,21 @@ public class PunishmentTest {
         Assert.assertFalse("User should not be banned by default", PunishmentManager.get().isBanned("leoko"));
         CommandManager.get().onCommand("UnitTest", "ban", new String[]{"Leoko", "Doing", "some", "unit-testing"});
         Assert.assertTrue("Punishment from above has failed", PunishmentManager.get().isBanned("leoko"));
-        Assert.assertEquals("Reason should match", PunishmentManager.get().getBan("leoko").getReason(), "Doing some unit-testing");
+        Assert.assertEquals("Reason should match", "Doing some unit-testing", PunishmentManager.get().getBan("leoko").getReason());
     }
 
     @Test
     public void shouldKeepPunishmentAfterRestart(){
-        Punishment punishment = new Punishment("leoko", "leoko", "Persistance test", "JUnit5", PunishmentType.MUTE, TimeManager.getTime(), -1, null, -1);
+        System.out.println("Persistence test...");
+        Punishment punishment = new Punishment("leoko", "leoko", "Persistence test", "JUnit5", PunishmentType.MUTE, TimeManager.getTime(), -1, null, -1);
         punishment.create();
         int id = punishment.getId();
+        System.out.println("Punishment ID >> "+id);
         DatabaseManager.get().shutdown();
         DatabaseManager.get().setup(false);
         Punishment punishment1 = PunishmentManager.get().getPunishment(id);
         Assert.assertNotNull("Punishment should exist", punishment1);
-        Assert.assertEquals("Reason should still match", punishment1.getReason(), "Persistance test");
+        Assert.assertEquals("Reason should still match", "Persistence test", punishment1.getReason());
     }
 
     @Test

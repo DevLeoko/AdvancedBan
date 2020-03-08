@@ -5,15 +5,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -32,6 +23,16 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -54,13 +55,13 @@ public class BungeeMethods implements MethodInterface {
                 getDataFolder().mkdirs();
             }
             if (!configFile.exists()) {
-                Files.copy(((Plugin) getPlugin()).getResourceAsStream("config.yml"), configFile.toPath());
+                Files.copy(getPlugin().getResourceAsStream("config.yml"), configFile.toPath());
             }
             if (!messageFile.exists()) {
-                Files.copy(((Plugin) getPlugin()).getResourceAsStream("Messages.yml"), messageFile.toPath());
+                Files.copy(getPlugin().getResourceAsStream("Messages.yml"), messageFile.toPath());
             }
             if (!layoutFile.exists()) {
-                Files.copy(((Plugin) getPlugin()).getResourceAsStream("Layouts.yml"), layoutFile.toPath());
+                Files.copy(getPlugin().getResourceAsStream("Layouts.yml"), layoutFile.toPath());
             }
 
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
@@ -95,7 +96,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getVersion() {
-        return ((Plugin) getPlugin()).getDescription().getVersion();
+        return getPlugin().getDescription().getVersion();
     }
 
     @Override
@@ -105,42 +106,43 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public Object getConfig() {
+    public Configuration getConfig() {
         return config;
     }
 
     @Override
-    public Object getMessages() {
+    public Configuration getMessages() {
         return messages;
     }
 
     @Override
-    public Object getLayouts() {
+    public Configuration getLayouts() {
         return layouts;
     }
 
     @Override
     public void setupMetrics() {
-        Metrics metrics = new Metrics((Plugin) getPlugin());
+        Metrics metrics = new Metrics(getPlugin());
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
-    public Object getPlugin() {
+    public Plugin getPlugin() {
         return BungeeMain.get();
     }
 
     @Override
     public File getDataFolder() {
-        return ((Plugin) getPlugin()).getDataFolder();
+        return getPlugin().getDataFolder();
     }
 
     @Override
     public void setCommandExecutor(String cmd) {
-        ProxyServer.getInstance().getPluginManager().registerCommand((Plugin) getPlugin(), new CommandReceiverBungee(cmd));
+        ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd));
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void sendMessage(Object player, String msg) {
         ((CommandSender) player).sendMessage(msg);
     }
@@ -160,44 +162,45 @@ public class BungeeMethods implements MethodInterface {
                     }
                 }
             }
-            return ProxyServer.getInstance().getPlayer(name).getAddress() != null;
+            return getPlayer(name).getAddress() != null;
         } catch (NullPointerException exc) {
             return false;
         }
     }
 
     @Override
-    public Object getPlayer(String name) {
+    public ProxiedPlayer getPlayer(String name) {
         return ProxyServer.getInstance().getPlayer(name);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void kickPlayer(String player, String reason) {
         if (Universal.get().useRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
         } else {
-            ProxyServer.getInstance().getPlayer(player).disconnect(reason);
+            getPlayer(player).disconnect(reason);
         }
     }
 
     @Override
-    public Object[] getOnlinePlayers() {
-        return ProxyServer.getInstance().getPlayers().toArray();
+    public ProxiedPlayer[] getOnlinePlayers() {
+        return ProxyServer.getInstance().getPlayers().toArray(new ProxiedPlayer[] {});
     }
 
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        ProxyServer.getInstance().getScheduler().schedule((Plugin) getPlugin(), rn, l1 * 50, l2 * 50, TimeUnit.MILLISECONDS);
+        ProxyServer.getInstance().getScheduler().schedule(getPlugin(), rn, l1 * 50, l2 * 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        ProxyServer.getInstance().getScheduler().schedule((Plugin) getPlugin(), rn, l1 * 50, TimeUnit.MILLISECONDS);
+        ProxyServer.getInstance().getScheduler().schedule(getPlugin(), rn, l1 * 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void runAsync(Runnable rn) {
-        ProxyServer.getInstance().getScheduler().runAsync((Plugin) getPlugin(), rn);
+        ProxyServer.getInstance().getScheduler().runAsync(getPlugin(), rn);
     }
 
     @Override
@@ -232,7 +235,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getInternUUID(String player) {
-        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(player);
+        ProxiedPlayer proxiedPlayer = getPlayer(player);
         if (proxiedPlayer == null) {
             return null;
         }
@@ -370,15 +373,16 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new PunishmentEvent(punishment));
+        getPlugin().getProxy().getPluginManager().callEvent(new PunishmentEvent(punishment));
     }
 
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
-        ((Plugin) getPlugin()).getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+        getPlugin().getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean isOnlineMode() {
         return ProxyServer.getInstance().getConfig().isOnlineMode();
     }

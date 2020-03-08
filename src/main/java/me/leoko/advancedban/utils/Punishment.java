@@ -1,16 +1,18 @@
 package me.leoko.advancedban.utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -35,6 +37,13 @@ public class Punishment {
         this.end = end;
         this.calculation = calculation;
         this.id = id;
+    }
+
+    public static void create(String name, String target, String reason, String operator, PunishmentType type, Long end,
+                              String calculation, boolean silent) {
+        new Punishment(name, target, reason, operator, end == -1 ? type.getBasic() : type,
+                TimeManager.getTime(), end, calculation, -1)
+                .create(silent);
     }
 
     public String getName() {
@@ -104,14 +113,14 @@ public class Punishment {
         if (getType() != PunishmentType.KICK) {
             try {
                 DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
-                ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart());
-                if (rs.next()) {
-                    id = rs.getInt("id");
-                } else {
-                    Universal.get().log("!! No able to update ID of punishment! Please restart the server to resolve this issue!");
-                    Universal.get().log("!! Failed at: " + toString());
+                try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name())) {
+                	if (rs.next()) {
+                        id = rs.getInt("id");
+                    } else {
+                        Universal.get().log("!! Not able to update ID of punishment! Please restart the server to resolve this issue!");
+                        Universal.get().log("!! Failed at: " + toString());
+                    }
                 }
-                rs.close();
             } catch (SQLException ex) {
                 Universal.get().debug(ex);
             }
@@ -176,7 +185,7 @@ public class Punishment {
                 "DATE", getDate(start),
                 "COUNT", cWarnings + "");
 
-        mi.notify("ab." + getType().getName() + ".notify", notification);
+        mi.notify("ab.notify." + getType().getName(), notification);
     }
 
     public void delete() {
@@ -202,8 +211,13 @@ public class Punishment {
         }
 
         if (who != null) {
+            String message = MessageManager.getMessage("Un" + getType().getBasic().getConfSection("Notification"),
+                    true, "OPERATOR", who, "NAME", getName());
+            mi.notify("ab.undoNotify." + getType().getBasic().getName(), Collections.singletonList(message));
+
             Universal.get().debug(who + " is deleting a punishment");
         }
+
         Universal.get().debug("Deleted punishment " + getId() + " from " + getName() + " punishment reason: " + getReason());
         mi.callRevokePunishmentEvent(this, massClear);
     }
@@ -227,7 +241,7 @@ public class Punishment {
     public String getDuration(boolean fromStart) {
         String duration = "permanent";
         if (getType().isTemp()) {
-            long diff = (getEnd() - (fromStart ? start : TimeManager.getTime())) / 1000;
+            long diff = ceilDiv(getEnd() - (fromStart ? start : TimeManager.getTime()), 1000L);
             if (diff > 60 * 60 * 24) {
                 duration = MessageManager.getMessage("General.TimeLayoutD", getDurationParameter("D", diff / 60 / 60 / 24 + "", "H", diff / 60 / 60 % 24 + "", "M", diff / 60 % 60 + "", "S", diff % 60 + ""));
             } else if (diff > 60 * 60) {
@@ -239,6 +253,10 @@ public class Punishment {
             }
         }
         return duration;
+    }
+
+    long ceilDiv(long x, long y) {
+        return -Math.floorDiv(-x, y);
     }
 
     private String[] getDurationParameter(String... parameter) {
