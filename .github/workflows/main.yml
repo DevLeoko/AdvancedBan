@@ -19,7 +19,15 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: |
+        mvn -B package --file pom.xml
+        rm target/!(Adv*) -r
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: AdvancedBan Jar
+        path: target
       
     - name: Generate javadocs
       run: mvn -B javadoc:javadoc --file pom.xml
@@ -28,6 +36,8 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v1.3.0
       with:
         build_dir: target/site/apidocs
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
