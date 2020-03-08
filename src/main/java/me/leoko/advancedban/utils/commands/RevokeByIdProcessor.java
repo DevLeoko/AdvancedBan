@@ -23,14 +23,14 @@ public class RevokeByIdProcessor implements Consumer<Command.CommandInput> {
 
         Punishment punishment = resolver.apply(id);
         if (punishment == null) {
-            MessageManager.sendMessage(input.getSender(), "Un" + path + ".NotPunished",
+            MessageManager.sendMessage(input.getSender(), path + ".NotPunished",
                     true, "ID", id + "");
             return;
         }
 
         final String operator = Universal.get().getMethods().getName(input.getSender());
         punishment.delete(operator, false, true);
-        MessageManager.sendMessage(input.getSender(), "Un" + path + ".Done",
+        MessageManager.sendMessage(input.getSender(), path + ".Done",
                 true, "ID", id + "");
     }
 }

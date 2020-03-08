@@ -201,7 +201,7 @@ public enum Command {
                     }
 
                     new ListProcessor(
-                            target -> PunishmentManager.get().getPunishments(target, null, false),
+                            target -> PunishmentManager.get().getPunishments(target, null, true),
                             "Warns", false, true).accept(input);
                 } else {
                     if (!Universal.get().getMethods().hasPerms(input.getSender(), "ab.warns.own")) {
@@ -211,7 +211,7 @@ public enum Command {
 
                     String name = Universal.get().getMethods().getName(input.getSender());
                     new ListProcessor(
-                            target -> PunishmentManager.get().getPunishments(name, null, false),
+                            target -> PunishmentManager.get().getPunishments(name, null, true),
                             "Warns", false, false).accept(input);
                 }
             },

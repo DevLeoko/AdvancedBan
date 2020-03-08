@@ -109,12 +109,13 @@ public class Universal {
                     + "\n&8| &cSupport:"
                     + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
                     + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
+                    + "\n&8| &cTwitter: &7@LeokoGar"
                     + "\n&8| &cUpdate:"
                     + "\n&8|   &7" + upt
                     + "\n&8[]================================[]&r\n ");
         } else {
             mi.log("&cEnabling AdvancedBan on Version &7" + mi.getVersion());
-            mi.log("&cCoded by &7Leoko &8| &cWeb: &7Skamps.eu");
+            mi.log("&cCoded by &7Leoko &8| &7Twitter: @LeokoGar");
         }
     }
 
@@ -134,10 +135,11 @@ public class Universal {
                     + "\n&8| &cSupport:"
                     + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
                     + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
+                    + "\n&8| &cTwitter: &7@LeokoGar"
                     + "\n&8[]================================[]&r\n ");
         } else {
             mi.log("&cDisabling AdvancedBan on Version &7" + getMethods().getVersion());
-            mi.log("&cCoded by Leoko &8| &7Web: Skamps.eu");
+            mi.log("&cCoded by Leoko &8| &7Twitter: @LeokoGar");
         }
     }
 

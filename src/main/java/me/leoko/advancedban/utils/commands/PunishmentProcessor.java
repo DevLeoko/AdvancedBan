@@ -64,7 +64,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         String operator = mi.getName(input.getSender());
         Punishment.create(name, target, reason, operator, type, end, "", silent);
 
-        MessageManager.sendMessage(input.getSender(), PunishmentType.BAN.getConfSection() + ".Done",
+        MessageManager.sendMessage(input.getSender(), type.getBasic().getConfSection() + ".Done",
                 true, "NAME", name);
     }
 
