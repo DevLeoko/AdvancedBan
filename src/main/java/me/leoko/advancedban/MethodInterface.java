@@ -400,8 +400,22 @@ public interface MethodInterface {
      * @param perm         the perm
      * @param notification the notification
      */
-    void notify(String perm, List<String> notification);
-
+    default void notify(String perm, List<String> notification) {
+    	notify(perm, null, notification);
+    }
+    
+    /**
+     * Broadcast a message to every user with the given perm OR the alt perm.
+     * Effort is made to ensure that the same message is not sent twice
+     * if the user has both permissions, but this is not guaranteed
+     * on all implementations.
+     * 
+     * @param perm the permission
+     * @param altPerm the alternate permission, can be <code>null</code>
+     * @param notification the notification
+     */
+    void notify(String perm, String altPerm, List<String> notification);
+    
     /**
      * Log a message.
      *

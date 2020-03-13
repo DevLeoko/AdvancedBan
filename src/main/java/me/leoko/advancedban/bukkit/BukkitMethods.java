@@ -361,9 +361,9 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void notify(String perm, List<String> notification) {
+    public void notify(String perm, String altPerm, List<String> notification) {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (hasPerms(p, perm)) {
+            if (hasPerms(p, perm) || altPerm != null && hasPerms(p, altPerm)) {
                 for (String str : notification) {
                     sendMessage(p, str);
                 }
