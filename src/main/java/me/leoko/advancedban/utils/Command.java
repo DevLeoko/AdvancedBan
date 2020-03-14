@@ -195,7 +195,7 @@ public enum Command {
             "\\S+( [1-9][0-9]*)?|\\S+",
             input -> {
                 if (input.getPrimary().matches("\\S+")) {
-                    if (!Universal.get().getMethods().hasPerms(input.getSender(), "ab.warns.other")) {
+                    if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
                     }
@@ -204,7 +204,7 @@ public enum Command {
                             target -> PunishmentManager.get().getPunishments(target, null, true),
                             "Warns", false, true).accept(input);
                 } else {
-                    if (!Universal.get().getMethods().hasPerms(input.getSender(), "ab.warns.own")) {
+                    if (!Universal.get().hasPerms(input.getSender(), "ab.warns.own")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
                     }
