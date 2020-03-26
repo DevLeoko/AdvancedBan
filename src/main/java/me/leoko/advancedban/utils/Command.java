@@ -30,7 +30,7 @@ public enum Command {
 
     TEMP_BAN(
             PunishmentType.TEMP_BAN.getPerms(),
-            "\\S+ [1-9][0-9]*([wdhms]|mo)( .*)?",
+            "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentProcessor(PunishmentType.TEMP_BAN),
             PunishmentType.TEMP_BAN.getConfSection("Usage"),
             "tempban"),
@@ -51,7 +51,7 @@ public enum Command {
 
     TEMP_MUTE(
             PunishmentType.TEMP_MUTE.getPerms(),
-            "\\S+ [1-9][0-9]*([wdhms]|mo)( .*)?",
+            "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentProcessor(PunishmentType.TEMP_MUTE),
             PunishmentType.TEMP_MUTE.getConfSection("Usage"),
             "tempmute"),
@@ -65,7 +65,7 @@ public enum Command {
 
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
-            "\\S+ [1-9][0-9]*([wdhms]|mo)( .*)?",
+            "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentProcessor(PunishmentType.TEMP_WARNING),
             PunishmentType.TEMP_WARNING.getConfSection("Usage"),
             "tempwarn"),
