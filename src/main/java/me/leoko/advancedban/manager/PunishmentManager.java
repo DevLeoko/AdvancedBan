@@ -68,7 +68,7 @@ public class PunishmentManager {
             
         } catch (SQLException ex) {
             universal.log("An error has occurred loading the punishments from the database.");
-            universal.debug(ex);
+            universal.debugSqlException(ex);
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -137,7 +137,7 @@ public class PunishmentManager {
                 }
             } catch (SQLException ex) {
                 universal.log("An error has occurred getting the punishments for " + target);
-                universal.debug(ex);
+                universal.debugSqlException(ex);
             }
         }
         return ptList;
@@ -164,7 +164,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has occurred executing a query in the database.");
             universal.debug("Query: \n" + sqlQuery);
-            universal.debug(ex);
+            universal.debugSqlException(ex);
         }
         return ptList;
     }
@@ -186,7 +186,7 @@ public class PunishmentManager {
         } catch (SQLException ex) {
             universal.log("An error has occurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
-            universal.debug(ex);
+            universal.debugSqlException(ex);
         }
         return pt == null || pt.isExpired() ? null : pt;
     }
@@ -302,7 +302,7 @@ public class PunishmentManager {
             
         } catch (SQLException ex) {
             universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
-            universal.debug(ex);
+            universal.debugSqlException(ex);
         }
         return i;
     }

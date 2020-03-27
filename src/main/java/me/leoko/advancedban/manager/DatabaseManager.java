@@ -102,6 +102,7 @@ public class DatabaseManager {
                         + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues\n"
                         + " \n"
                 );
+                Universal.get().debugSqlException(ex);
             }
         }
 
@@ -120,7 +121,7 @@ public class DatabaseManager {
             }
         } catch (SQLException ex) {
             Universal.get().log("An unexpected error has occurred turning off the database");
-            Universal.get().debug(ex);
+            Universal.get().debugSqlException(ex);
         }
     }
     
@@ -145,6 +146,7 @@ public class DatabaseManager {
                     + " Issue tracker: https://github.com/DevLeoko/AdvancedBan/issues \n"
                     + " \n"
             );
+            Universal.get().debugSqlException(exc);
             failedMySQL = true;
         }
     }
@@ -194,7 +196,7 @@ public class DatabaseManager {
     						+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
     				);
     		Universal.get().debug("Query: \n" + sql);
-    		Universal.get().debug(ex);
+    		Universal.get().debugSqlException(ex);
        	}
         return null;
     }
@@ -210,7 +212,7 @@ public class DatabaseManager {
             return connection.isValid(timeout);
         } catch (SQLException ex) {
             Universal.get().log("An unexpected error has occurred with the database.");
-            Universal.get().debug(ex);
+            Universal.get().debugSqlException(ex);
             return false;
         }
     }

@@ -122,7 +122,7 @@ public class Punishment {
                     }
                 }
             } catch (SQLException ex) {
-                Universal.get().debug(ex);
+                Universal.get().debugSqlException(ex);
             }
         }
 

@@ -11,6 +11,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -337,18 +339,26 @@ public class Universal {
         debugToFile(msg);
     }
 
+    public void debugException(Exception exc){
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        exc.printStackTrace(pw);
+
+        debug(sw.toString());
+    }
+
     /**
      * Debug.
      *
      * @param ex the ex
      */
-    public void debug(SQLException ex) {
+    public void debugSqlException(SQLException ex) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
             debug("§7An error has occurred with the database, the error code is: '" + ex.getErrorCode() + "'");
             debug("§7The state of the sql is: " + ex.getSQLState());
             debug("§7Error message: " + ex.getMessage());
-            ex.printStackTrace();
         }
+        debugException(ex);
     }
 
     private void debugToFile(Object msg) {
