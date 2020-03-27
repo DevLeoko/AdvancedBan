@@ -130,7 +130,7 @@ public enum Command {
 
     UN_PUNISH("ab.all.undo",
             "[0-9]+",
-            new RevokeByIdProcessor("UnPunish", PunishmentManager.get()::getWarn),
+            new RevokeByIdProcessor("UnPunish", PunishmentManager.get()::getPunishment),
             "UnPunish.Usage",
             "unpunish"),
 
