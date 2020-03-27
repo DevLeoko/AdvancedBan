@@ -1,0 +1,10 @@
+me.leoko.advancedban
+me.leoko.advancedban.bukkit
+me.leoko.advancedban.bukkit.event
+me.leoko.advancedban.bukkit.listener
+me.leoko.advancedban.bungee
+me.leoko.advancedban.bungee.event
+me.leoko.advancedban.bungee.listener
+me.leoko.advancedban.manager
+me.leoko.advancedban.utils
+me.leoko.advancedban.utils.commands
