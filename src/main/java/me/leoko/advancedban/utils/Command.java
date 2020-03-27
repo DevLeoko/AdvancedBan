@@ -233,11 +233,18 @@ public enum Command {
                 Punishment mute = PunishmentManager.get().getMute(uuid);
                 Punishment ban = PunishmentManager.get().getBan(uuid);
 
+                String cached = MessageManager.getMessage("Check.Cached", false);
+                String notCached = MessageManager.getMessage("Check.NotCached", false);
+
+                boolean nameCached = PunishmentManager.get().isCached(name);
+                boolean ipCached = PunishmentManager.get().isCached(ip);
+                boolean uuidCached = PunishmentManager.get().isCached(uuid);
+
                 Object sender = input.getSender();
-                MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name);
-                MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid);
+                MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name, "CACHED", nameCached ? cached : notCached);
+                MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid, "CACHED", uuidCached ? cached : notCached);
                 if (Universal.get().hasPerms(sender, "ab.check.ip")) {
-                    MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip);
+                    MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip, "CACHED", ipCached ? cached : notCached);
                 }
                 MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
                 MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION", mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");

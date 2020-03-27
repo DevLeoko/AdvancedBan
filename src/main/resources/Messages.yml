@@ -230,9 +230,9 @@ ChangeReason:
 
 Check:
   Usage: "&cUsage &8\xbb &7&o/check [Name]"
-  Header: "&7Checking &e&o%NAME%"
-  UUID: "&cUUID &8\xbb &7%UUID%"
-  IP: "&cIP &8\xbb &7%IP%"
+  Header: "&7Checking &e&o%NAME% &8(%CACHED%&8)"
+  UUID: "&cUUID &8\xbb &7%UUID% &8(%CACHED%&8)"
+  IP: "&cIP &8\xbb &7%IP% &8(%CACHED%&8)"
   Geo: "&cCountry &8\xbb &7%LOCATION%"
   Mute: "&cMuted &8\xbb &7%DURATION%"
   MuteReason: "  &cReason &8\xbb &7%REASON%"
@@ -240,3 +240,5 @@ Check:
   BanReason: "  &cReason &8\xbb &7%REASON%"
   Warn: "&cWarns &8\xbb &7%COUNT%"
   NotFound: "&cSorry we have not been able to find %NAME%"
+  Cached: "&a&ocached"
+  NotCached: "&c&onot cached"
