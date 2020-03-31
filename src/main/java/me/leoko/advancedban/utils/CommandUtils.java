@@ -47,9 +47,9 @@ public class CommandUtils {
         MethodInterface mi = Universal.get().getMethods();
         String reason = String.join(" ", input.getArgs());
 
-        if (reason.matches("[~@].+") && !mi.contains(mi.getLayouts(), "Message." + reason.substring(1))) {
+        if (reason.matches("[~@].+") && !mi.contains(mi.getLayouts(), "Message." + input.getPrimary().substring(1))) {
             MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound",
-                    true, "NAME", reason.substring(1));
+                    true, "NAME", input.getPrimary().substring(1));
             return null;
         }
 
