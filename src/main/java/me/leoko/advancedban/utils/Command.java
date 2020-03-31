@@ -42,6 +42,13 @@ public enum Command {
             PunishmentType.IP_BAN.getConfSection("Usage"),
             "ipban", "banip", "ban-ip"),
 
+    TEMP_IP_BAN(
+            PunishmentType.TEMP_IP_BAN.getPerms(),
+            "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentProcessor(PunishmentType.TEMP_IP_BAN),
+            PunishmentType.TEMP_IP_BAN.getConfSection("Usage"),
+            "tempipban"),
+
     MUTE(
             PunishmentType.MUTE.getPerms(),
             ".+",
@@ -109,7 +116,7 @@ public enum Command {
                         return;
 
                     List<Punishment> punishments = PunishmentManager.get().getWarns(uuid);
-                    if (!punishments.isEmpty()) {
+                    if (punishments.isEmpty()) {
                         MessageManager.sendMessage(input.getSender(), "Un" + confSection + ".Clear.Empty",
                                 true, "NAME", name);
                         return;
@@ -236,7 +243,7 @@ public enum Command {
                 String cached = MessageManager.getMessage("Check.Cached", false);
                 String notCached = MessageManager.getMessage("Check.NotCached", false);
 
-                boolean nameCached = PunishmentManager.get().isCached(name);
+                boolean nameCached = PunishmentManager.get().isCached(name.toLowerCase());
                 boolean ipCached = PunishmentManager.get().isCached(ip);
                 boolean uuidCached = PunishmentManager.get().isCached(uuid);
 
@@ -276,7 +283,7 @@ public enum Command {
                 }
             },
             null,
-            "systemPrefs"),
+            "systemprefs"),
 
     ADVANCED_BAN(null,
             ".*",
