@@ -9,6 +9,7 @@ import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -39,10 +40,16 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 
         // calculate duration if necessary
         Long end = -1L;
+        String timeTemplate = "";
         if (type.isTemp()) {
-            end = processTime(input, target, type);
-            if (end == null)
+            TimeCalculation calculation = processTime(input, target, type);
+            if (calculation == null)
                 return;
+
+            end = calculation.time;
+
+            if(calculation.template != null)
+                timeTemplate = calculation.template;
         }
 
 
@@ -62,14 +69,14 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 
         MethodInterface mi = Universal.get().getMethods();
         String operator = mi.getName(input.getSender());
-        Punishment.create(name, target, reason, operator, type, end, "", silent);
+        Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
 
         MessageManager.sendMessage(input.getSender(), type.getBasic().getConfSection() + ".Done",
                 true, "NAME", name);
     }
 
     // Removes time argument and returns timestamp (null if failed)
-    private static Long processTime(Command.CommandInput input, String uuid, PunishmentType type) {
+    private static TimeCalculation processTime(Command.CommandInput input, String uuid, PunishmentType type) {
         String time = input.getPrimary();
         input.next();
         MethodInterface mi = Universal.get().getMethods();
@@ -83,9 +90,10 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
             List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + layout);
             String timeName = timeLayout.get(Math.min(i, timeLayout.size() - 1));
             if (timeName.equalsIgnoreCase("perma")) {
-            	return -1L;
+            	return new TimeCalculation(layout, -1L);
             }
-			return TimeManager.getTime() + TimeManager.toMilliSec(time);
+			Long actualTime = TimeManager.getTime() + TimeManager.toMilliSec(timeName);
+            return new TimeCalculation(layout, actualTime);
         }
 		long toAdd = TimeManager.toMilliSec(time);
 		if (!Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur.max")) {
@@ -102,7 +110,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 		        return null;
 		    }
 		}
-		return TimeManager.getTime() + toAdd;
+		return new TimeCalculation(null, TimeManager.getTime() + toAdd);
     }
 
     // Checks whether target is exempted from punishment
@@ -154,5 +162,15 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private static boolean alreadyPunished(String target, PunishmentType type) {
         return (type.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(target))
                 || (type.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(target));
+    }
+
+    private static class TimeCalculation{
+        private String template;
+        private Long time;
+
+        public TimeCalculation(String template, Long time) {
+            this.template = template;
+            this.time = time;
+        }
     }
 }
