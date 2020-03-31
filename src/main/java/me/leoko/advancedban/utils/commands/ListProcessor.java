@@ -30,6 +30,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
     @Override
     public void accept(Command.CommandInput input) {
         String target = "";
+        String name = input.getPrimary();
         if (hasTarget) {
             target = input.getPrimary();
             if (!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
@@ -45,7 +46,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
         final List<Punishment> punishments = listSupplier.apply(target);
         if (punishments.isEmpty()) {
             MessageManager.sendMessage(input.getSender(), config + ".NoEntries",
-                    true, "NAME", target);
+                    true, "NAME", name);
             return;
         }
 
@@ -62,7 +63,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         String prefix = MessageManager.getMessage("General.Prefix");
         List<String> header = MessageManager.getLayout(mi.getMessages(), config + ".Header",
-                "PREFIX", prefix, "NAME", target);
+                "PREFIX", prefix, "NAME", name);
 
         for (String line : header)
             mi.sendMessage(input.getSender(), line);
@@ -72,9 +73,10 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         for (int i = (page - 1) * 5; i < page * 5 && punishments.size() > i; i++) {
             Punishment punishment = punishments.get(i);
+            String nameOrIp = punishment.getType().isIpOrientated() ? punishment.getName() + " / " +punishment.getUuid() : punishment.getName();
             List<String> entryLayout = MessageManager.getLayout(mi.getMessages(), config + ".Entry",
                     "PREFIX", prefix,
-                    "NAME", punishment.getName(),
+                    "NAME", nameOrIp,
                     "DURATION", punishment.getDuration(history),
                     "OPERATOR", punishment.getOperator(),
                     "REASON", punishment.getReason(),
@@ -92,7 +94,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
                 "COUNT", punishments.size() + "");
         if (punishments.size() / 5.0 + 1 > page + 1) {
             MessageManager.sendMessage(input.getSender(), config + ".PageFooter", false,
-                    "NEXT_PAGE", (page + 1) + "", "NAME", target);
+                    "NEXT_PAGE", (page + 1) + "", "NAME", name);
         }
     }
 }
