@@ -41,7 +41,7 @@ public class Punishment {
 
     public static void create(String name, String target, String reason, String operator, PunishmentType type, Long end,
                               String calculation, boolean silent) {
-        new Punishment(name, target, reason, operator, end == -1 ? type.getBasic() : type,
+        new Punishment(name, target, reason, operator, end == -1 ? type.getPermanent() : type,
                 TimeManager.getTime(), end, calculation, -1)
                 .create(silent);
     }
@@ -129,17 +129,19 @@ public class Punishment {
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
 
         if (getType().getBasic() == PunishmentType.WARNING) {
-            String cmd = "";
+            String cmd = null;
             for (int i = 1; i <= cWarnings; i++) {
                 if (mi.contains(mi.getConfig(), "WarnActions." + i)) {
                     cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
                 }
             }
-            final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
-            mi.runSync(() -> {
-                mi.executeCommand(finalCmd);
-                Universal.get().log("Executing command: " + finalCmd);
-            });
+            if(cmd != null){
+                final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
+                mi.runSync(() -> {
+                    mi.executeCommand(finalCmd);
+                    Universal.get().log("Executing command: " + finalCmd);
+                });
+            }
         }
 
         if (!silent) {

@@ -74,6 +74,13 @@ public enum PunishmentType {
         return basic == null ? this : basic;
     }
 
+    public PunishmentType getPermanent() {
+        if(this == IP_BAN || this == TEMP_IP_BAN)
+            return IP_BAN;
+
+        return getBasic();
+    }
+
     public boolean isTemp() {
         return temp;
     }
