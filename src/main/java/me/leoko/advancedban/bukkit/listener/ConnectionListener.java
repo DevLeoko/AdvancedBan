@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * Created by Leoko @ dev.skamps.eu on 16.07.2016.
  */
 public class ConnectionListener implements Listener {
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onConnect(AsyncPlayerPreLoginEvent event) {
         String result = Universal.get().callConnection(event.getName(), event.getAddress().getHostAddress());
         if (result != null) {
