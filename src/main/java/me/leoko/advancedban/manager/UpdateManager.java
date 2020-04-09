@@ -36,6 +36,25 @@ public class UpdateManager {
 
         if(mi.isUnitTesting()) return;
 
+        if (!mi.contains(mi.getMessages(), "WarnsOwn")) {
+            addMessage("ChangeReason:", "", 0);
+            addMessage("ChangeReason:", "WarnsOwn:", -1);
+            addMessage("ChangeReason:", "  OutOfIndex: \"&cThere is no page %PAGE%!\"", -1);
+            addMessage("ChangeReason:", "  NoEntries: \"&c&oYou have no warnings yet\"", -1);
+            addMessage("ChangeReason:", "  Header:", -1);
+            addMessage("ChangeReason:", "    - \"%PREFIX% &7Your warnings:\"", -1);
+            addMessage("ChangeReason:", "    - \"&e&oDuration &8| &7&oWarned by\"", -1);
+            addMessage("ChangeReason:", "    - \"&c&o#ID &8> &7&oReason\"", -1);
+            addMessage("ChangeReason:", "    - \"&7\"", -1);
+            addMessage("ChangeReason:", "  Entry:", -1);
+            addMessage("ChangeReason:", "    - \"&8[&e%DATE%&8]\"", -1);
+            addMessage("ChangeReason:", "    - \"&e%DURATION% &8| &7%OPERATOR%\"", -1);
+            addMessage("ChangeReason:", "    - \"&c&l#%ID% &8> &7&o%REASON%\"", -1);
+            addMessage("ChangeReason:", "    - \"&7\"", -1);
+            addMessage("ChangeReason:", "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Active warnings: &e&o%COUNT%\"", -1);
+            addMessage("ChangeReason:", "  PageFooter: \"&7Use &e&o/warns %NEXT_PAGE% &7to see the next page\"", -1);
+        }
+
         if (!mi.contains(mi.getMessages(), "UnBan.Notification")) {
             addMessage("UnBan:", "  Notification: \"&e&o%OPERATOR% &7unbanned &c&o%NAME%\"", 1);
             addMessage("UnMute:", "  Notification: \"&e&o%OPERATOR% &7unmuted &c&o%NAME%\"", 1);

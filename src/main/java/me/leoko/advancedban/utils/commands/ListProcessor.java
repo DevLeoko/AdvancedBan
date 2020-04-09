@@ -29,10 +29,11 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
     @Override
     public void accept(Command.CommandInput input) {
-        String target = "";
-        String name = input.getPrimary();
+        String target = null;
+        String name = "invalid";
         if (hasTarget) {
             target = input.getPrimary();
+            name = target;
             if (!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
                 target = processName(input);
                 if (target == null)

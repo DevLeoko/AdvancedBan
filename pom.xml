@@ -8,7 +8,7 @@
     <version>2.1.8</version>
     <packaging>jar</packaging>
     <properties>
-        <build>SNAPSHOT</build>
+        <build>RELEASE</build>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skipTests>false</skipTests>
         <trimStackTrace>true</trimStackTrace>

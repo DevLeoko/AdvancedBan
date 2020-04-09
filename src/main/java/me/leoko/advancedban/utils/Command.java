@@ -195,13 +195,13 @@ public enum Command {
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishments(target, null, false),
                     "History", true, true),
-            "Banlist.Usage",
+            "History.Usage",
             "history"),
 
     WARNS(null,
-            "\\S+( [1-9][0-9]*)?|\\S+",
+            "\\S+( [1-9][0-9]*)?|\\S+|",
             input -> {
-                if (input.getPrimary().matches("\\S+")) {
+                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -217,9 +217,10 @@ public enum Command {
                     }
 
                     String name = Universal.get().getMethods().getName(input.getSender());
+                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[]{name}));
                     new ListProcessor(
-                            target -> PunishmentManager.get().getPunishments(name, null, true),
-                            "Warns", false, false).accept(input);
+                            target -> PunishmentManager.get().getPunishments(identifier, null, true),
+                            "WarnsOwn", false, false).accept(input);
                 }
             },
             "Warns.Usage",
@@ -366,6 +367,7 @@ public enum Command {
             null,
             "advancedban");
 
+    //language=RegExp
     private final String permission;
     private final Predicate<String[]> syntaxValidator;
     private final Consumer<CommandInput> commandHandler;
@@ -413,7 +415,7 @@ public enum Command {
         return null;
     }
 
-    public class CommandInput {
+    public static class CommandInput {
         private Object sender;
         private String[] args;
 
