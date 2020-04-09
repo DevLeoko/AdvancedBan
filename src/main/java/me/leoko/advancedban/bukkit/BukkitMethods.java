@@ -9,6 +9,7 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import org.apache.commons.io.Charsets;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,11 +22,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,16 +54,13 @@ public class BukkitMethods implements MethodInterface {
             getPlugin().saveResource("Layouts.yml", true);
         }
 
-        config = YamlConfiguration.loadConfiguration(configFile);
-        messages = YamlConfiguration.loadConfiguration(messageFile);
-        layouts = YamlConfiguration.loadConfiguration(layoutFile);
-
-        if (!config.contains("UUID-Fetcher")) {
-            //noinspection ResultOfMethodCallIgnored
-            configFile.renameTo(new File(getDataFolder(), "oldConfig.yml"));
-            configFile = new File(getDataFolder(), "config.yml");
-            getPlugin().saveResource("config.yml", true);
-            config = YamlConfiguration.loadConfiguration(configFile);
+        try {
+            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+            messages = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(messageFile), StandardCharsets.UTF_8));
+            layouts = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(layoutFile), StandardCharsets.UTF_8));
+        } catch (FileNotFoundException exc) {
+            // We just saved the files, so that should really not happen.
+            Universal.get().debugException(exc);
         }
     }
 
