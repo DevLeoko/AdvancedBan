@@ -196,13 +196,16 @@ public class Universal {
     /**
      * Is mute command boolean.
      *
-     * @param cmd the cmd
-     * @return the boolean
+     * @param cmd the full command without the slash
+     * @return whether or not the command should be disabled if a player is muted
      */
     public boolean isMuteCommand(String cmd) {
-        cmd = cmd.contains(":") ? cmd.split(":", 2)[1] : cmd;
+    	if (cmd.contains(":")) {
+    		cmd = cmd.substring(cmd.indexOf(':') + 1);
+    	}        
+    	cmd = cmd.toLowerCase();
         for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) {
-            if (cmd.equalsIgnoreCase(str)) {
+            if (cmd.startsWith(str.toLowerCase())) {
                 return true;
             }
         }
