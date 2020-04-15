@@ -9,7 +9,6 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
-import org.apache.commons.io.Charsets;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -235,7 +234,7 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public boolean callCMD(Object player, String cmd) {
         Punishment pnt;
-        if (Universal.get().isMuteCommand(cmd.split(" ")[0].substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
+        if (Universal.get().isMuteCommand(cmd.substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
             for (String str : pnt.getLayout()) {
                 sendMessage(player, str);
             }
