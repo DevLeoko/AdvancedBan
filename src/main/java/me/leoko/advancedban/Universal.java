@@ -200,7 +200,7 @@ public class Universal {
      * @return the boolean
      */
     public boolean isMuteCommand(String cmd) {
-        cmd = (cmd.contains(":") ? cmd.split(":", 2)[1] : cmd).toLowerCase();
+        cmd = (cmd.contains(":") && cmd.indexOf(':') < cmd.indexOf(' ') ? cmd.split(":", 2)[1] : cmd).toLowerCase();
         for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) {
             if (cmd.startsWith(str.toLowerCase())) {
                 return true;
