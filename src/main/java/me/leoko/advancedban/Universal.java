@@ -19,10 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -251,11 +248,12 @@ public class Universal {
      *
      * @param name the name
      * @param ip   the ip
+     * @param fullUUID the uuid
      * @return the string
      */
-    public String callConnection(String name, String ip) {
+    public String callConnection(String name, String ip, UUID fullUUID) {
         name = name.toLowerCase();
-        String uuid = UUIDManager.get().getUUID(name);
+        String uuid = fullUUID.toString().replace("-", "");
         if (uuid == null) {
             return "[AdvancedBan] Failed to fetch your UUID";
         }

@@ -18,7 +18,7 @@ public class ConnectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onConnect(AsyncPlayerPreLoginEvent event) {
         if(event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED){
-            String result = Universal.get().callConnection(event.getName(), event.getAddress().getHostAddress());
+            String result = Universal.get().callConnection(event.getName(), event.getAddress().getHostAddress(), event.getUniqueId());
             if (result != null) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, result);
             }

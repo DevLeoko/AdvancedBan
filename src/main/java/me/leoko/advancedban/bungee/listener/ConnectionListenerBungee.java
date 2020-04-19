@@ -22,7 +22,7 @@ public class ConnectionListenerBungee implements Listener {
     public void onConnection(LoginEvent event) {
         event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
         Universal.get().getMethods().runAsync(() -> {
-            String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
+            String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress(), event.getConnection().getUniqueId());
             if (result != null) {
                 event.setCancelled(true);
                 event.setCancelReason(result);
