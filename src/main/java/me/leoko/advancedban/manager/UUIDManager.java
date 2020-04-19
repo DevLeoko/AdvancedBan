@@ -2,7 +2,6 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
-import net.md_5.bungee.api.connection.PendingConnection;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
