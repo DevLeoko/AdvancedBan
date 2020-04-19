@@ -248,12 +248,11 @@ public class Universal {
      *
      * @param name the name
      * @param ip   the ip
-     * @param fullUUID the uuid
      * @return the string
      */
-    public String callConnection(String name, String ip, UUID fullUUID) {
+    public String callConnection(String name, String ip) {
         name = name.toLowerCase();
-        String uuid = fullUUID.toString().replace("-", "");
+        String uuid = UUIDManager.get().getUUID(name);
         if (uuid == null) {
             return "[AdvancedBan] Failed to fetch your UUID";
         }
