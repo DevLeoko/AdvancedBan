@@ -105,8 +105,10 @@ public class UUIDManager {
      * @param name the name
      * @param uuid the uuid
      */
-    public void addUUIDToCache(String name, UUID uuid) {
-        activeUUIDs.put(name, uuid.toString().replace("-", ""));
+    public void supplyInternUUID(String name, UUID uuid) {
+        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+            activeUUIDs.put(name, uuid.toString().replace("-", ""));
+        }
     }
 
     /**

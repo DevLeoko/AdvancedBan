@@ -19,7 +19,7 @@ public class ConnectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onConnect(AsyncPlayerPreLoginEvent event) {
         if(event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED){
-            UUIDManager.get().addUUIDToCache(event.getName(), event.getUniqueId());
+            UUIDManager.get().supplyInternUUID(event.getName(), event.getUniqueId());
             String result = Universal.get().callConnection(event.getName(), event.getAddress().getHostAddress());
             if (result != null) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, result);
