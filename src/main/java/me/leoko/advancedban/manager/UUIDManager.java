@@ -7,11 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Scanner;
 
 /**
  * The UUID Manager used to resolve and cache the UUIDs.
@@ -100,6 +97,18 @@ public class UUIDManager {
         }
 
         return uuid;
+    }
+
+    /**
+     * Adds uuid to the cache
+     *
+     * @param name the name
+     * @param uuid the uuid
+     */
+    public void supplyInternUUID(String name, UUID uuid) {
+        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+            activeUUIDs.put(name, uuid.toString().replace("-", ""));
+        }
     }
 
     /**
