@@ -125,6 +125,17 @@ public class UUIDManager {
     }
 
     /**
+     * Gets a uuid from a name only if AdvancedBan
+     * already has the uuid/name mapping in memory.
+     * 
+     * @param name the player name
+     * @return the nonhyphenated uuid or null if not found
+     */
+    public String getInMemoryUUID(String name) {
+    	return activeUUIDs.get(name);
+    }
+
+    /**
      * Get name from an uuid.
      *
      * @param uuid         the uuid
