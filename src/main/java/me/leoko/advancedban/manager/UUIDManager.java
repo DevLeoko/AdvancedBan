@@ -118,10 +118,8 @@ public class UUIDManager {
      * @return the uuid
      */
     public String getUUID(String name) {
-        if (activeUUIDs.containsKey(name)) {
-            return activeUUIDs.get(name);
-        }
-        return getInitialUUID(name);
+        String inMemoryUuid = getInMemoryUUID(name);
+        return (inMemoryUuid != null) ? inMemoryUuid : getInitialUUID(name);
     }
 
     /**
@@ -169,11 +167,10 @@ public class UUIDManager {
         }
 
         if (!forceInitial) {
-            for (Entry<String, String> rs : activeUUIDs.entrySet()) {
-                if (rs.getValue().equalsIgnoreCase(uuid)) {
-                    return rs.getKey();
-                }
-            }
+        	String inMemoryName = getInMemoryName(uuid);
+        	if (inMemoryName != null) {
+        		return inMemoryName;
+        	}
         }
 
         try (Scanner scanner = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8")) {
