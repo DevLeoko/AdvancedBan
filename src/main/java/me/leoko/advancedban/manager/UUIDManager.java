@@ -118,10 +118,35 @@ public class UUIDManager {
      * @return the uuid
      */
     public String getUUID(String name) {
-        if (activeUUIDs.containsKey(name)) {
-            return activeUUIDs.get(name);
+        String inMemoryUuid = getInMemoryUUID(name);
+        return (inMemoryUuid != null) ? inMemoryUuid : getInitialUUID(name);
+    }
+
+    /**
+     * Gets a uuid from a name only if AdvancedBan
+     * already has the uuid/name mapping in memory.
+     * 
+     * @param name the player name
+     * @return the nonhyphenated uuid or null if not found
+     */
+    public String getInMemoryUUID(String name) {
+    	return activeUUIDs.get(name);
+    }
+
+    /**
+     * Gets a name from a uuid only if AdvancedBan
+     * already has the uuid/name mapping in memory.
+     * 
+     * @param uuid the uuid without hyphens
+     * @return the player name or null if not found
+     */
+    public String getInMemoryName(String uuid) {
+        for (Entry<String, String> rs : activeUUIDs.entrySet()) {
+            if (rs.getValue().equalsIgnoreCase(uuid)) {
+                return rs.getKey();
+            }
         }
-        return getInitialUUID(name);
+        return null;
     }
 
     /**
@@ -142,11 +167,10 @@ public class UUIDManager {
         }
 
         if (!forceInitial) {
-            for (Entry<String, String> rs : activeUUIDs.entrySet()) {
-                if (rs.getValue().equalsIgnoreCase(uuid)) {
-                    return rs.getKey();
-                }
-            }
+        	String inMemoryName = getInMemoryName(uuid);
+        	if (inMemoryName != null) {
+        		return inMemoryName;
+        	}
         }
 
         try (Scanner scanner = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8")) {
