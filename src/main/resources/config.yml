@@ -62,6 +62,7 @@ MuteCommands:
 
 # These players will not be able to get punished in any way
 # this also works if the player is offline
+# Use Vault to make exempt permissions also work for offline players
 ExemptPlayers:
 - 'Leoko'
 - 'md5'

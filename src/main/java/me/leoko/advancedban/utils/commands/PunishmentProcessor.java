@@ -9,9 +9,9 @@ import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
-import java.sql.Time;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
 
@@ -27,15 +27,15 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         boolean silent = processTag(input, "-s");
         String name = input.getPrimary();
 
-        // is exempted
-        if (processExempt(input, type))
-            return;
-
         // extract target
         String target = type.isIpOrientated()
                 ? processIP(input)
                 : processName(input);
         if (target == null)
+            return;
+
+        // is exempted
+        if (processExempt(name, target, input.getSender(), type))
             return;
 
         // calculate duration if necessary
@@ -48,7 +48,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 
             end = calculation.time;
 
-            if(calculation.template != null)
+            if (calculation.template != null)
                 timeTemplate = calculation.template;
         }
 
@@ -90,38 +90,44 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
             List<String> timeLayout = mi.getStringList(mi.getLayouts(), "Time." + layout);
             String timeName = timeLayout.get(Math.min(i, timeLayout.size() - 1));
             if (timeName.equalsIgnoreCase("perma")) {
-            	return new TimeCalculation(layout, -1L);
+                return new TimeCalculation(layout, -1L);
             }
-			Long actualTime = TimeManager.getTime() + TimeManager.toMilliSec(timeName);
+            Long actualTime = TimeManager.getTime() + TimeManager.toMilliSec(timeName);
             return new TimeCalculation(layout, actualTime);
         }
-		long toAdd = TimeManager.toMilliSec(time);
-		if (!Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur.max")) {
-		    long max = -1;
-		    for (int i = 10; i >= 1; i--) {
-		        if (Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur." + i) &&
-		                mi.contains(mi.getConfig(), "TempPerms." + i)) {
-		            max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
-		            break;
-		        }
-		    }
-		    if (max != -1 && toAdd > max) {
-		        MessageManager.sendMessage(input.getSender(), type.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
-		        return null;
-		    }
-		}
-		return new TimeCalculation(null, TimeManager.getTime() + toAdd);
+        long toAdd = TimeManager.toMilliSec(time);
+        if (!Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur.max")) {
+            long max = -1;
+            for (int i = 10; i >= 1; i--) {
+                if (Universal.get().hasPerms(input.getSender(), "ab." + type.getName() + ".dur." + i) &&
+                        mi.contains(mi.getConfig(), "TempPerms." + i)) {
+                    max = mi.getLong(mi.getConfig(), "TempPerms." + i) * 1000;
+                    break;
+                }
+            }
+            if (max != -1 && toAdd > max) {
+                MessageManager.sendMessage(input.getSender(), type.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
+                return null;
+            }
+        }
+        return new TimeCalculation(null, TimeManager.getTime() + toAdd);
     }
 
     // Checks whether target is exempted from punishment
-    private static boolean processExempt(Command.CommandInput input, PunishmentType type) {
-        String name = input.getPrimary();
+    private static boolean processExempt(String name, String target, Object sender, PunishmentType type) {
         MethodInterface mi = Universal.get().getMethods();
         String dataName = name.toLowerCase();
-        // ( isOnline && hasOnlineExempt ) || hasOfflineExempt
-        if ((mi.isOnline(dataName) && !canPunish(input.getSender(), mi.getPlayer(dataName), type.getName()))
-                || Universal.get().isExemptPlayer(dataName)) {
-            MessageManager.sendMessage(input.getSender(), type.getBasic().getConfSection() + ".Exempt",
+
+        boolean onlineExempt = false;
+        if (mi.isOnline(dataName)) {
+            Object onlineTarget = mi.getPlayer(dataName);
+            onlineExempt = canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasPerms(onlineTarget, perms), type.getName());
+        }
+
+        boolean offlineExempt = !onlineExempt && (Universal.get().isExemptPlayer(dataName) || canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasOfflinePerms(name, perms), type.getName()));
+
+        if (onlineExempt || offlineExempt) {
+            MessageManager.sendMessage(sender, type.getBasic().getConfSection() + ".Exempt",
                     true, "NAME", name);
             return true;
         }
@@ -129,18 +135,19 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     }
 
     // Check based on exempt level if some is able to ban a player
-    public static boolean canPunish(Object operator, Object target, String path) {
+    public static boolean canNotPunish(Function<String, Boolean> operatorHasPerms, Function<String, Boolean> targetHasPerms, String path) {
         final String perms = "ab." + path + ".exempt";
-        if (Universal.get().hasPerms(target, perms))
-            return false;
+        if (targetHasPerms.apply(perms))
+            return true;
 
-        int targetLevel = permissionLevel(target, perms);
-        return targetLevel == 0 || permissionLevel(operator, perms) > targetLevel;
+        int targetLevel = permissionLevel(targetHasPerms, perms);
+
+        return targetLevel != 0 && permissionLevel(operatorHasPerms, perms) <= targetLevel;
     }
 
-    private static int permissionLevel(Object subject, String permission){
+    private static int permissionLevel(Function<String, Boolean> hasPerms, String permission) {
         for (int i = 10; i >= 1; i--)
-            if(Universal.get().hasPerms(subject, permission+"."+i))
+            if (hasPerms.apply(permission + "." + i))
                 return i;
 
         return 0;
@@ -164,7 +171,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
                 || (type.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(target));
     }
 
-    private static class TimeCalculation{
+    private static class TimeCalculation {
         private String template;
         private Long time;
 

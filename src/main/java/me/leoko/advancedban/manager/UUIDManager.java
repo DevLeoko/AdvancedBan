@@ -32,23 +32,23 @@ public class UUIDManager {
      * Initially setup the uuid manager by determening which {@link FetcherMode} should be used
      * based on the configured preference and the servers capabilities.
      */
-    public void setup(){
-        if(mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Dynamic", true)){
-            if(!mi.isOnlineMode()) {
+    public void setup() {
+        if (mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Dynamic", true)) {
+            if (!mi.isOnlineMode()) {
                 mode = FetcherMode.DISABLED;
-            }else{
-                if(Universal.get().isBungee()){
+            } else {
+                if (Universal.get().isBungee()) {
                     mode = FetcherMode.MIXED;
-                }else{
+                } else {
                     mode = FetcherMode.INTERN;
                 }
             }
-        }else{
-            if(!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) {
+        } else {
+            if (!mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Enabled", true)) {
                 mode = FetcherMode.DISABLED;
-            }else if(mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)){
+            } else if (mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Intern", false)) {
                 mode = FetcherMode.INTERN;
-            }else{
+            } else {
                 mode = FetcherMode.RESTFUL;
             }
         }
@@ -63,12 +63,12 @@ public class UUIDManager {
      */
     public String getInitialUUID(String name) {
         name = name.toLowerCase();
-        if(mode == FetcherMode.DISABLED)
+        if (mode == FetcherMode.DISABLED)
             return name;
 
-        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+        if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             String internUUID = mi.getInternUUID(name);
-            if(mode == FetcherMode.INTERN || internUUID != null)
+            if (mode == FetcherMode.INTERN || internUUID != null)
                 return internUUID;
         }
 
@@ -106,9 +106,24 @@ public class UUIDManager {
      * @param uuid the uuid
      */
     public void supplyInternUUID(String name, UUID uuid) {
-        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+        if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             activeUUIDs.put(name, uuid.toString().replace("-", ""));
         }
+    }
+
+    /**
+     * Convert String to UUID even if dashes are missing
+     *
+     * @param uuid
+     * @return
+     */
+    public UUID fromString(String uuid) {
+        if (!uuid.contains("-") && uuid.length() == 32)
+            uuid = uuid
+                    .replaceFirst(
+                            "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5");
+
+        return uuid.length() == 36 && uuid.contains("-") ? UUID.fromString(uuid) : null;
     }
 
     /**
@@ -125,18 +140,18 @@ public class UUIDManager {
     /**
      * Gets a uuid from a name only if AdvancedBan
      * already has the uuid/name mapping in memory.
-     * 
+     *
      * @param name the player name
      * @return the nonhyphenated uuid or null if not found
      */
     public String getInMemoryUUID(String name) {
-    	return activeUUIDs.get(name);
+        return activeUUIDs.get(name);
     }
 
     /**
      * Gets a name from a uuid only if AdvancedBan
      * already has the uuid/name mapping in memory.
-     * 
+     *
      * @param uuid the uuid without hyphens
      * @return the player name or null if not found
      */
@@ -160,17 +175,17 @@ public class UUIDManager {
         if (mode == FetcherMode.DISABLED)
             return uuid;
 
-        if(mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
+        if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             String internName = mi.getName(uuid);
-            if(mode == FetcherMode.INTERN || internName != null)
+            if (mode == FetcherMode.INTERN || internName != null)
                 return internName;
         }
 
         if (!forceInitial) {
-        	String inMemoryName = getInMemoryName(uuid);
-        	if (inMemoryName != null) {
-        		return inMemoryName;
-        	}
+            String inMemoryName = getInMemoryName(uuid);
+            if (inMemoryName != null) {
+                return inMemoryName;
+            }
         }
 
         try (Scanner scanner = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8")) {
@@ -181,6 +196,8 @@ public class UUIDManager {
             return null;
         }
     }
+
+
 
     private String askAPI(String url, String name, String key) throws IOException {
         HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
@@ -210,7 +227,7 @@ public class UUIDManager {
     /**
      * The fetcher-mode describes how the {@link UUIDManager} resolves UUIDs.
      */
-    public enum FetcherMode{
+    public enum FetcherMode {
         /**
          * No UUID Fetcher is used. The Username will be treated as an UUID.<br>
          * <b>Recommended for:</b> Servers running in offline mode (cracked).

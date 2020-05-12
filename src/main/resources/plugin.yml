@@ -2,6 +2,7 @@ name: ${project.artifactId}
 version: ${project.version}
 main: ${project.groupId}.bukkit.BukkitMain
 author: Leoko
+softdepend: [Vault]
 
 commands:
   AdvancedBan:
