@@ -55,20 +55,23 @@ public class PunishmentManager {
      * @return the interim data
      */
     public InterimData load(String name, String uuid, String ip) {
-	Set<Punishment> punishments = new HashSet<>();
-	Set<Punishment> history = new HashSet<>();
+        Set<Punishment> punishments = new HashSet<>();
+        Set<Punishment> history = new HashSet<>();
         try (ResultSet resultsPunishments = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip); ResultSet resultsHistory = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip)) {
-            
-        	while (resultsPunishments.next()) {
+            if (resultsHistory == null || resultsPunishments == null)
+                return null;
+
+            while (resultsPunishments.next()) {
                 punishments.add(getPunishmentFromResultSet(resultsPunishments));
-            } 
+            }
             while (resultsHistory.next()) {
                 history.add(getPunishmentFromResultSet(resultsHistory));
             }
-            
+
         } catch (SQLException ex) {
             universal.log("An error has occurred loading the punishments from the database.");
             universal.debugSqlException(ex);
+            return null;
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -116,7 +119,7 @@ public class PunishmentManager {
         List<Punishment> ptList = new ArrayList<>();
 
         if (isCached(target)) {
-            for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext();) {
+            for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
                 if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
                     if (!current || !pt.isExpired()) {
@@ -176,19 +179,26 @@ public class PunishmentManager {
      * @return the punishment
      */
     public Punishment getPunishment(int id) {
-        ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id);
-        Punishment pt = null;
-        try {
+        final Optional<Punishment> cachedPunishment = getLoadedPunishments(false).stream()
+                .filter(punishment -> punishment.getId() == id).findAny();
+
+        if (cachedPunishment.isPresent())
+            return cachedPunishment.get();
+
+
+        try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id)) {
             if (rs.next()) {
-                pt = getPunishmentFromResultSet(rs);
+                final Punishment punishment = getPunishmentFromResultSet(rs);
+                if (!punishment.isExpired())
+                    return punishment;
             }
-            rs.close();
         } catch (SQLException ex) {
             universal.log("An error has occurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
             universal.debugSqlException(ex);
         }
-        return pt == null || pt.isExpired() ? null : pt;
+
+        return null;
     }
 
     /**
@@ -200,7 +210,7 @@ public class PunishmentManager {
     public Punishment getWarn(int id) {
         Punishment punishment = getPunishment(id);
 
-        if(punishment == null)
+        if (punishment == null)
             return null;
 
         return punishment.getType().getBasic() == PunishmentType.WARNING ? punishment : null;
@@ -292,14 +302,14 @@ public class PunishmentManager {
         if (isCached(uuid)) {
             return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
         }
-        
+
         int i = 0;
         try (ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout)) {
-        	
+
             while (resultSet.next()) {
-            	i++;
+                i++;
             }
-            
+
         } catch (SQLException ex) {
             universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
             universal.debugSqlException(ex);
