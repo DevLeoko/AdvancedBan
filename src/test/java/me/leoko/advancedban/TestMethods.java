@@ -126,6 +126,11 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
+    public boolean hasOfflinePerms(String name, String perms) {
+        return false;
+    }
+
+    @Override
     public boolean isOnline(String name) {
         return false;
     }
@@ -182,16 +187,6 @@ public class TestMethods implements MethodInterface {
     public boolean callCMD(Object player, String cmd) {
         fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #19");
         return false;
-    }
-
-    @Override
-    public void loadMySQLFile(File f) {
-        //Nothing to do here while testing
-    }
-
-    @Override
-    public void createMySQLFile(File f) {
-        System.out.println("Created new MySQL-File");
     }
 
     @Override

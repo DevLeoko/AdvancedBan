@@ -19,7 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 
 /**
@@ -59,7 +62,7 @@ public class Universal {
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
         } catch (Exception ex) {
             log("Failed enabling database-manager...");
-            debug(ex.getMessage());
+            debugException(ex);
         }
 
         mi.setupMetrics();
@@ -266,6 +269,15 @@ public class Universal {
         }
 
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
+
+        if (interimData == null) {
+            if (getMethods().getBoolean(mi.getConfig(), "LockdownOnError", true)) {
+                return "[AdvancedBan] Failed to load player data!";
+            } else {
+                return null;
+            }
+        }
+
         Punishment pt = interimData.getBan();
 
         if (pt == null) {
@@ -339,7 +351,7 @@ public class Universal {
         debugToFile(msg);
     }
 
-    public void debugException(Exception exc){
+    public void debugException(Exception exc) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exc.printStackTrace(pw);

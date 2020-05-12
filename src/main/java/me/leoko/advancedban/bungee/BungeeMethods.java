@@ -42,6 +42,7 @@ public class BungeeMethods implements MethodInterface {
     private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
+    private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
     private Configuration config;
     private Configuration messages;
     private Configuration layouts;
@@ -67,6 +68,12 @@ public class BungeeMethods implements MethodInterface {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
             messages = ConfigurationProvider.getProvider(YamlConfiguration.class).load(messageFile);
             layouts = ConfigurationProvider.getProvider(YamlConfiguration.class).load(layoutFile);
+
+            if (mysqlFile.exists()) {
+                mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(mysqlFile);
+            } else {
+                mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -142,14 +149,19 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void sendMessage(Object player, String msg) {
         ((CommandSender) player).sendMessage(msg);
     }
 
     @Override
     public boolean hasPerms(Object player, String perms) {
-        return player == null ? false : ((CommandSender) player).hasPermission(perms);
+        return player != null && ((CommandSender) player).hasPermission(perms);
+    }
+
+    @Override
+    public boolean hasOfflinePerms(String name, String perms) {
+        return false;
     }
 
     @Override
@@ -174,7 +186,7 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void kickPlayer(String player, String reason) {
         if (Universal.get().useRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
@@ -185,7 +197,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public ProxiedPlayer[] getOnlinePlayers() {
-        return ProxyServer.getInstance().getPlayers().toArray(new ProxiedPlayer[] {});
+        return ProxyServer.getInstance().getPlayers().toArray(new ProxiedPlayer[]{});
     }
 
     @Override
@@ -266,29 +278,6 @@ public class BungeeMethods implements MethodInterface {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void loadMySQLFile(File file) {
-        try {
-            mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void createMySQLFile(File file) {
-        mysql.set("MySQL.IP", "localhost");
-        mysql.set("MySQL.DB-Name", "YourDatabase");
-        mysql.set("MySQL.Username", "root");
-        mysql.set("MySQL.Password", "pw123");
-        mysql.set("MySQL.Port", 3306);
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(mysql, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -382,7 +371,7 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public boolean isOnlineMode() {
         return ProxyServer.getInstance().getConfig().isOnlineMode();
     }

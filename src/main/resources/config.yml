@@ -7,10 +7,21 @@
 # If set to false all bans will be saved locally in a HSQLDB-Database
 UseMySQL: false
 
+MySQL:
+  IP: localhost
+  DB-Name: database-name
+  Username: admin
+  Password: superSecret
+  Port: 3306
+
 # Set to false if you want to have only short messages in the console
 # On startup and on the shutdown.
 DetailedEnableMessage: true
 DetailedDisableMessage: true
+
+# Whether to disallow connections to the server when there is an error
+# with the database. (e.g.: if your MySQL Server goes down)
+LockdownOnError: true
 
 # This will be the default reason to be displayed if none is given
 DefaultReason: "none"

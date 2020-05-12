@@ -145,6 +145,15 @@ public interface MethodInterface {
     boolean hasPerms(Object player, String perms);
 
     /**
+     * Check if an offline player has the given permission.
+     *
+     * @param name server intern identifier for player
+     * @param perms  the perms
+     * @return the boolean
+     */
+    boolean hasOfflinePerms(String name, String perms);
+
+    /**
      * Check whether player is online.
      *
      * @param name the name
@@ -229,20 +238,6 @@ public interface MethodInterface {
      * @return the boolean
      */
     boolean callCMD(Object player, String cmd);
-
-    /**
-     * Load MySQL data from file.
-     *
-     * @param f the f
-     */
-    void loadMySQLFile(File f);
-
-    /**
-     * Create default MySQL file.
-     *
-     * @param f the f
-     */
-    void createMySQLFile(File f);
 
     /**
      * Get MySQL.yml file.

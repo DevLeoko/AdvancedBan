@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -27,6 +28,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -35,11 +37,21 @@ public class BukkitMethods implements MethodInterface {
 
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
+    private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
     private YamlConfiguration config;
     private File configFile = new File(getDataFolder(), "config.yml");
     private YamlConfiguration messages;
     private YamlConfiguration layouts;
     private YamlConfiguration mysql;
+    private BiFunction<OfflinePlayer, String, Boolean> permissionVault;
+
+    public BukkitMethods() {
+        // Vault support
+        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+            RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+            permissionVault = (player, perms) -> rsp.getProvider().playerHas(null, player, perms);
+        }
+    }
 
     @Override
     public void loadFiles() {
@@ -57,6 +69,12 @@ public class BukkitMethods implements MethodInterface {
             config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
             messages = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(messageFile), StandardCharsets.UTF_8));
             layouts = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(layoutFile), StandardCharsets.UTF_8));
+
+            if (mysqlFile.exists()) {
+                mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(mysqlFile), StandardCharsets.UTF_8));
+            }else {
+                mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+            }
         } catch (FileNotFoundException exc) {
             // We just saved the files, so that should really not happen.
             Universal.get().debugException(exc);
@@ -142,11 +160,25 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public boolean hasPerms(Object player, String perms) {
+
         return ((CommandSender) player).hasPermission(perms);
     }
 
+    @Override
+    public boolean hasOfflinePerms(String name, String perms) {
+        if (permissionVault == null)
+            return false;
+
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+
+        if(player == null || !player.hasPlayedBefore())
+            return false;
+
+        return permissionVault.apply(player, perms);
+    }
+
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public boolean isOnline(String name) {
         return Bukkit.getOfflinePlayer(name).isOnline();
     }
@@ -165,7 +197,7 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public Player[] getOnlinePlayers() {
-        return Bukkit.getOnlinePlayers().toArray(new Player[] {});
+        return Bukkit.getOnlinePlayers().toArray(new Player[]{});
     }
 
     @Override
@@ -214,7 +246,7 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public String getInternUUID(String player) {
         return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replaceAll("-", "");
     }
@@ -241,25 +273,6 @@ public class BukkitMethods implements MethodInterface {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void loadMySQLFile(File f) {
-        mysql = YamlConfiguration.loadConfiguration(f);
-    }
-
-    @Override
-    public void createMySQLFile(File f) {
-        mysql.set("MySQL.IP", "localhost");
-        mysql.set("MySQL.DB-Name", "YourDatabase");
-        mysql.set("MySQL.Username", "root");
-        mysql.set("MySQL.Password", "pw123");
-        mysql.set("MySQL.Port", 3306);
-        try {
-            mysql.save(f);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
