@@ -140,7 +140,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.3</version>
                 <configuration>
                     <relocations>
                     	<relocation>
@@ -164,6 +164,9 @@
                             <shadedPattern>${project.groupId}.shaded.org.bstats</shadedPattern>
                         </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
                 </configuration>
                 <executions>
                     <execution>
