@@ -22,7 +22,10 @@ public class DynamicDataSource {
             config.setUsername(usrName);
             config.setPassword(password);
         } else {
-            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+            // No need to worry about relocation because the maven-shade-plugin also changes strings
+            String driverClassName = "org.hsqldb.jdbc.JDBCDriver";
+            Class.forName(driverClassName);
+            config.setDriverClassName(driverClassName);
             config.setJdbcUrl("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false");
             config.setUsername("SA");
             config.setPassword("");
