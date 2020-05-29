@@ -107,7 +107,7 @@ public class UUIDManager {
      */
     public void supplyInternUUID(String name, UUID uuid) {
         if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
-            activeUUIDs.put(name, uuid.toString().replace("-", ""));
+            activeUUIDs.put(name.toLowerCase(), uuid.toString().replace("-", ""));
         }
     }
 
