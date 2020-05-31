@@ -145,7 +145,7 @@ public class UUIDManager {
      * @return the nonhyphenated uuid or null if not found
      */
     public String getInMemoryUUID(String name) {
-        return activeUUIDs.get(name);
+        return activeUUIDs.get(name.toLowerCase());
     }
 
     /**
@@ -200,6 +200,7 @@ public class UUIDManager {
 
 
     private String askAPI(String url, String name, String key) throws IOException {
+        name = name.toLowerCase();
         HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
         request.connect();
 
