@@ -7,19 +7,12 @@ import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.base.Charsets;
-
-import io.netty.util.internal.ThreadLocalRandom;
 
 /**
  * Created by Leo on 07.08.2017.
