@@ -200,16 +200,55 @@ public class Universal {
      * @return the boolean
      */
     public boolean isMuteCommand(String cmd) {
-        // Strip everything but the main command
-        cmd = cmd.split(" ")[0];
+        return isMuteCommand(cmd, getMethods().getStringList(getMethods().getConfig(), "MuteCommands"));
+    }
+
+    /**
+     * Visible for testing. Do not use this. Please use {@link #isMuteCommand(String)}.
+     * 
+     * @param cmd          the command
+     * @param muteCommands the mute commands from the config
+     * @return true if the command matched any of the mute commands.
+     */
+    boolean isMuteCommand(String cmd, List<String> muteCommands) {
+        String[] words = cmd.split(" ");
         // Handle commands with colons
-        if (cmd.indexOf(':') != -1) {
-            cmd = cmd.split(":", 2)[1];
+        if (words[0].indexOf(':') != -1) {
+            words[0] = words[0].split(":", 2)[1];
         }
-        for (String str : getMethods().getStringList(getMethods().getConfig(), "MuteCommands")) {
-            if (cmd.equalsIgnoreCase(str)) {
+        for (String muteCommand : muteCommands) {
+            if (muteCommandMatches(words, muteCommand)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Visible for testing. Do not use this.
+     * 
+     * @param commandWords the command run by a player, separated into its words
+     * @param muteCommand a mute command from the config
+     * @return true if they match, false otherwise
+     */
+    boolean muteCommandMatches(String[] commandWords, String muteCommand) {
+        // Basic equality check
+        if (commandWords[0].equalsIgnoreCase(muteCommand)) {
+            return true;
+        }
+        // Advanced equality check
+        // Essentially a case-insensitive "startsWith" for arrays
+        if (muteCommand.indexOf(' ') != -1) {
+            String[] muteCommandWords = muteCommand.split(" ");
+            if (muteCommandWords.length > commandWords.length) {
+                return false;
+            }
+            for (int n = 0; n < muteCommandWords.length; n++) {
+                if (!muteCommandWords[n].equalsIgnoreCase(commandWords[n])) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }

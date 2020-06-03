@@ -6,10 +6,20 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.base.Charsets;
+
+import io.netty.util.internal.ThreadLocalRandom;
 
 /**
  * Created by Leo on 07.08.2017.
@@ -51,6 +61,42 @@ public class PunishmentTest {
         PunishmentManager.get().load("cache", "cache", "127.0.0.1").accept();
         Assert.assertTrue("Punishment should be cached after user is loaded", PunishmentManager.get().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getUuid().equals("cache")));
         Assert.assertTrue("Punishment should be still active when in cache", PunishmentManager.get().isBanned("cache"));
+    }
+    
+    @Test
+    public void shouldBlockBasicCommandsIncludingColons() {
+        Universal universal = Universal.get();
+        List<String> muteCommands = Arrays.asList("msg", "reply", "tell");
+        Assert.assertTrue("Command should be blocked as it matches exactly a mute command",
+                universal.isMuteCommand("msg", muteCommands));
+        Assert.assertTrue("Command should be blocked as a mute command regardless of colon",
+                universal.isMuteCommand("plugin:reply", muteCommands));
+        Assert.assertFalse("Command not in the mute commands list should not be blocked",
+                universal.isMuteCommand("fly", muteCommands));
+        Assert.assertFalse(
+                "Command not in the mute commands list, but similar to a command in the list, should not be blocked",
+                universal.isMuteCommand("replyall", muteCommands));
+    }
+    
+    @Test
+    public void shouldBlockCommandsStartingWithMuteCommandWords() {
+        Universal universal = Universal.get();
+        String muteCommand = "party msg";
+        Assert.assertTrue("Subcommand with arguments should be blocked as a mute command",
+                universal.muteCommandMatches("party msg user hello".split(" "), muteCommand));
+        Assert.assertTrue("Subcommand without arguments should be blocked as a mute command",
+                universal.muteCommandMatches("party msg".split(" "), muteCommand));
+
+        Assert.assertFalse("Base command should not be blocked as a mute command although it partially matches",
+                universal.muteCommandMatches("party".split(" "), muteCommand));
+
+        Assert.assertFalse("Different subcommand with arguments should not be blocked as a mute command",
+                universal.muteCommandMatches("party invite user".split(" "), muteCommand));
+        Assert.assertFalse("Different subcommand without arguments should not be blocked as a mute command",
+                universal.muteCommandMatches("party invite".split(" "), muteCommand));
+
+        Assert.assertFalse("Different base command entirely should not be blocked as a mute command",
+                universal.muteCommandMatches("broadcast party msg".split(" "), muteCommand));
     }
 
     @AfterAll
