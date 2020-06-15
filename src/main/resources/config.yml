@@ -13,6 +13,7 @@ MySQL:
   Username: admin
   Password: superSecret
   Port: 3306
+  Properties: 'verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8'
 
 # Set to false if you want to have only short messages in the console
 # On startup and on the shutdown.
@@ -59,6 +60,7 @@ MuteCommands:
 - 'amsg'
 - 'eamsg'
 - 'ehelpop'
+- 'p msg'
 
 # These players will not be able to get punished in any way
 # this also works if the player is offline
