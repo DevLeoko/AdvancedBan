@@ -145,7 +145,7 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void setCommandExecutor(String cmd) {
-        PluginCommand command = Bukkit.getPluginCommand(cmd);
+        PluginCommand command = getPlugin().getCommand(cmd);
         if (command != null) {
             command.setExecutor(CommandReceiver.get());
         } else {
