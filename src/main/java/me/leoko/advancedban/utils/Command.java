@@ -147,8 +147,8 @@ public enum Command {
                 Punishment punishment;
 
                 if (input.getPrimaryData().matches("[0-9]*")) {
-                    input.next();
                     int id = Integer.parseInt(input.getPrimaryData());
+                    input.next();
 
                     punishment = PunishmentManager.get().getPunishment(id);
                 } else {

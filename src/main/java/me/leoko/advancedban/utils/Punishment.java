@@ -128,22 +128,6 @@ public class Punishment {
             }
         }
 
-        if (getType().getBasic() == PunishmentType.WARNING) {
-            String cmd = null;
-            for (int i = 1; i <= cWarnings; i++) {
-                if (mi.contains(mi.getConfig(), "WarnActions." + i)) {
-                    cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
-                }
-            }
-            if(cmd != null){
-                final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
-                mi.runSync(() -> {
-                    mi.executeCommand(finalCmd);
-                    Universal.get().log("Executing command: " + finalCmd);
-                });
-            }
-        }
-
         if (!silent) {
             announce(cWarnings);
         }
@@ -164,6 +148,22 @@ public class Punishment {
         PunishmentManager.get().getLoadedHistory().add(this);
 
         mi.callPunishmentEvent(this);
+
+        if (getType().getBasic() == PunishmentType.WARNING) {
+            String cmd = null;
+            for (int i = 1; i <= cWarnings; i++) {
+                if (mi.contains(mi.getConfig(), "WarnActions." + i)) {
+                    cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
+                }
+            }
+            if(cmd != null){
+                final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
+                mi.runSync(() -> {
+                    mi.executeCommand(finalCmd);
+                    Universal.get().log("Executing command: " + finalCmd);
+                });
+            }
+        }
     }
 
     public void updateReason(String reason) {
