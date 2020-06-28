@@ -131,3 +131,8 @@ Log Purge Days: 10
 
 # Removes the prefix of the plugin in every message.
 Disable Prefix: false
+
+# Register commands in a more friendly manner
+# Off by default, so AdvancedBan can override /ban from other plugins
+# This is a Bukkit-specific option. It has no meaning on BungeeCord
+Friendly Register Commands: false

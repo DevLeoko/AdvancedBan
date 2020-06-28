@@ -167,6 +167,13 @@ public class UpdateManager {
                         "Disable Prefix: false"
                 ));
             }
+            if (!mi.contains(mi.getConfig(), "Friendly Register Commands")) {
+                lines.addAll(Arrays.asList("",
+                        "# Register commands in a more friendly manner",
+                        "# Off by default, so AdvancedBan can override /ban from other plugins",
+                        "# This is a Bukkit-specific option. It has no meaning on BungeeCord",
+                        "Friendly Register Commands: false"));
+            }
             FileUtils.writeLines(file, lines);
         } catch (IOException exc) {
             exc.printStackTrace();

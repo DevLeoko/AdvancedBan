@@ -145,7 +145,8 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void setCommandExecutor(String cmd) {
-        PluginCommand command = Bukkit.getPluginCommand(cmd);
+        boolean friendly = getBoolean(getConfig(), "Friendly Register Commands", false);
+        PluginCommand command = (friendly) ? getPlugin().getCommand(cmd) : Bukkit.getPluginCommand(cmd);
         if (command != null) {
             command.setExecutor(CommandReceiver.get());
         } else {
