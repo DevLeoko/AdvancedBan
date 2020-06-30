@@ -12,7 +12,7 @@ _Please provide the EXACT steps required to reproduce the problem..._
 2.
 3.
 
-_Any error/log post it through [pastebin.com](http://pastebin.com) and link it here._
+_Any error/log post it through [pastebin.com](http://pastebin.com) and link it here. (Also include /plugins/AdvancedBan/logs/latest.log)_
 
 
 _Add any additional information below._
