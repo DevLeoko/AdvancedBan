@@ -417,7 +417,6 @@ public class Universal {
     private void debugToFile(Object msg) {
         File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
-            System.out.print("Seems that a problem has occurred while creating the latest.log file in the startup.");
             try {
                 debugFile.createNewFile();
             } catch (IOException ex) {
