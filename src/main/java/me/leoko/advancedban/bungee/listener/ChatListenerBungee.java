@@ -38,7 +38,7 @@ public class ChatListenerBungee implements Listener {
                 || cursor.startsWith("/kick ") || cursor.startsWith("/mute ") || cursor.startsWith("/tempban ")
                 || cursor.startsWith("/tempipban ") || cursor.startsWith("/tempmute ") || cursor.startsWith("/tempwarn ")
                 || cursor.startsWith("/tipban ") || cursor.startsWith("/unmute ") || cursor.startsWith("/unwarn ")
-                || cursor.startsWith("/warn "))) {
+                || cursor.startsWith("/warn ")) || cursor.startsWith("/unnote ") || cursor.startsWith("/note ")) {
             return;
         }
         if (event.getSender() instanceof ProxiedPlayer) { // Check if the player has permission for tab complete

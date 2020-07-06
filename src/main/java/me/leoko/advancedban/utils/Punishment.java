@@ -109,7 +109,7 @@ public class Punishment {
         }
 
         final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
-
+        
         DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
 
         if (getType() != PunishmentType.KICK) {
@@ -127,7 +127,6 @@ public class Punishment {
                 Universal.get().debugSqlException(ex);
             }
         }
-
         if (!silent) {
             announce(cWarnings);
         }
@@ -137,7 +136,7 @@ public class Punishment {
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
                 mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
-            } else {
+            } else if (getType().getBasic() != PunishmentType.NOTE){
                 for (String str : getLayout()) {
                     mi.sendMessage(p, str);
                 }

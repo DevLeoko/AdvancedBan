@@ -70,6 +70,14 @@ public enum Command {
             PunishmentType.WARNING.getConfSection("Usage"),
             "warn"),
 
+
+    NOTE(
+            PunishmentType.NOTE.getPerms(),
+            ".+",
+            new PunishmentProcessor(PunishmentType.NOTE),
+            PunishmentType.NOTE.getConfSection("Usage"),
+            "note"),
+
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
             "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
@@ -134,6 +142,36 @@ public enum Command {
             },
             "Un" + PunishmentType.WARNING.getConfSection("Usage"),
             "unwarn"),
+    UN_NOTE("ab." + PunishmentType.NOTE.getName() + ".undo",
+            "[0-9]+|(?i:clear \\S+)",
+            input -> {
+                final String confSection = PunishmentType.NOTE.getConfSection();
+                if (input.getPrimaryData().equals("clear")) {
+                    input.next();
+                    String name = input.getPrimary();
+                    String uuid = processName(input);
+                    if (uuid == null)
+                        return;
+
+                    List<Punishment> punishments = PunishmentManager.get().getNotes(uuid);
+                    if (punishments.isEmpty()) {
+                        MessageManager.sendMessage(input.getSender(), "Un" + confSection + ".Clear.Empty",
+                                true, "NAME", name);
+                        return;
+                    }
+
+                    String operator = Universal.get().getMethods().getName(input.getSender());
+                    for (Punishment punishment : punishments) {
+                        punishment.delete(operator, true, true);
+                    }
+                    MessageManager.sendMessage(input.getSender(), "Un" + confSection + ".Clear.Done",
+                            true, "COUNT", String.valueOf(punishments.size()));
+                } else {
+                    new RevokeByIdProcessor("Un" + confSection, PunishmentManager.get()::getNote).accept(input);
+                }
+            },
+            "Un" + PunishmentType.NOTE.getConfSection("Usage"),
+            "unnote"),
 
     UN_PUNISH("ab.all.undo",
             "[0-9]+",
@@ -225,6 +263,33 @@ public enum Command {
             },
             "Warns.Usage",
             "warns"),
+    NOTES(null,
+            "\\S+( [1-9][0-9]*)?|\\S+|",
+            input -> {
+                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
+                    if (!Universal.get().hasPerms(input.getSender(), "ab.notes.other")) {
+                        MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
+                        return;
+                    }
+
+                    new ListProcessor(
+                            target -> PunishmentManager.get().getPunishments(target, PunishmentType.NOTE, true),
+                            "Notes", false, true).accept(input);
+                } else {
+                    if (!Universal.get().hasPerms(input.getSender(), "ab.notes.own")) {
+                        MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
+                        return;
+                    }
+
+                    String name = Universal.get().getMethods().getName(input.getSender());
+                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[]{name}));
+                    new ListProcessor(
+                            target -> PunishmentManager.get().getPunishments(identifier, PunishmentType.NOTE, true),
+                            "NotesOwn", false, false).accept(input);
+                }
+            },
+            "Notes.Usage",
+            "notes"),
 
     CHECK("ab.check",
             "\\S+",
@@ -264,6 +329,8 @@ public enum Command {
                     MessageManager.sendMessage(sender, "Check.BanReason", false, "REASON", ban.getReason());
                 }
                 MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
+
+                MessageManager.sendMessage(sender, "Check.Note", false, "COUNT", PunishmentManager.get().getCurrentNotes(uuid) + "");
             },
             "Check.Usage",
             "check"),
@@ -317,6 +384,8 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7Mute a user temporary");
                             mi.sendMessage(sender, "§c/warn [Name] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Warn a user permanently");
+                            mi.sendMessage(sender, "§c/note [Name] [Reason]");
+                            mi.sendMessage(sender, "§8» §7Adds a note to a user");
                             mi.sendMessage(sender, "§c/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Warn a user temporary");
                             mi.sendMessage(sender, "§c/kick [Name] [Reason/@Layout]");
@@ -327,6 +396,8 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7Unmute a user");
                             mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
                             mi.sendMessage(sender, "§8» §7Deletes a warn");
+                            mi.sendMessage(sender, "§c/unnote [ID] or /unnote clear [Name]");
+                            mi.sendMessage(sender, "§8» §7Deletes a unnote");
                             mi.sendMessage(sender, "§c/change-reason [ID or ban/mute USER] [New reason]");
                             mi.sendMessage(sender, "§8» §7Changes the reason of a punishment");
                             mi.sendMessage(sender, "§c/unpunish [ID]");
@@ -336,7 +407,9 @@ public enum Command {
                             mi.sendMessage(sender, "§c/history [Name/IP] <Page>");
                             mi.sendMessage(sender, "§8» §7See a users history");
                             mi.sendMessage(sender, "§c/warns [Name] <Page>");
-                            mi.sendMessage(sender, "§8» §7See your or a users wa");
+                            mi.sendMessage(sender, "§8» §7See your or a users warnings");
+                            mi.sendMessage(sender, "§c/notes [Name] <Page>");
+                            mi.sendMessage(sender, "§8» §7See your or a users notes");
                             mi.sendMessage(sender, "§c/check [Name]");
                             mi.sendMessage(sender, "§8» §7Get all information about a user");
                             mi.sendMessage(sender, "§c/AdvancedBan <reload/help>");

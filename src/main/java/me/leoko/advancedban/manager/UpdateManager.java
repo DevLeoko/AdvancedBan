@@ -59,6 +59,7 @@ public class UpdateManager {
             addMessage("UnBan:", "  Notification: \"&e&o%OPERATOR% &7unbanned &c&o%NAME%\"", 1);
             addMessage("UnMute:", "  Notification: \"&e&o%OPERATOR% &7unmuted &c&o%NAME%\"", 1);
             addMessage("UnWarn:", "  Notification: \"&e&o%OPERATOR% &7unwarned &c&o%NAME%\"", 1);
+            addMessage("UnNote:", "  Notification: \"&e&o%OPERATOR% &7unnoted &c&o%NAME%\"", 1);
         }
 
         if (!mi.contains(mi.getMessages(), "Check.MuteReason")) {
