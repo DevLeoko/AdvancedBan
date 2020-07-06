@@ -134,6 +134,9 @@ public class PunishmentManager {
             try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
+                    if(put.getBasic()==PunishmentType.WARNING && ( put == punishment.getType().getBasic() || punishment.getType().getBasic() == PunishmentType.TEMP_WARNING) && (!current || !punishment.isExpired())) {
+                    	  ptList.add(punishment);
+                	}else
                     if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
                     }
