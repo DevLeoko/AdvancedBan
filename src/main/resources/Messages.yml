@@ -305,6 +305,7 @@ Check:
   Ban: "&cBanned &8» &7%DURATION%"
   BanReason: "  &cReason &8» &7%REASON%"
   Warn: "&cWarns &8» &7%COUNT%"
+  Note: "&cNotes &8» &7%COUNT%"
   NotFound: "&cSorry we have not been able to find %NAME%"
   Cached: "&a&ocached"
   NotCached: "&c&onot cached"

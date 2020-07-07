@@ -11,7 +11,7 @@ public enum PunishmentType {
     MUTE("Mute", null, false, "ab.mute.perma"),
     TEMP_MUTE("Tempmute", MUTE, true, "ab.mute.temp"),
     WARNING("Warn", null, false, "ab.warn.perma"),
-    NOTE("Note", null, false, "ab.Note"),
+    NOTE("Note", null, false, "ab.note.use"),
     TEMP_WARNING("Tempwarn", WARNING, true, "ab.warn.temp"),
     KICK("Kick", null, false, "ab.kick.use");
 

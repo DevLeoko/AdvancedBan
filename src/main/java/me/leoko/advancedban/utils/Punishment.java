@@ -137,10 +137,11 @@ public class Punishment {
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
                 mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
-            } else if (getType().getBasic() != PunishmentType.NOTE){
-                for (String str : getLayout()) {
-                    mi.sendMessage(p, str);
-                }
+            } else {
+            	if (getType().getBasic() != PunishmentType.NOTE)
+	                for (String str : getLayout()) {
+	                    mi.sendMessage(p, str);
+	                }
                 PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
