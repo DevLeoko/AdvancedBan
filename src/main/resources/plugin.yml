@@ -21,6 +21,8 @@ commands:
     description: Kick a user
   warn:
     description: Warn a user permanently
+  note:
+    description: Adds a note to a users file
   tempwarn:
     description: Warn a user temporarily
   mute:
@@ -33,12 +35,16 @@ commands:
     description: See a user''s history
   warns:
     description: See your or a user''s warns
+  notes:
+    description: See your or a user''s notes
   check:
     description: Get all information about a user
   systemPrefs:
     description: Displays System-Preferences for setting up the plugin
   unwarn:
     description: Deletes a warn
+  unnote:
+    description: Deletes a note
   unpunish:
     description: Deletes a punishment by ID
   unban:

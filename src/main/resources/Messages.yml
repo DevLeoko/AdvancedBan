@@ -117,6 +117,14 @@ Warn:
   - "&c&o%NAME% &7got warned by &e&o%OPERATOR%"
   - "&7For the reason &o%REASON%"
 
+Note:
+  Usage: "&cUsage &8» &7&o/note [Name] [Reason]"
+  Done: "&c&o%NAME% &7was successfully noted!"
+  Exempt: "&7You are not able to note &c&o%NAME%"
+  Notification:
+  - "&c&o%NAME% &7got noted by &e&o%OPERATOR%"
+  - "&7For the reason &o%REASON%"
+
 Tempwarn:
   Usage: "&cUsage &8» &7&o/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to warn more than %MAX%sec"
@@ -165,6 +173,15 @@ UnWarn:
   Clear:
     Empty: "&c&o%NAME% &7has no warnings!"
     Done: "&7Cleared &a&o%COUNT% &7warnings"
+
+UnNote:
+  Usage: "&cUsage &8» &7&o/unwarn [ID] or /unnote clear [Name]"
+  NotFound: "&cCould not find note #%ID%"
+  Done: "&7Note &a&o#%ID% &7was successfully deleted!"
+  Notification: "&e&o%OPERATOR% &7unnoted &c&o%NAME%"
+  Clear:
+    Empty: "&c&o%NAME% &7has no notes!"
+    Done: "&7Cleared &a&o%COUNT% &7notes"
 
 UnPunish:
   Usage: "&cUsage &8» &7&o/unpunish [ID]"
@@ -238,6 +255,39 @@ WarnsOwn:
     - "&7"
   Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Active warnings: &e&o%COUNT%"
   PageFooter: "&7Use &e&o/warns %NEXT_PAGE% &7to see the next page"
+  
+Notes:
+  Usage: "&cUsage &8» &7&o/notes [Name] <Page> &cor &7&o/notes <Page>"
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&o%NAME% has no notes yet"
+  Header:
+  - "%PREFIX% &7Notes for %NAME%:"
+  - "&c&oName &8| &e&oDuration &8| &7&onoted by"
+  - "&c&o#ID &8> &7&oReason"
+  - "&7"
+  Entry:
+  - "&8[&e%DATE%&8]"
+  - "&c%NAME% &8| &8| &7%OPERATOR%"
+  - "&c&l#%ID% &8> &7&o%REASON%"
+  - "&7"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%"
+  PageFooter: "&7Use &e&o/notes %NAME% %NEXT_PAGE% &7to see the next page"
+
+NotesOwn:
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&oYou have no notes yet"
+  Header:
+    - "%PREFIX% &7Your notes:"
+    - "&e&oDuration &8| &7&oNoted by"
+    - "&c&o#ID &8> &7&oReason"
+    - "&7"
+  Entry:
+    - "&8[&e%DATE%&8]"
+    - "&e%DURATION% &8| &7%OPERATOR%"
+    - "&c&l#%ID% &8> &7&o%REASON%"
+    - "&7"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%"
+  PageFooter: "&7Use &e&o/notes %NEXT_PAGE% &7to see the next page"
 
 ChangeReason:
   Usage: "&cUsage &8» &7&o/change-reason [ID or ban/mute USER] [New reason]"
@@ -255,6 +305,7 @@ Check:
   Ban: "&cBanned &8» &7%DURATION%"
   BanReason: "  &cReason &8» &7%REASON%"
   Warn: "&cWarns &8» &7%COUNT%"
+  Note: "&cNotes &8» &7%COUNT%"
   NotFound: "&cSorry we have not been able to find %NAME%"
   Cached: "&a&ocached"
   NotCached: "&c&onot cached"

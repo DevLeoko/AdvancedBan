@@ -11,6 +11,7 @@ public enum PunishmentType {
     MUTE("Mute", null, false, "ab.mute.perma"),
     TEMP_MUTE("Tempmute", MUTE, true, "ab.mute.temp"),
     WARNING("Warn", null, false, "ab.warn.perma"),
+    NOTE("Note", null, false, "ab.note.use"),
     TEMP_WARNING("Tempwarn", WARNING, true, "ab.warn.temp"),
     KICK("Kick", null, false, "ab.kick.use");
 
@@ -45,6 +46,8 @@ public enum PunishmentType {
                 return TEMP_MUTE;
             case "warn":
                 return WARNING;
+            case "note":
+                return NOTE;
             case "tempwarn":
                 return TEMP_WARNING;
             case "kick":

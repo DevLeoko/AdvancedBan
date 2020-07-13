@@ -80,15 +80,18 @@ public class Universal {
         mi.setCommandExecutor("banip");
         mi.setCommandExecutor("kick");
         mi.setCommandExecutor("warn");
+        mi.setCommandExecutor("note");
         mi.setCommandExecutor("tempwarn");
         mi.setCommandExecutor("mute");
         mi.setCommandExecutor("tempmute");
         mi.setCommandExecutor("unmute");
         mi.setCommandExecutor("unwarn");
+        mi.setCommandExecutor("unnote");
         mi.setCommandExecutor("unban");
         mi.setCommandExecutor("banlist");
         mi.setCommandExecutor("history");
         mi.setCommandExecutor("warns");
+        mi.setCommandExecutor("notes");
         mi.setCommandExecutor("check");
         mi.setCommandExecutor("systemprefs");
         mi.setCommandExecutor("unpunish");

@@ -224,7 +224,30 @@ public class PunishmentManager {
      */
     public List<Punishment> getWarns(String uuid) {
         return getPunishments(uuid, PunishmentType.WARNING, true);
-    }
+    } /**
+     * Get an active note by id.
+    *
+    * @param id the id
+    * @return the note
+    */
+   public Punishment getNote(int id) {
+       Punishment punishment = getPunishment(id);
+
+       if (punishment == null)
+           return null;
+
+       return punishment.getType().getBasic() == PunishmentType.NOTE ? punishment : null;
+   }
+
+   /**
+    * Get a players active note.
+    *
+    * @param uuid the players uuid
+    * @return the note
+    */
+   public List<Punishment> getNotes(String uuid) {
+       return getPunishments(uuid, PunishmentType.NOTE, true);
+   }
 
     /**
      * Get a players active ban.
@@ -325,6 +348,15 @@ public class PunishmentManager {
      */
     public int getCurrentWarns(String uuid) {
         return getWarns(uuid).size();
+    }
+    /**
+     * Get how many notes a player has.
+     *
+     * @param uuid the players uuid
+     * @return the current note count
+     */
+    public int getCurrentNotes(String uuid) {
+        return getNotes(uuid).size();
     }
 
     /**
