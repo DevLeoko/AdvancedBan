@@ -384,7 +384,7 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7Mute a user temporary");
                             mi.sendMessage(sender, "§c/warn [Name] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Warn a user permanently");
-                            mi.sendMessage(sender, "§c/note [Name] [Reason]");
+                            mi.sendMessage(sender, "§c/note [Name] [Note]");
                             mi.sendMessage(sender, "§8» §7Adds a note to a user");
                             mi.sendMessage(sender, "§c/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Warn a user temporary");
@@ -397,7 +397,7 @@ public enum Command {
                             mi.sendMessage(sender, "§c/unwarn [ID] or /unwarn clear [Name]");
                             mi.sendMessage(sender, "§8» §7Deletes a warn");
                             mi.sendMessage(sender, "§c/unnote [ID] or /unnote clear [Name]");
-                            mi.sendMessage(sender, "§8» §7Deletes a unnote");
+                            mi.sendMessage(sender, "§8» §7Deletes a note");
                             mi.sendMessage(sender, "§c/change-reason [ID or ban/mute USER] [New reason]");
                             mi.sendMessage(sender, "§8» §7Changes the reason of a punishment");
                             mi.sendMessage(sender, "§c/unpunish [ID]");
