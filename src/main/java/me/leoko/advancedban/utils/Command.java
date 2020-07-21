@@ -180,7 +180,7 @@ public enum Command {
             "unpunish"),
 
     CHANGE_REASON("ab.changeReason",
-            "([0-9]+|(ban|mute) \\S+) .+",
+            "([0-9]+|(?i)(ban|mute) \\S+) .+",
             input -> {
                 Punishment punishment;
 
@@ -190,7 +190,7 @@ public enum Command {
 
                     punishment = PunishmentManager.get().getPunishment(id);
                 } else {
-                    PunishmentType type = PunishmentType.valueOf(input.getPrimary());
+                    PunishmentType type = PunishmentType.valueOf(input.getPrimary().toUpperCase());
                     input.next();
 
                     String target = input.getPrimary();
@@ -440,7 +440,6 @@ public enum Command {
             null,
             "advancedban");
 
-    //language=RegExp
     private final String permission;
     private final Predicate<String[]> syntaxValidator;
     private final Consumer<CommandInput> commandHandler;
