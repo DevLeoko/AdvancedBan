@@ -11,7 +11,7 @@ General:
 
 
 Ban:
-  Usage: "&cUsage &8» &7&o/ban [Name] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/ban (-s) [Name] [Reason/@Layout]"
   Done: "&c&o%NAME% &7was successfully banned!"
   AlreadyDone: "&c&o%NAME% &7has already been banned!"
   Exempt: "&7You are not able to ban &c&o%NAME%"
@@ -30,7 +30,7 @@ Ban:
   UndoNotification: "&e&o%OPERATOR% &7unbanned &c&o%NAME%"
 
 Ipban:
-  Usage: "&cUsage &8» &7&o/banip [Name/IP] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/banip (-s) [Name/IP] [Reason/@Layout]"
   Layout:
   - '%PREFIX% &7Permanently banned'
   - '&7'
@@ -46,7 +46,7 @@ Ipban:
   IpNotCashed: "&cThere is no saved IP for %NAME%!"
 
 Tempban:
-  Usage: "&cUsage &8» &7&o/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/tempban (-s) [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to ban more than %MAX%sec"
   Layout:
   - '%PREFIX% &7Temporarily banned'
@@ -64,7 +64,7 @@ Tempban:
   - "&7&oThis player got banned for &e&o%DURATION%"
 
 Tempipban:
-  Usage: "&cUsage &8» &7&o/tempipban [Name/IP] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/tempipban (-s) [Name/IP] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to ban more than %MAX%sec"
   Layout:
   - '%PREFIX% &7Temporarily banned'
@@ -82,7 +82,7 @@ Tempipban:
   - "&7&oThis player got banned for &e&o%DURATION%"
 
 Mute:
-  Usage: "&cUsage &8» &7&o/mute [Name] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/mute (-s) [Name] [Reason/@Layout]"
   Done: "&c&o%NAME% &7was successfully muted!"
   AlreadyDone: "&c&o%NAME% &7has already been muted!"
   Exempt: "&7You are not able to mute &c&o%NAME%"
@@ -95,7 +95,7 @@ Mute:
   UndoNotification: "&e&o%OPERATOR% &7unmuted &c&o%NAME%"
 
 Tempmute:
-  Usage: "&cUsage &8» &7&o/tempmute [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/tempmute (-s) [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to mute more than %MAX%sec"
   Layout:
   - '%PREFIX% &7You are muted for %DURATION%'
@@ -106,7 +106,7 @@ Tempmute:
   - "&7&oThis player got muted for &e&o%DURATION%"
 
 Warn:
-  Usage: "&cUsage &8» &7&o/warn [Name] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/warn (-s) [Name] [Reason/@Layout]"
   Done: "&c&o%NAME% &7was successfully warned!"
   Exempt: "&7You are not able to warn &c&o%NAME%"
   Layout:
@@ -118,7 +118,7 @@ Warn:
   - "&7For the reason &o%REASON%"
 
 Note:
-  Usage: "&cUsage &8» &7&o/note [Name] [Reason]"
+  Usage: "&cUsage &8» &7&o/note (-s) [Name] [Reason]"
   Done: "&c&o%NAME% &7was successfully noted!"
   Exempt: "&7You are not able to note &c&o%NAME%"
   Notification:
@@ -126,7 +126,7 @@ Note:
   - "&7For the reason &o%REASON%"
 
 Tempwarn:
-  Usage: "&cUsage &8» &7&o/tempwarn [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/tempwarn (-s) [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
   MaxDuration: "&cYou are not able to warn more than %MAX%sec"
   Layout:
   - '%PREFIX% &cYou received a temp-warning'
@@ -139,7 +139,7 @@ Tempwarn:
   - "&7This warning will pass in &o%DURATION%"
 
 Kick:
-  Usage: "&cUsage &8» &7&o/kick [Name] [Reason/@Layout]"
+  Usage: "&cUsage &8» &7&o/kick (-s) [Name] [Reason/@Layout]"
   Done: "&c&o%NAME% &7was successfully kicked!"
   NotOnline: "&c&o%NAME% &7is not online!"
   Exempt: "&7You are not able to kick &c&o%NAME%"
