@@ -6,24 +6,22 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
-import me.leoko.advancedban.utils.commands.ListProcessor;
-import me.leoko.advancedban.utils.commands.PunishmentProcessor;
-import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
-import me.leoko.advancedban.utils.commands.RevokeProcessor;
+import me.leoko.advancedban.utils.commands.*;
+import me.leoko.advancedban.utils.tabcompletion.*;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
+import static me.leoko.advancedban.utils.tabcompletion.MutableTabCompleter.list;
 
 public enum Command {
     BAN(
             PunishmentType.BAN.getPerms(),
             ".+",
+            new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.BAN),
             PunishmentType.BAN.getConfSection("Usage"),
             "ban"),
@@ -31,6 +29,7 @@ public enum Command {
     TEMP_BAN(
             PunishmentType.TEMP_BAN.getPerms(),
             "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_BAN),
             PunishmentType.TEMP_BAN.getConfSection("Usage"),
             "tempban"),
@@ -38,6 +37,7 @@ public enum Command {
     IP_BAN(
             PunishmentType.IP_BAN.getPerms(),
             ".+",
+            new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.IP_BAN),
             PunishmentType.IP_BAN.getConfSection("Usage"),
             "ipban", "banip", "ban-ip"),
@@ -45,6 +45,7 @@ public enum Command {
     TEMP_IP_BAN(
             PunishmentType.TEMP_IP_BAN.getPerms(),
             "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_IP_BAN),
             PunishmentType.TEMP_IP_BAN.getConfSection("Usage"),
             "tempipban"),
@@ -52,6 +53,7 @@ public enum Command {
     MUTE(
             PunishmentType.MUTE.getPerms(),
             ".+",
+            new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.MUTE),
             PunishmentType.MUTE.getConfSection("Usage"),
             "mute"),
@@ -59,6 +61,7 @@ public enum Command {
     TEMP_MUTE(
             PunishmentType.TEMP_MUTE.getPerms(),
             "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_MUTE),
             PunishmentType.TEMP_MUTE.getConfSection("Usage"),
             "tempmute"),
@@ -66,28 +69,31 @@ public enum Command {
     WARN(
             PunishmentType.WARNING.getPerms(),
             ".+",
+            new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.WARNING),
             PunishmentType.WARNING.getConfSection("Usage"),
             "warn"),
 
-
-    NOTE(
-            PunishmentType.NOTE.getPerms(),
-            ".+",
-            new PunishmentProcessor(PunishmentType.NOTE),
-            PunishmentType.NOTE.getConfSection("Usage"),
-            "note"),
-
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
             "\\S+ ([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.TEMP_WARNING),
             PunishmentType.TEMP_WARNING.getConfSection("Usage"),
             "tempwarn"),
 
+    NOTE(
+            PunishmentType.NOTE.getPerms(),
+            ".+",
+            new PunishmentTabCompleter(false),
+            new PunishmentProcessor(PunishmentType.NOTE),
+            PunishmentType.NOTE.getConfSection("Usage"),
+            "note"),
+
     KICK(
             PunishmentType.KICK.getPerms(),
             ".+",
+            new PunishmentTabCompleter(false),
             input -> {
                 if (!Universal.get().getMethods().isOnline(input.getPrimaryData())) {
                     MessageManager.sendMessage(input.getSender(), "Kick.NotOnline", true,
@@ -102,18 +108,35 @@ public enum Command {
 
     UN_BAN("ab." + PunishmentType.BAN.getName() + ".undo",
             "\\S+",
+            new BasicTabCompleter("<Name/IP>"),
             new RevokeProcessor(PunishmentType.BAN),
             "Un" + PunishmentType.BAN.getConfSection("Usage"),
             "unban"),
 
     UN_MUTE("ab." + PunishmentType.MUTE.getName() + ".undo",
             "\\S+",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1) {
+                    return list("<Name>", CleanTabCompleter.PLAYER_PLACEHOLDER);
+                }else {
+                    return list();
+                }
+            }),
             new RevokeProcessor(PunishmentType.MUTE),
             "Un" + PunishmentType.MUTE.getConfSection("Usage"),
             "unmute"),
 
     UN_WARN("ab." + PunishmentType.WARNING.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1) {
+                    return list("<ID>", "clear");
+                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                } else {
+                    return list();
+                }
+            }),
             input -> {
                 final String confSection = PunishmentType.WARNING.getConfSection();
                 if (input.getPrimaryData().equals("clear")) {
@@ -144,6 +167,15 @@ public enum Command {
             "unwarn"),
     UN_NOTE("ab." + PunishmentType.NOTE.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1) {
+                    return list("<ID>", "clear");
+                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                } else {
+                    return list();
+                }
+            }),
             input -> {
                 final String confSection = PunishmentType.NOTE.getConfSection();
                 if (input.getPrimaryData().equals("clear")) {
@@ -175,12 +207,27 @@ public enum Command {
 
     UN_PUNISH("ab.all.undo",
             "[0-9]+",
+            new BasicTabCompleter("<ID>"),
             new RevokeByIdProcessor("UnPunish", PunishmentManager.get()::getPunishment),
             "UnPunish.Usage",
             "unpunish"),
 
     CHANGE_REASON("ab.changeReason",
             "([0-9]+|(?i)(ban|mute) \\S+) .+",
+            new CleanTabCompleter(args -> {
+                if(args.length <= 1) {
+                    return list("<ID>", "ban", "mute");
+                }else {
+                    boolean playerTarget = args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("mute");
+                    if(args.length == 2 && playerTarget){
+                        return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                    } else if((playerTarget && args.length == 3) || args.length == 2){
+                        return list("new reason...");
+                    } else {
+                        return list();
+                    }
+                }
+            }),
             input -> {
                 Punishment punishment;
 
@@ -222,6 +269,7 @@ public enum Command {
 
     BAN_LIST("ab.banlist",
             "([1-9][0-9]*)?",
+            new BasicTabCompleter("<ID>"),
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150),
                     "Banlist", false, false),
@@ -230,6 +278,14 @@ public enum Command {
 
     HISTORY("ab.history",
             "\\S+( [1-9][0-9]*)?",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                else if(args.length == 2 && !args[0].matches("\\d+"))
+                    return list("<Page>");
+                else
+                    return list();
+            }),
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishments(target, null, false),
                     "History", true, true),
@@ -238,6 +294,14 @@ public enum Command {
 
     WARNS(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                else if(args.length == 2 && !args[0].matches("\\d+"))
+                    return list("<Page>");
+                else
+                    return list();
+            }),
             input -> {
                 if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
@@ -265,6 +329,14 @@ public enum Command {
             "warns"),
     NOTES(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                else if(args.length == 2 && !args[0].matches("\\d+"))
+                    return list("<Page>");
+                else
+                    return list();
+            }),
             input -> {
                 if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.notes.other")) {
@@ -293,13 +365,19 @@ public enum Command {
 
     CHECK("ab.check",
             "\\S+",
+            new CleanTabCompleter(args -> {
+                if(args.length == 1) {
+                    return list("<Name>", CleanTabCompleter.PLAYER_PLACEHOLDER);
+                }else {
+                    return list();
+                }
+            }),
             input -> {
                 String name = input.getPrimary();
 
                 String uuid = processName(input);
                 if (uuid == null)
                     return;
-
 
                 String ip = Universal.get().getIps().getOrDefault(name.toLowerCase(), "none cashed");
                 String loc = Universal.get().getMethods().getFromUrlJson("http://ip-api.com/json/" + ip, "country");
@@ -337,6 +415,7 @@ public enum Command {
 
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
+            null,
             input -> {
                 MethodInterface mi = Universal.get().getMethods();
                 Calendar calendar = new GregorianCalendar();
@@ -355,6 +434,7 @@ public enum Command {
 
     ADVANCED_BAN(null,
             ".*",
+            new BasicTabCompleter("help", "reload"),
             input -> {
                 MethodInterface mi = Universal.get().getMethods();
                 Object sender = input.getSender();
@@ -442,22 +522,24 @@ public enum Command {
 
     private final String permission;
     private final Predicate<String[]> syntaxValidator;
+    private final TabCompleter tabCompleter;
     private final Consumer<CommandInput> commandHandler;
     private final String usagePath;
     private final String[] names;
 
     Command(String permission, Predicate<String[]> syntaxValidator,
-            Consumer<CommandInput> commandHandler, String usagePath, String... names) {
+            TabCompleter tabCompleter, Consumer<CommandInput> commandHandler, String usagePath, String... names) {
         this.permission = permission;
         this.syntaxValidator = syntaxValidator;
+        this.tabCompleter = tabCompleter;
         this.commandHandler = commandHandler;
         this.usagePath = usagePath;
         this.names = names;
     }
 
-    Command(String permission, String regex, Consumer<CommandInput> commandHandler,
+    Command(String permission, String regex, TabCompleter tabCompleter, Consumer<CommandInput> commandHandler,
             String usagePath, String... names) {
-        this(permission, (args) -> String.join(" ", args).matches(regex), commandHandler, usagePath, names);
+        this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath, names);
     }
 
     public String getPermission() {
@@ -474,6 +556,14 @@ public enum Command {
 
     public void execute(Object player, String[] args) {
         commandHandler.accept(new CommandInput(player, args));
+    }
+
+    public String[] getNames() {
+        return names;
+    }
+
+    public TabCompleter getTabCompleter() {
+        return tabCompleter;
     }
 
     public static Command getByName(String name) {
