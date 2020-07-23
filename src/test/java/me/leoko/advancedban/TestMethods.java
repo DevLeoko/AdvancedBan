@@ -1,6 +1,7 @@
 package me.leoko.advancedban;
 
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -85,7 +86,7 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd) {
+    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
         //Command executors are not being registered for testing
     }
 

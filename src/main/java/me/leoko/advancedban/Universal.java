@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.*;
+import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
 import net.md_5.bungee.api.ChatColor;
@@ -68,33 +69,11 @@ public class Universal {
         mi.setupMetrics();
         PunishmentManager.get().setup();
 
-        mi.setCommandExecutor("advancedban");
-        mi.setCommandExecutor("change-reason");
-        mi.setCommandExecutor("ban");
-        mi.setCommandExecutor("tempban");
-        mi.setCommandExecutor("ipban");
-        mi.setCommandExecutor("ban-ip");
-        mi.setCommandExecutor("banip");
-        mi.setCommandExecutor("tempipban");
-        mi.setCommandExecutor("tipban");
-        mi.setCommandExecutor("banip");
-        mi.setCommandExecutor("kick");
-        mi.setCommandExecutor("warn");
-        mi.setCommandExecutor("note");
-        mi.setCommandExecutor("tempwarn");
-        mi.setCommandExecutor("mute");
-        mi.setCommandExecutor("tempmute");
-        mi.setCommandExecutor("unmute");
-        mi.setCommandExecutor("unwarn");
-        mi.setCommandExecutor("unnote");
-        mi.setCommandExecutor("unban");
-        mi.setCommandExecutor("banlist");
-        mi.setCommandExecutor("history");
-        mi.setCommandExecutor("warns");
-        mi.setCommandExecutor("notes");
-        mi.setCommandExecutor("check");
-        mi.setCommandExecutor("systemprefs");
-        mi.setCommandExecutor("unpunish");
+        for (Command command : Command.values()) {
+            for (String commandName : command.getNames()) {
+                mi.setCommandExecutor(commandName, command.getTabCompleter());
+            }
+        }
 
         String upt = "You have the newest version";
         String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");

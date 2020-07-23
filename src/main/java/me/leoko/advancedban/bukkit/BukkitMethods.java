@@ -9,6 +9,7 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -72,7 +73,7 @@ public class BukkitMethods implements MethodInterface {
 
             if (mysqlFile.exists()) {
                 mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(mysqlFile), StandardCharsets.UTF_8));
-            }else {
+            } else {
                 mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
             }
         } catch (FileNotFoundException exc) {
@@ -144,11 +145,13 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd) {
+    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
         boolean friendly = getBoolean(getConfig(), "Friendly Register Commands", false);
         PluginCommand command = (friendly) ? getPlugin().getCommand(cmd) : Bukkit.getPluginCommand(cmd);
         if (command != null) {
             command.setExecutor(CommandReceiver.get());
+            if (tabCompleter != null)
+                command.setTabCompleter((commandSender, c, s, args) -> tabCompleter.onTabComplete(args));
         } else {
             System.out.println("AdvancedBan >> Failed to register command " + cmd);
         }
@@ -172,7 +175,7 @@ public class BukkitMethods implements MethodInterface {
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 
-        if(player == null || !player.hasPlayedBefore())
+        if (player == null || !player.hasPlayedBefore())
             return false;
 
         return permissionVault.apply(player, perms);

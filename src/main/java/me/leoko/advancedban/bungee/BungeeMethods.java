@@ -14,6 +14,7 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -144,7 +145,7 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd) {
+    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
         ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd));
     }
 

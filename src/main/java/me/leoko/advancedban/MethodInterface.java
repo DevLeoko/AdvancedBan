@@ -1,6 +1,7 @@
 package me.leoko.advancedban;
 
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -84,8 +85,9 @@ public interface MethodInterface {
      * Register a command name to be handled by advancedban.
      *
      * @param cmd the cmd
+     * @param tabCompleter behaviour when tab completion is triggered
      */
-    void setCommandExecutor(String cmd);
+    void setCommandExecutor(String cmd, TabCompleter tabCompleter);
 
     /**
      * Send a message to a specific player.
