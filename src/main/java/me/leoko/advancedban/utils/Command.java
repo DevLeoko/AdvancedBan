@@ -108,20 +108,14 @@ public enum Command {
 
     UN_BAN("ab." + PunishmentType.BAN.getName() + ".undo",
             "\\S+",
-            new BasicTabCompleter("<Name/IP>"),
+            new BasicTabCompleter("[Name/IP]"),
             new RevokeProcessor(PunishmentType.BAN),
             "Un" + PunishmentType.BAN.getConfSection("Usage"),
             "unban"),
 
     UN_MUTE("ab." + PunishmentType.MUTE.getName() + ".undo",
             "\\S+",
-            new CleanTabCompleter(args -> {
-                if(args.length == 1) {
-                    return list("<Name>", CleanTabCompleter.PLAYER_PLACEHOLDER);
-                }else {
-                    return list();
-                }
-            }),
+            new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
             new RevokeProcessor(PunishmentType.MUTE),
             "Un" + PunishmentType.MUTE.getConfSection("Usage"),
             "unmute"),
@@ -130,9 +124,9 @@ public enum Command {
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter(args -> {
                 if(args.length == 1) {
-                    return list("<ID>", "clear");
+                    return list("[ID]", "clear");
                 }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
                 }
@@ -169,9 +163,9 @@ public enum Command {
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter(args -> {
                 if(args.length == 1) {
-                    return list("<ID>", "clear");
+                    return list("[ID]", "clear");
                 }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
                 }
@@ -220,7 +214,7 @@ public enum Command {
                 }else {
                     boolean playerTarget = args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("mute");
                     if(args.length == 2 && playerTarget){
-                        return list(CleanTabCompleter.PLAYER_PLACEHOLDER);
+                        return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                     } else if((playerTarget && args.length == 3) || args.length == 2){
                         return list("new reason...");
                     } else {
@@ -269,7 +263,7 @@ public enum Command {
 
     BAN_LIST("ab.banlist",
             "([1-9][0-9]*)?",
-            new BasicTabCompleter("<ID>"),
+            new BasicTabCompleter("<Page>"),
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150),
                     "Banlist", false, false),
@@ -277,10 +271,10 @@ public enum Command {
             "banlist"),
 
     HISTORY("ab.history",
-            "\\S+( [1-9][0-9]*)?",
+            "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter(args -> {
                 if(args.length == 1)
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                 else if(args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
@@ -296,7 +290,7 @@ public enum Command {
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter(args -> {
                 if(args.length == 1)
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                 else if(args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
@@ -331,7 +325,7 @@ public enum Command {
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter(args -> {
                 if(args.length == 1)
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Page>");
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                 else if(args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
@@ -365,13 +359,7 @@ public enum Command {
 
     CHECK("ab.check",
             "\\S+",
-            new CleanTabCompleter(args -> {
-                if(args.length == 1) {
-                    return list("<Name>", CleanTabCompleter.PLAYER_PLACEHOLDER);
-                }else {
-                    return list();
-                }
-            }),
+            new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
             input -> {
                 String name = input.getPrimary();
 
