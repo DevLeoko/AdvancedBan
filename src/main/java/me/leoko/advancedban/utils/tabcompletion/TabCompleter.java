@@ -4,5 +4,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface TabCompleter {
-    List<String> onTabComplete(String[] args);
+    List<String> onTabComplete(Object user, String[] args);
 }

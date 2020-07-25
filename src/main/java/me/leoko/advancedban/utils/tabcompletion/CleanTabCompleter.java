@@ -13,8 +13,8 @@ public class CleanTabCompleter implements MutableTabCompleter {
     }
 
     @Override
-    public ArrayList<String> onTabComplete(String[] args) {
-        ArrayList<String> suggestions = rawTabCompleter.onTabComplete(args);
+    public ArrayList<String> onTabComplete(Object user, String[] args) {
+        ArrayList<String> suggestions = rawTabCompleter.onTabComplete(user, args);
 
         if(!suggestions.isEmpty() && suggestions.get(0).equals(PLAYER_PLACEHOLDER)) {
             suggestions.remove(0);

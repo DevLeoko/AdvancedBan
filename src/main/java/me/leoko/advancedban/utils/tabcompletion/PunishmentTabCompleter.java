@@ -17,7 +17,7 @@ public class PunishmentTabCompleter implements TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> onTabComplete(Object user, String[] args) {
         final MethodInterface methodInterface = Universal.get().getMethods();
 
         List<String> suggestions = new ArrayList<>();

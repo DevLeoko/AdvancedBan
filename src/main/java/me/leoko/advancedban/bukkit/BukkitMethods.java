@@ -27,6 +27,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -151,7 +152,11 @@ public class BukkitMethods implements MethodInterface {
         if (command != null) {
             command.setExecutor(CommandReceiver.get());
             if (tabCompleter != null)
-                command.setTabCompleter((commandSender, c, s, args) -> tabCompleter.onTabComplete(args));
+                command.setTabCompleter((commandSender, c, s, args) -> {
+                    if (command.getPermission() != null && !hasPerms(commandSender, command.getPermission()))
+                        return Collections.emptyList();
+                    return tabCompleter.onTabComplete(commandSender, args);
+                });
         } else {
             System.out.println("AdvancedBan >> Failed to register command " + cmd);
         }
