@@ -175,7 +175,7 @@ UnWarn:
     Done: "&7Cleared &a&o%COUNT% &7warnings"
 
 UnNote:
-  Usage: "&cUsage &8» &7&o/unwarn [ID] or /unnote clear [Name]"
+  Usage: "&cUsage &8» &7&o/unnote [ID] or /unnote clear [Name]"
   NotFound: "&cCould not find note #%ID%"
   Done: "&7Note &a&o#%ID% &7was successfully deleted!"
   Notification: "&e&o%OPERATOR% &7unnoted &c&o%NAME%"
