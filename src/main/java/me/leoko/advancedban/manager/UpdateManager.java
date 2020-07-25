@@ -34,7 +34,64 @@ public class UpdateManager {
     public void setup() {
         MethodInterface mi = Universal.get().getMethods();
 
-        if(mi.isUnitTesting()) return;
+        if (mi.isUnitTesting()) return;
+
+        if (!mi.contains(mi.getMessages(), "UnNote.Usage")) {
+            try {
+                addMessage("Check:", "  Note: \"&cNotes &8» &7%COUNT%\"", 1);
+                FileUtils.writeLines(new File(mi.getDataFolder(), "Messages.yml"), "UTF8", Arrays.asList(
+                        "",
+                        "# Automatically added by v2.2.1 update process",
+                        "UnNote:",
+                        "  Usage: \"&cUsage &8» &7&o/unwarn [ID] or /unnote clear [Name]\"",
+                        "  NotFound: \"&cCould not find note #%ID%\"",
+                        "  Done: \"&7Note &a&o#%ID% &7was successfully deleted!\"",
+                        "  Notification: \"&e&o%OPERATOR% &7unnoted &c&o%NAME%\"",
+                        "  Clear:",
+                        "    Empty:\"&c&o%NAME% &7has no notes!\"",
+                        "    Done:\"&7Cleared &a&o%COUNT% &7notes\"",
+                        "",
+                        "Note:",
+                        "  Usage: \"&cUsage &8» &7&o/note [Name] [Reason]\"",
+                        "  Done: \"&c&o%NAME% &7was successfully noted!\"",
+                        "  Exempt: \"&7You are not able to note &c&o%NAME%\"",
+                        "  Notification:",
+                        "    - \"&c&o%NAME% &7got noted by &e&o%OPERATOR%\"",
+                        "    - \"&7For the reason &o%REASON%\"",
+                        "",
+                        "Notes:",
+                        "  Usage: \"&cUsage &8» &7&o/notes [Name] <Page> &cor &7&o/notes <Page>\"",
+                        "  OutOfIndex: \"&cThere is no page %PAGE%!\"",
+                        "  NoEntries: \"&c&o%NAME% has no notes yet\"",
+                        "  Header:",
+                        "    - \"&7\"",
+                        "    - \"%PREFIX% &7Notes for %NAME%:\"",
+                        "    - \"&7\"",
+                        "  Entry:",
+                        "    - \"&7%DATE% &8| &7By &o%OPERATOR% &7(&c#%ID%&7)\"",
+                        "    - \"&8> &e%REASON%\"",
+                        "    - \"&7\"",
+                        "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%\"",
+                        "  PageFooter: \"&7Use &e&o/notes %NAME% %NEXT_PAGE% &7to see the next page\"",
+                        "",
+                        "NotesOwn:",
+                        "  OutOfIndex: \"&cThere is no page %PAGE%!\"",
+                        "  NoEntries: \"&c&oYou have no notes yet\"",
+                        "  Header:",
+                        "    - \"&7\"",
+                        "    - \"%PREFIX% &7Your notes:\"",
+                        "    - \"&7\"",
+                        "  Entry:",
+                        "    - \"&7%DATE% &8| &7By &o%OPERATOR% &7(&c#%ID%&7)\"",
+                        "    - \"&8> &e%REASON%\"",
+                        "    - \"&7\"",
+                        "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%\"",
+                        "  PageFooter: \"&7Use &e&o/notes %NEXT_PAGE% &7to see the next page\""
+                ), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (!mi.contains(mi.getMessages(), "WarnsOwn")) {
             addMessage("ChangeReason:", "", 0);
@@ -60,60 +117,7 @@ public class UpdateManager {
             addMessage("UnMute:", "  Notification: \"&e&o%OPERATOR% &7unmuted &c&o%NAME%\"", 1);
             addMessage("UnWarn:", "  Notification: \"&e&o%OPERATOR% &7unwarned &c&o%NAME%\"", 1);
         }
-        
-        if (!mi.contains(mi.getMessages(), "UnNote.Usage")) { try {
-                FileUtils.writeLines(new File(mi.getDataFolder(), "Messages.yml"), Arrays.asList(
-                    "UnNote:",
-                    "  Usage: \"&cUsage &8» &7&o/unwarn [ID] or /unnote clear [Name]\"",
-                    "  NotFound: \"&cCould not find note #%ID%\"",
-                    "  Done: \"&7Note &a&o#%ID% &7was successfully deleted!\"",
-                    "  Notification: \"&e&o%OPERATOR% &7unnoted &c&o%NAME%\"",
-                    "  Clear:",
-                    "    Empty:\"&c&o%NAME% &7has no notes!\"",
-                    "    Done:\"&7Cleared &a&o%COUNT% &7notes\"",
-                    "",
-                    "Note:",
-                    "  Usage: \"&cUsage &8» &7&o/note [Name] [Reason]\"",
-                    "  Done: \"&c&o%NAME% &7was successfully noted!\"",
-                    "  Exempt: \"&7You are not able to note &c&o%NAME%\"",
-                    "  Notification:",
-                    "    - \"&c&o%NAME% &7got noted by &e&o%OPERATOR%\"",
-                    "    - \"&7For the reason &o%REASON%\"",
-                    "",
-                    "Notes:",
-                    "  Usage: \"&cUsage &8» &7&o/notes [Name] <Page> &cor &7&o/notes <Page>\"",
-                    "  OutOfIndex: \"&cThere is no page %PAGE%!\"",
-                    "  NoEntries: \"&c&o%NAME% has no notes yet\"",
-                    "  Header:",
-                    "    - \"&7\"",
-                    "    - \"%PREFIX% &7Notes for %NAME%:\"",
-                    "    - \"&7\"",
-                    "  Entry:",
-                    "    - \"&7%DATE% &8| &7By &o%OPERATOR% &7(&c#%ID%&7)\"",
-                    "    - \"&8> &e%REASON%\"",
-                    "    - \"&7\"",
-                    "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%\"",
-                    "  PageFooter: \"&7Use &e&o/notes %NAME% %NEXT_PAGE% &7to see the next page\"",
-                    "",
-                    "NotesOwn:",
-                    "  OutOfIndex: \"&cThere is no page %PAGE%!\"",
-                    "  NoEntries: \"&c&oYou have no notes yet\"",
-                    "  Header:",
-                    "    - \"&7\"",
-                    "    - \"%PREFIX% &7Your notes:\"",
-                    "    - \"&7\"",
-                    "  Entry:",
-                    "    - \"&7%DATE% &8| &7By &o%OPERATOR% &7(&c#%ID%&7)\"",
-                    "    - \"&8> &e%REASON%\"",
-                    "    - \"&7\"",
-                    "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Notes: &e&o%COUNT%\"",
-                    "  PageFooter: \"&7Use &e&o/notes %NEXT_PAGE% &7to see the next page\""
-                ), true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        
+
         if (!mi.contains(mi.getMessages(), "Check.MuteReason")) {
             try {
                 File file = new File(mi.getDataFolder(), "Messages.yml");
@@ -236,10 +240,10 @@ public class UpdateManager {
     private void addMessage(String search, String insert, int indexOffset) {
         try {
             File file = new File(Universal.get().getMethods().getDataFolder(), "Messages.yml");
-            List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
+            List<String> lines = FileUtils.readLines(file, "UTF8");
             int index = lines.indexOf(search);
             lines.add(index + indexOffset, insert);
-            FileUtils.writeLines(file, lines);
+            FileUtils.writeLines(file, "UTF8", lines);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
