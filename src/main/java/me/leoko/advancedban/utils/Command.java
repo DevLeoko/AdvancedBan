@@ -271,11 +271,11 @@ public enum Command {
             "banlist"),
 
     HISTORY("ab.history",
-            "\\S+( [1-9][0-9]*)?|\\S+|",
+            "\\S+( [1-9][0-9]*)?",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1)
-                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
-                else if(args.length == 2 && !args[0].matches("\\d+"))
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
+                else if(args.length == 2)
                     return list("<Page>");
                 else
                     return list();
