@@ -28,7 +28,7 @@ public enum Command {
 
     TEMP_BAN(
             PunishmentType.TEMP_BAN.getPerms(),
-            "\\S+ (-s )?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_BAN),
             PunishmentType.TEMP_BAN.getConfSection("Usage"),
@@ -44,7 +44,7 @@ public enum Command {
 
     TEMP_IP_BAN(
             PunishmentType.TEMP_IP_BAN.getPerms(),
-            "\\S+ (-s )?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_IP_BAN),
             PunishmentType.TEMP_IP_BAN.getConfSection("Usage"),
@@ -60,7 +60,7 @@ public enum Command {
 
     TEMP_MUTE(
             PunishmentType.TEMP_MUTE.getPerms(),
-            "\\S+ (-s )?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_MUTE),
             PunishmentType.TEMP_MUTE.getConfSection("Usage"),
@@ -76,7 +76,7 @@ public enum Command {
 
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
-            "\\S+ (-s )?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
             new PunishmentTabCompleter(false),
             new PunishmentProcessor(PunishmentType.TEMP_WARNING),
             PunishmentType.TEMP_WARNING.getConfSection("Usage"),
