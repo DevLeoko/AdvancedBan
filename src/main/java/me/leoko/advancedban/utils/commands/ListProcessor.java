@@ -55,7 +55,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
         final Iterator<Punishment> punishmentIterator = punishments.iterator();
         while (punishmentIterator.hasNext()){
             final Punishment punishment = punishmentIterator.next();
-            if(punishment.isExpired()){
+            if(punishment.isExpired() && !history){
                 punishment.delete();
                 punishmentIterator.remove();
             }
