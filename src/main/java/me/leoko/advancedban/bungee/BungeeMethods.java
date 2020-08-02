@@ -189,7 +189,9 @@ public class BungeeMethods implements MethodInterface {
     @SuppressWarnings("deprecation")
     @Override
     public void kickPlayer(String player, String reason) {
-        if (Universal.get().useRedis()) {
+        if(BungeeMain.getCloudSupport() != null){
+            BungeeMain.getCloudSupport().kick(getPlayer(player), reason);
+        }else if (Universal.get().useRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
         } else {
             getPlayer(player).disconnect(reason);

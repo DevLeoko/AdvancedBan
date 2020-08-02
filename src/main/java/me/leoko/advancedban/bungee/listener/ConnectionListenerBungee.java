@@ -1,6 +1,8 @@
 package me.leoko.advancedban.bungee.listener;
 
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
+import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.BungeeMain;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -25,10 +27,16 @@ public class ConnectionListenerBungee implements Listener {
         event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
         Universal.get().getMethods().runAsync(() -> {
             String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
+
             if (result != null) {
-                event.setCancelled(true);
-                event.setCancelReason(result);
+                if(BungeeMain.getCloudSupport() != null){
+                    BungeeMain.getCloudSupport().kick(event.getConnection().getUniqueId(), result);
+                }else {
+                    event.setCancelled(true);
+                    event.setCancelReason(result);
+                }
             }
+
             if (Universal.get().useRedis()) {
                 RedisBungee.getApi().sendChannelMessage("AdvancedBanConnection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
             }
