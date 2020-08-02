@@ -1,5 +1,6 @@
 package me.leoko.advancedban.utils.commands;
 
+import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
@@ -15,18 +16,12 @@ import java.util.function.Function;
 
 import static me.leoko.advancedban.utils.CommandUtils.processName;
 
+@AllArgsConstructor
 public class ListProcessor implements Consumer<Command.CommandInput> {
     private Function<String, List<Punishment>> listSupplier;
     private String config;
     private boolean history;
     private boolean hasTarget;
-
-    public ListProcessor(Function<String, List<Punishment>> listSupplier, String config, boolean history, boolean hasTarget) {
-        this.listSupplier = listSupplier;
-        this.config = config;
-        this.history = history;
-        this.hasTarget = hasTarget;
-    }
 
     @Override
     public void accept(Command.CommandInput input) {
@@ -52,14 +47,13 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
             return;
         }
 
-        final Iterator<Punishment> punishmentIterator = punishments.iterator();
-        while (punishmentIterator.hasNext()){
-            final Punishment punishment = punishmentIterator.next();
-            if(punishment.isExpired() && !history){
-                punishment.delete();
-                punishmentIterator.remove();
-            }
-        }
+        punishments
+                .stream()
+                .filter(punishment -> punishment.isExpired() && !history)
+                .forEach(punishment -> {
+                    punishment.delete();
+                    punishments.remove(punishment);
+                });
 
         int page = input.hasNext() ? Integer.parseInt(input.getPrimary()) : 1;
         if (punishments.size() / 5.0 + 1 <= page) {
@@ -72,8 +66,8 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
         List<String> header = MessageManager.getLayout(mi.getMessages(), config + ".Header",
                 "PREFIX", prefix, "NAME", name);
 
-        for (String line : header)
-            mi.sendMessage(input.getSender(), line);
+        header.forEach(line -> mi.sendMessage(input.getSender(), line));
+
 
         SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(),
                 "DateFormat", "dd.MM.yyyy-HH:mm"));
@@ -87,7 +81,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
                     "DURATION", punishment.getDuration(history),
                     "OPERATOR", punishment.getOperator(),
                     "REASON", punishment.getReason(),
-                    "TYPE", punishment.getType().getConfSection(),
+                    "TYPE", punishment.getType().getName(),
                     "ID", punishment.getId() + "",
                     "DATE", format.format(new Date(punishment.getStart())));
 

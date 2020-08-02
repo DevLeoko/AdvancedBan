@@ -2,6 +2,9 @@ package me.leoko.advancedban;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import me.leoko.advancedban.bungee.BungeeMethods;
 import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
@@ -20,10 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -32,11 +32,19 @@ import java.util.Scanner;
 public class Universal {
 
     private static Universal instance = null;
-    private final Map<String, String> ips = new HashMap<>();
+    private final @Getter Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
     private LogManager logManager;
+
+    @Getter @Setter
     private static boolean redis = false;
-    private final Gson gson = new Gson();
+
+
+    private final @Getter Gson gson = new Gson();
+
+
+
+
 
     /**
      * Get universal.
@@ -69,11 +77,8 @@ public class Universal {
         mi.setupMetrics();
         PunishmentManager.get().setup();
 
-        for (Command command : Command.values()) {
-            for (String commandName : command.getNames()) {
-                mi.setCommandExecutor(commandName, command.getTabCompleter());
-            }
-        }
+        Arrays.stream(Command.values()).forEach(command -> Arrays.asList(command.getNames())
+                .forEach(commandName -> mi.setCommandExecutor(commandName, command.getTabCompleter())));
 
         String upt = "You have the newest version";
         String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");
@@ -125,15 +130,6 @@ public class Universal {
             mi.log("&cDisabling AdvancedBan on Version &7" + getMethods().getVersion());
             mi.log("&cCoded by Leoko &8| &7Twitter: @LeokoGar");
         }
-    }
-
-    /**
-     * Gets ips.
-     *
-     * @return the ips
-     */
-    public Map<String, String> getIps() {
-        return ips;
     }
 
     /**
@@ -282,9 +278,7 @@ public class Universal {
     public String callConnection(String name, String ip) {
         name = name.toLowerCase();
         String uuid = UUIDManager.get().getUUID(name);
-        if (uuid == null) {
-            return "[AdvancedBan] Failed to fetch your UUID";
-        }
+        if (uuid == null) return "[AdvancedBan] Failed to fetch your UUID";
 
         if (ip != null) {
             getIps().remove(name);
@@ -335,25 +329,6 @@ public class Universal {
     }
 
     /**
-     * Use redis.
-     *
-     * @param use the use
-     */
-    public void useRedis(boolean use) {
-        redis = use;
-    }
-
-    /**
-     * Use redis boolean.
-     *
-     * @return the boolean
-     */
-    public boolean useRedis() {
-        return redis;
-    }
-
-
-    /**
      * Log.
      *
      * @param msg the msg
@@ -379,7 +354,6 @@ public class Universal {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exc.printStackTrace(pw);
-
         debug(sw.toString());
     }
 
@@ -415,14 +389,5 @@ public class Universal {
             System.out.print("An error has occurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
         }
-    }
-
-    /**
-     * Gets gson.
-     *
-     * @return the gson
-     */
-    public Gson getGson() {
-        return gson;
     }
 }

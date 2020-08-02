@@ -1,5 +1,9 @@
 package me.leoko.advancedban.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
@@ -17,6 +21,8 @@ import java.util.List;
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
+@Getter
+@ToString
 public class Punishment {
 
     private static final MethodInterface mi = Universal.get().getMethods();
@@ -46,40 +52,8 @@ public class Punishment {
                 .create(silent);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
     public String getReason() {
         return (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public String getCalculation() {
-        return calculation;
-    }
-
-    public long getStart() {
-        return start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-
-    public PunishmentType getType() {
-        return type;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getHexId() {
@@ -177,7 +151,7 @@ public class Punishment {
 
     private void announce(int cWarnings) {
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
-                getType().getConfSection() + ".Notification",
+                getType().getName() + ".Notification",
                 "OPERATOR", getOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(true),
@@ -230,7 +204,7 @@ public class Punishment {
 
         return MessageManager.getLayout(
                 isLayout ? mi.getLayouts() : mi.getMessages(),
-                isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getConfSection() + ".Layout",
+                isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getName() + ".Layout",
                 "OPERATOR", getOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
@@ -290,18 +264,4 @@ public class Punishment {
         return getType().isTemp() && getEnd() <= TimeManager.getTime();
     }
 
-    @Override
-    public String toString() {
-        return "Punishment{"
-                + "id=" + id
-                + ", name='" + name + '\''
-                + ", uuid='" + uuid + '\''
-                + ", reason='" + reason + '\''
-                + ", operator='" + operator + '\''
-                + ", start=" + start
-                + ", end=" + end
-                + ", calculation='" + calculation + '\''
-                + ", type=" + type
-                + '}';
-    }
 }

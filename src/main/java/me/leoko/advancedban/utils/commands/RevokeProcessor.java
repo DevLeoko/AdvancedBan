@@ -1,5 +1,6 @@
 package me.leoko.advancedban.utils.commands;
 
+import lombok.AllArgsConstructor;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.utils.Command;
@@ -10,12 +11,9 @@ import java.util.function.Consumer;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
 
+@AllArgsConstructor
 public class RevokeProcessor implements Consumer<Command.CommandInput> {
     private PunishmentType type;
-
-    public RevokeProcessor(PunishmentType type) {
-        this.type = type;
-    }
 
     @Override
     public void accept(Command.CommandInput input) {
@@ -30,14 +28,14 @@ public class RevokeProcessor implements Consumer<Command.CommandInput> {
 
         Punishment punishment = getPunishment(target, type);
         if (punishment == null) {
-            MessageManager.sendMessage(input.getSender(), "Un" + type.getConfSection() + ".NotPunished",
+            MessageManager.sendMessage(input.getSender(), "Un" + type.getName() + ".NotPunished",
                     true, "NAME", name);
             return;
         }
 
         final String operator = Universal.get().getMethods().getName(input.getSender());
         punishment.delete(operator, false, true);
-        MessageManager.sendMessage(input.getSender(), "Un" + type.getConfSection() + ".Done",
+        MessageManager.sendMessage(input.getSender(), "Un" + type.getName() + ".Done",
                 true, "NAME", name);
     }
 }

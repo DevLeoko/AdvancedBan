@@ -1,20 +1,20 @@
 package me.leoko.advancedban.utils.tabcompletion;
 
+import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+@AllArgsConstructor
 public class PunishmentTabCompleter implements TabCompleter {
 
     private final boolean temporary;
 
-    public PunishmentTabCompleter(boolean temporary) {
-        this.temporary = temporary;
-    }
 
     @Override
     public List<String> onTabComplete(Object user, String[] args) {
@@ -38,9 +38,7 @@ public class PunishmentTabCompleter implements TabCompleter {
             suggestions.add("[Name]");
         } else if(temporary && args.length == 2){
             String current = args[args.length-1];
-
             String amount = current.toLowerCase().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)")[0];
-
             if(current.equals(""))
                 amount = "X";
 
@@ -49,24 +47,20 @@ public class PunishmentTabCompleter implements TabCompleter {
                     suggestions.add(amount + unit);
                 }
             }
-
             for (String layout : methodInterface.getKeys(methodInterface.getLayouts(), "Time")) {
                 suggestions.add("#"+layout);
             }
         } else if((temporary && args.length == 3) || args.length == 2) {
             suggestions.add("Reason...");
-
             for (String layout : methodInterface.getKeys(methodInterface.getLayouts(), "Message")) {
                 suggestions.add("@"+layout);
             }
         }
 
         if(args.length > 0){
-            final Iterator<String> iterator = suggestions.iterator();
-            while (iterator.hasNext()){
-                if(!iterator.next().startsWith(args[args.length - 1]))
-                    iterator.remove();
-            }
+            String[] finalArgs = args;
+            suggestions.stream().filter(s -> s.startsWith(finalArgs[finalArgs.length - 1]))
+                    .forEach(suggestions::remove);
         }
 
         return suggestions;

@@ -168,7 +168,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public boolean isOnline(String name) {
         try {
-            if (Universal.get().useRedis()) {
+            if (Universal.isRedis()) {
                 for (String str : RedisBungee.getApi().getHumanPlayersOnline()) {
                     if (str.equalsIgnoreCase(name)) {
                         return RedisBungee.getApi().getPlayerIp(RedisBungee.getApi().getUuidFromName(str)) != null;
@@ -191,7 +191,7 @@ public class BungeeMethods implements MethodInterface {
     public void kickPlayer(String player, String reason) {
         if(BungeeMain.getCloudSupport() != null){
             BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
-        }else if (Universal.get().useRedis()) {
+        }else if (Universal.isRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
         } else {
             getPlayer(player).disconnect(new TextComponent(reason));
@@ -373,7 +373,6 @@ public class BungeeMethods implements MethodInterface {
         getPlugin().getProxy().getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isOnlineMode() {
         return ProxyServer.getInstance().getConfig().isOnlineMode();
@@ -381,16 +380,13 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void notify(String perm, List<String> notification) {
-        if (Universal.get().useRedis()) {
-            notification.forEach((str) -> {
-                RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " " + str);
-            });
+        if (Universal.isRedis()) {
+            notification.forEach((str) -> RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " " + str));
         } else {
-            ProxyServer.getInstance().getPlayers().stream().filter((pp) -> (Universal.get().hasPerms(pp, perm))).forEachOrdered((pp) -> {
-                notification.forEach((str) -> {
-                    sendMessage(pp, str);
-                });
-            });
+            ProxyServer.getInstance().getPlayers()
+                    .stream()
+                    .filter((pp) -> (Universal.get().hasPerms(pp, perm)))
+                    .forEachOrdered((pp) -> notification.forEach((str) -> sendMessage(pp, str)));
         }
     }
 

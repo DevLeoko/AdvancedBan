@@ -1,5 +1,7 @@
 package me.leoko.advancedban.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
@@ -17,6 +19,7 @@ import java.util.function.Predicate;
 import static me.leoko.advancedban.utils.CommandUtils.*;
 import static me.leoko.advancedban.utils.tabcompletion.MutableTabCompleter.list;
 
+@Getter
 public enum Command {
     BAN(
             PunishmentType.BAN.getPerms(),
@@ -132,7 +135,7 @@ public enum Command {
                 }
             }),
             input -> {
-                final String confSection = PunishmentType.WARNING.getConfSection();
+                final String confSection = PunishmentType.WARNING.getName();
                 if (input.getPrimaryData().equals("clear")) {
                     input.next();
                     String name = input.getPrimary();
@@ -171,7 +174,7 @@ public enum Command {
                 }
             }),
             input -> {
-                final String confSection = PunishmentType.NOTE.getConfSection();
+                final String confSection = PunishmentType.NOTE.getName();
                 if (input.getPrimaryData().equals("clear")) {
                     input.next();
                     String name = input.getPrimary();
@@ -505,7 +508,7 @@ public enum Command {
                 mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
                 mi.sendMessage(sender, "  §cServer §8• §7" + (Universal.get().isBungee() ? "Bungeecord" : "Spigot/Bukkit"));
                 if (Universal.get().isBungee()) {
-                    mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.get().useRedis() ? "true" : "false"));
+                    mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.get().isRedis() ? "true" : "false"));
                 }
                 mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
                 mi.sendMessage(sender, "  §cPrefix §8• §7" + (mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix")));
@@ -536,14 +539,6 @@ public enum Command {
         this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath, names);
     }
 
-    public String getPermission() {
-        return permission;
-    }
-
-    public String getUsagePath() {
-        return usagePath;
-    }
-
     public boolean validateArguments(String[] args) {
         return syntaxValidator.test(args);
     }
@@ -552,9 +547,7 @@ public enum Command {
         commandHandler.accept(new CommandInput(player, args));
     }
 
-    public String[] getNames() {
-        return names;
-    }
+
 
     public TabCompleter getTabCompleter() {
         return tabCompleter;
@@ -571,6 +564,7 @@ public enum Command {
         return null;
     }
 
+    @Getter
     public static class CommandInput {
         private Object sender;
         private String[] args;
@@ -578,14 +572,6 @@ public enum Command {
         CommandInput(Object sender, String[] args) {
             this.sender = sender;
             this.args = args;
-        }
-
-        public Object getSender() {
-            return sender;
-        }
-
-        public String[] getArgs() {
-            return args;
         }
 
         public String getPrimary() {

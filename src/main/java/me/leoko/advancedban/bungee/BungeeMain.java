@@ -1,6 +1,7 @@
 package me.leoko.advancedban.bungee;
 
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import lombok.Getter;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.cloud.CloudSupport;
 import me.leoko.advancedban.bungee.cloud.CloudSupportHandler;
@@ -15,11 +16,8 @@ public class BungeeMain extends Plugin {
 
     private static BungeeMain instance;
 
-    private static CloudSupport cloudSupport;
+    private static @Getter CloudSupport cloudSupport;
 
-    public static CloudSupport getCloudSupport() {
-        return cloudSupport;
-    }
 
     public static BungeeMain get() {
         return instance;
@@ -38,7 +36,7 @@ public class BungeeMain extends Plugin {
 
 
         if (ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null) {
-            Universal.get().useRedis(true);
+            Universal.setRedis(true);
             ProxyServer.getInstance().getPluginManager().registerListener(this, new PubSubMessageListener());
             RedisBungee.getApi().registerPubSubChannels("AdvancedBan", "AdvancedBanConnection");
             Universal.get().log("RedisBungee detected, hooking into it!");
