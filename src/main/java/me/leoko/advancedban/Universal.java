@@ -77,8 +77,11 @@ public class Universal {
         mi.setupMetrics();
         PunishmentManager.get().setup();
 
-        Arrays.stream(Command.values()).forEach(command -> Arrays.asList(command.getNames())
-                .forEach(commandName -> mi.setCommandExecutor(commandName, command.getTabCompleter())));
+        for (Command command : Command.values()) {
+            for (String commandName : command.getNames()) {
+                mi.setCommandExecutor(commandName, command.getTabCompleter());
+            }
+        }
 
         String upt = "You have the newest version";
         String response = getFromURL("https://api.spigotmc.org/legacy/update.php?resource=8695");

@@ -1,6 +1,4 @@
-/*
- * © Copyright - Emmanuel Lampe aka. rexlManu 2020.
- */
+
 package me.leoko.advancedban.bungee.cloud.support;
 
 

@@ -9,6 +9,7 @@ import net.md_5.bungee.api.plugin.Event;
  * Event fired when a punishment is created
  */
 @AllArgsConstructor
+@Getter
 public class PunishmentEvent extends Event {
-    private @Getter final Punishment punishment;
+    private final Punishment punishment;
 }

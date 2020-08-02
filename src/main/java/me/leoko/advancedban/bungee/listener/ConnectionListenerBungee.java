@@ -1,8 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.BungeeMain;
 import me.leoko.advancedban.manager.PunishmentManager;

@@ -1,7 +1,5 @@
 package me.leoko.advancedban.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 import me.leoko.advancedban.MethodInterface;

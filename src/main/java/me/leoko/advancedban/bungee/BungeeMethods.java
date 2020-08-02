@@ -194,7 +194,7 @@ public class BungeeMethods implements MethodInterface {
         }else if (Universal.isRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
         } else {
-            getPlayer(player).disconnect(new TextComponent(reason));
+            getPlayer(player).disconnect(TextComponent.fromLegacyText(reason));
         }
     }
 
