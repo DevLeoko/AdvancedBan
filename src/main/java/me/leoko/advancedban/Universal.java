@@ -3,7 +3,6 @@ package me.leoko.advancedban;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import me.leoko.advancedban.bungee.BungeeMethods;
-import me.leoko.advancedban.bungee.cloud.CloudSupport;
 import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
@@ -37,7 +36,6 @@ public class Universal {
     private MethodInterface mi;
     private LogManager logManager;
     private static boolean redis = false;
-    private static boolean cloudNet = false;
     private final Gson gson = new Gson();
 
     /**
