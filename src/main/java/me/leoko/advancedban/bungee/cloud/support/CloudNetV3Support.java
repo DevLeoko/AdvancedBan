@@ -1,6 +1,4 @@
-
 package me.leoko.advancedban.bungee.cloud.support;
-
 
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;

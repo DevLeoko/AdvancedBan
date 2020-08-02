@@ -1,13 +1,9 @@
-
 package me.leoko.advancedban.bungee.cloud;
 
 import me.leoko.advancedban.bungee.cloud.support.CloudNetV2Support;
 import me.leoko.advancedban.bungee.cloud.support.CloudNetV3Support;
 import net.md_5.bungee.api.ProxyServer;
 
-/**
- * @author juliandev.xyz
- */
 public class CloudSupportHandler {
 
     public static CloudSupport getCloudSystem(){
