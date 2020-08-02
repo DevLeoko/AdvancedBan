@@ -64,7 +64,7 @@ public class InternalListener implements Listener {
                             TimeManager.getTime() + punishment.get("end").getAsLong(),
                             punishment.get("calculation") != null ? punishment.get("calculation").getAsString() : null,
                             -1
-                    ).create(punishment.get("silent") != null ? punishment.get("silent").getAsBoolean() : false);
+                    ).create(punishment.get("silent") != null && punishment.get("silent").getAsBoolean());
                     universal.log("A punishment was created using PluginMessaging listener.");
                     universal.debug(punishment.toString());
                 } catch (JsonSyntaxException | NullPointerException ex) {
@@ -83,11 +83,7 @@ public class InternalListener implements Listener {
     public void sendToBukkit(String channel, List<String> messages) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
-        messages.forEach((msg) -> {
-            out.writeUTF(msg);
-        });
-        ProxyServer.getInstance().getServers().keySet().forEach(server -> {
-            ProxyServer.getInstance().getServerInfo(server).sendData("AdvancedBan", out.toByteArray(), true);
-        });
+        messages.forEach(out::writeUTF);
+        ProxyServer.getInstance().getServers().keySet().forEach(server -> ProxyServer.getInstance().getServerInfo(server).sendData("AdvancedBan", out.toByteArray(), true));
     }
 }

@@ -186,13 +186,15 @@ public class BungeeMethods implements MethodInterface {
         return ProxyServer.getInstance().getPlayer(name);
     }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public void kickPlayer(String player, String reason) {
-        if (Universal.get().useRedis()) {
+        if(BungeeMain.getCloudSupport() != null){
+            BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
+        }else if (Universal.get().useRedis()) {
             RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
         } else {
-            getPlayer(player).disconnect(reason);
+            getPlayer(player).disconnect(new TextComponent(reason));
         }
     }
 
