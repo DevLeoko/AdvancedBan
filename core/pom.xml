@@ -118,10 +118,6 @@
                             <pattern>org.hsqldb</pattern>
                             <shadedPattern>${project.groupId}.shaded.org.hsqldb</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>${project.groupId}.shaded.org.bstats</shadedPattern>
-                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>
@@ -141,6 +137,14 @@
                         <version>1.0.0-RC2</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

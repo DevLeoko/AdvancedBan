@@ -1,8 +1,7 @@
-name: ${project.artifactId}
+name: ${project.name}
 version: ${project.version}
 main: ${project.groupId}.bukkit.BukkitMain
-api-version: 1.15
-authors: [Leoko]
+author: Leoko
 softdepend: [Vault]
 
 commands:
