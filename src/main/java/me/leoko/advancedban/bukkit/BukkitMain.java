@@ -28,13 +28,14 @@ public class BukkitMain extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new CommandListener(), this);
         this.getServer().getPluginManager().registerEvents(new InternalListener(), this);
 
-        for (Player op : Bukkit.getOnlinePlayers()) {
-            AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(op.getName(), op.getAddress().getAddress(), op.getUniqueId());
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(player.getName(), player.getAddress().getAddress(), player.getUniqueId());
             connListener.onConnect(apple);
             if (apple.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_BANNED) {
-                op.kickPlayer(apple.getKickMessage());
+                player.kickPlayer(apple.getKickMessage());
             }
-        }
+        });
+
     }
 
     @Override

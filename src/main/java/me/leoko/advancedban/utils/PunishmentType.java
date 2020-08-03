@@ -1,8 +1,11 @@
 package me.leoko.advancedban.utils;
 
+import lombok.Getter;
+
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
+@Getter
 public enum PunishmentType {
     BAN("Ban", null, false, "ab.ban.perma"),
     TEMP_BAN("Tempban", BAN, true, "ab.ban.temp"),
@@ -57,18 +60,6 @@ public enum PunishmentType {
         }
     }
 
-    public String getName() {
-        return name.toLowerCase();
-    }
-
-    public String getPerms() {
-        return perms;
-    }
-
-    public String getConfSection() {
-        return name;
-    }
-
     public String getConfSection(String path) {
         return name+"."+path;
     }
@@ -82,10 +73,6 @@ public enum PunishmentType {
             return IP_BAN;
 
         return getBasic();
-    }
-
-    public boolean isTemp() {
-        return temp;
     }
 
     public boolean isIpOrientated() {

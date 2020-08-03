@@ -110,8 +110,7 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public String[] getKeys(Object file, String path) {
-        String[] ss = new String[0];
-        return ((YamlConfiguration) file).getConfigurationSection(path).getKeys(false).toArray(ss);
+        return ((YamlConfiguration) file).getConfigurationSection(path).getKeys(false).toArray(new String[0]);
     }
 
     @Override
@@ -169,7 +168,6 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public boolean hasPerms(Object player, String perms) {
-
         return ((CommandSender) player).hasPermission(perms);
     }
 
@@ -264,9 +262,7 @@ public class BukkitMethods implements MethodInterface {
     public boolean callChat(Object player) {
         Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
         if (pnt != null) {
-            for (String str : pnt.getLayout()) {
-                sendMessage(player, str);
-            }
+            pnt.getLayout().forEach(str -> sendMessage(player, str));
             return true;
         }
         return false;
@@ -276,9 +272,7 @@ public class BukkitMethods implements MethodInterface {
     public boolean callCMD(Object player, String cmd) {
         Punishment pnt;
         if (Universal.get().isMuteCommand(cmd.substring(1)) && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
-            for (String str : pnt.getLayout()) {
-                sendMessage(player, str);
-            }
+            pnt.getLayout().forEach(str -> sendMessage(player, str));
             return true;
         }
         return false;
@@ -380,13 +374,10 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void notify(String perm, List<String> notification) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (hasPerms(p, perm)) {
-                for (String str : notification) {
-                    sendMessage(p, str);
-                }
-            }
-        }
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> hasPerms(player, perm))
+                .forEach(player -> notification.forEach(str -> sendMessage(player, str)));
     }
 
     @Override

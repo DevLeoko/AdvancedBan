@@ -25,14 +25,20 @@ public class ConnectionListenerBungee implements Listener {
         event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
         Universal.get().getMethods().runAsync(() -> {
             String result = Universal.get().callConnection(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
+
             if (result != null) {
-                event.setCancelled(true);
-                event.setCancelReason(result);
+                if(BungeeMain.getCloudSupport() != null){
+                    BungeeMain.getCloudSupport().kick(event.getConnection().getUniqueId(), result);
+                }else {
+                    event.setCancelled(true);
+                    event.setCancelReason(result);
+                }
             }
-            if (Universal.get().useRedis()) {
+
+            if (Universal.isRedis()) {
                 RedisBungee.getApi().sendChannelMessage("AdvancedBanConnection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
             }
-            event.completeIntent((BungeeMain)Universal.get().getMethods().getPlugin());
+            event.completeIntent((BungeeMain) Universal.get().getMethods().getPlugin());
         });
     }
 

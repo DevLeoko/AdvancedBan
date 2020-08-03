@@ -1,5 +1,6 @@
 package me.leoko.advancedban.utils.commands;
 
+import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
@@ -15,12 +16,9 @@ import java.util.function.Function;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
 
+@AllArgsConstructor
 public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private PunishmentType type;
-
-    public PunishmentProcessor(PunishmentType type) {
-        this.type = type;
-    }
 
     @Override
     public void accept(Command.CommandInput input) {
@@ -62,7 +60,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 
         // check if punishment of this type is already active
         if (alreadyPunished(target, type)) {
-            MessageManager.sendMessage(input.getSender(), type.getBasic().getConfSection() + ".AlreadyDone",
+            MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".AlreadyDone",
                     true, "NAME", name);
             return;
         }
@@ -71,7 +69,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         String operator = mi.getName(input.getSender());
         Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
 
-        MessageManager.sendMessage(input.getSender(), type.getBasic().getConfSection() + ".Done",
+        MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".Done",
                 true, "NAME", name);
     }
 
@@ -106,7 +104,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
                 }
             }
             if (max != -1 && toAdd > max) {
-                MessageManager.sendMessage(input.getSender(), type.getConfSection() + ".MaxDuration", true, "MAX", max / 1000 + "");
+                MessageManager.sendMessage(input.getSender(), type.getName() + ".MaxDuration", true, "MAX", max / 1000 + "");
                 return null;
             }
         }
@@ -127,7 +125,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         boolean offlineExempt = !onlineExempt && (Universal.get().isExemptPlayer(dataName) || canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasOfflinePerms(name, perms), type.getName()));
 
         if (onlineExempt || offlineExempt) {
-            MessageManager.sendMessage(sender, type.getBasic().getConfSection() + ".Exempt",
+            MessageManager.sendMessage(sender, type.getBasic().getName() + ".Exempt",
                     true, "NAME", name);
             return true;
         }
@@ -149,7 +147,6 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         for (int i = 10; i >= 1; i--)
             if (hasPerms.apply(permission + "." + i))
                 return i;
-
         return 0;
     }
 

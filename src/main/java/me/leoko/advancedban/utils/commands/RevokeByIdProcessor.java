@@ -1,5 +1,6 @@
 package me.leoko.advancedban.utils.commands;
 
+import lombok.AllArgsConstructor;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.utils.Command;
@@ -8,14 +9,11 @@ import me.leoko.advancedban.utils.Punishment;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@AllArgsConstructor
 public class RevokeByIdProcessor implements Consumer<Command.CommandInput> {
     private String path;
     private Function<Integer, Punishment> resolver;
 
-    public RevokeByIdProcessor(String path, Function<Integer, Punishment> resolver) {
-        this.path = path;
-        this.resolver = resolver;
-    }
 
     @Override
     public void accept(Command.CommandInput input) {
