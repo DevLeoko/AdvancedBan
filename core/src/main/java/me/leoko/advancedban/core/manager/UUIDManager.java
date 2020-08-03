@@ -115,8 +115,8 @@ public class UUIDManager {
     /**
      * Convert String to UUID even if dashes are missing
      *
-     * @param uuid
-     * @return
+     * @param uuid the uuid
+     * @return UUID
      */
     public UUID fromString(String uuid) {
         if (!uuid.contains("-") && uuid.length() == 32)

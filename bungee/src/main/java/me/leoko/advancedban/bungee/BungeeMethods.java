@@ -175,7 +175,7 @@ public class BungeeMethods implements MethodInterface {
                     }
                 }
             }
-            return getPlayer(name).getAddress() != null;
+            return getPlayer(name).getPendingConnection().getVirtualHost().getAddress() != null;
         } catch (NullPointerException exc) {
             return false;
         }
@@ -240,7 +240,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getIP(Object player) {
-        return ((ProxiedPlayer) player).getAddress().getHostName();
+        return ((ProxiedPlayer) player).getPendingConnection().getVirtualHost().getHostName();
     }
 
     @Override

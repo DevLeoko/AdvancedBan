@@ -137,18 +137,6 @@ public class Universal {
     }
 
     /**
-     * Is bungee boolean.
-     *
-     * @return the boolean
-     */
-    /*
-        public boolean isBungee() {
-        return mi instanceof BungeeMethods;
-    }
-     */
-
-
-    /**
      * Gets methods.
      *
      * @return the methods
@@ -382,6 +370,7 @@ public class Universal {
         File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
         if (!debugFile.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 debugFile.createNewFile();
             } catch (IOException ex) {
                 System.out.print("An error has occurred creating the 'latest.log' file again, check your server.");
