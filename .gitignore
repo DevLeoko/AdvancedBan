@@ -14,5 +14,4 @@ bin
 **/*.iml
 **/*~
 .idea
-**/target
 out/
