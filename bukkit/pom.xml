@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.leoko.advancedban</groupId>
-    <artifactId>BukkitMain</artifactId>
+    <artifactId>advancedban-bukkit</artifactId>
     <version>2.2.1</version>
     <packaging>jar</packaging>
 
-    <name>AdvancedBan</name>
+    <name>AdvancedBan-Bukkit</name>
 
     <properties>
         <java.version>1.8</java.version>
