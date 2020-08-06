@@ -14,22 +14,26 @@
     <packaging>jar</packaging>
 
     <repositories>
-        <repository>
-            <id>releases</id>
-            <url>https://repo.cloudnetservice.eu/repository/releases/</url>
-        </repository>
-        <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
-        </repository>
+        <!-- BungeeCord API -->
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <!-- RedisBungee -->
         <repository>
             <id>md_5-snapshots</id>
             <url>http://repo.md-5.net/content/repositories/snapshots/</url>
         </repository>
+        <!-- CloudNet -->
+        <repository>
+            <id>cloudnet3-releases</id>
+            <url>https://repo.cloudnetservice.eu/repository/releases/</url>
+        </repository>
+        <repository>
+            <id>cloudnet2-repo</id>
+            <url>https://cloudnetservice.eu/repositories</url>
+        </repository>
+        <!-- bStats -->
         <repository>
             <id>CodeMC</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
