@@ -3,9 +3,11 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>me.leoko.advancedban</groupId>
     <artifactId>AdvancedBan</artifactId>
     <version>2.2.1</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>core</module>
@@ -13,8 +15,6 @@
         <module>bungee</module>
         <module>bundle</module>
     </modules>
-
-    <packaging>pom</packaging>
 
     <properties>
         <build>RELEASE</build>
