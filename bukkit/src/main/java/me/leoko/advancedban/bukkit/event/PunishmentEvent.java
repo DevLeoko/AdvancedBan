@@ -18,6 +18,10 @@ public class PunishmentEvent extends Event {
         this.punishment = punishment;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
