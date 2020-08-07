@@ -38,14 +38,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.0-RC2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.0-RC2</version>
+            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -70,12 +63,6 @@
             <version>2.8.6</version>
             <!-- Usually provided by the server implementation -->
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

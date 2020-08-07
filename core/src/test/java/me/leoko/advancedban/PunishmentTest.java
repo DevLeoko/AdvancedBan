@@ -6,11 +6,18 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
-import org.junit.Assert;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,17 +25,21 @@ import java.util.List;
  * Created by Leo on 07.08.2017.
  */
 public class PunishmentTest {
+
+    @TempDir
+    public static File dataFolder;
+
     @BeforeAll
     public static void setupUniversal(){
-        Universal.get().setup(new TestMethods());
+        Universal.get().setup(new TestMethods(dataFolder));
     }
 
     @Test
     public void shouldCreatePunishmentForGivenUserWithGivenReason(){
-        Assert.assertFalse("User should not be banned by default", PunishmentManager.get().isBanned("leoko"));
+        assertFalse(PunishmentManager.get().isBanned("leoko"), "User should not be banned by default");
         CommandManager.get().onCommand("UnitTest", "ban", new String[]{"Leoko", "Doing", "some", "unit-testing"});
-        Assert.assertTrue("Punishment from above has failed", PunishmentManager.get().isBanned("leoko"));
-        Assert.assertEquals("Reason should match", "Doing some unit-testing", PunishmentManager.get().getBan("leoko").getReason());
+        assertTrue(PunishmentManager.get().isBanned("leoko"), "Punishment from above has failed");
+        assertEquals("Doing some unit-testing", PunishmentManager.get().getBan("leoko").getReason(), "Reason should match");
     }
 
     @Test
@@ -41,55 +52,55 @@ public class PunishmentTest {
         DatabaseManager.get().shutdown();
         DatabaseManager.get().setup(false);
         Punishment punishment1 = PunishmentManager.get().getPunishment(id);
-        Assert.assertNotNull("Punishment should exist", punishment1);
-        Assert.assertEquals("Reason should still match", "Persistence test", punishment1.getReason());
+        assertNotNull(punishment1, "Punishment should exist");
+        assertEquals("Persistence test", punishment1.getReason(), "Reason should still match");
     }
 
     @Test
     public void shouldWorkWithCachedAndNotCachedPunishments(){
         Punishment punishment = new Punishment("cache", "cache", "Cache test", "JUnit5", PunishmentType.BAN, TimeManager.getTime(), -1, null, -1);
         punishment.create();
-        Assert.assertFalse("Punishment should not be cached if user is not online", PunishmentManager.get().getLoadedPunishments(false).contains(punishment));
-        Assert.assertTrue("Punishment should be active even if not in cache", PunishmentManager.get().isBanned("cache"));
+        assertFalse(PunishmentManager.get().getLoadedPunishments(false).contains(punishment), "Punishment should not be cached if user is not online");
+        assertTrue(PunishmentManager.get().isBanned("cache"), "Punishment should be active even if not in cache");
         PunishmentManager.get().load("cache", "cache", "127.0.0.1").accept();
-        Assert.assertTrue("Punishment should be cached after user is loaded", PunishmentManager.get().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getUuid().equals("cache")));
-        Assert.assertTrue("Punishment should be still active when in cache", PunishmentManager.get().isBanned("cache"));
+        assertTrue(PunishmentManager.get().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getUuid().equals("cache")),
+                "Punishment should be cached after user is loaded");
+        assertTrue(PunishmentManager.get().isBanned("cache"), "Punishment should be still active when in cache");
     }
     
     @Test
     public void shouldBlockBasicCommandsIncludingColons() {
         Universal universal = Universal.get();
         List<String> muteCommands = Arrays.asList("msg", "reply", "tell");
-        Assert.assertTrue("Command should be blocked as it matches exactly a mute command",
-                universal.isMuteCommand("msg", muteCommands));
-        Assert.assertTrue("Command should be blocked as a mute command regardless of colon",
-                universal.isMuteCommand("plugin:reply", muteCommands));
-        Assert.assertFalse("Command not in the mute commands list should not be blocked",
-                universal.isMuteCommand("fly", muteCommands));
-        Assert.assertFalse(
-                "Command not in the mute commands list, but similar to a command in the list, should not be blocked",
-                universal.isMuteCommand("replyall", muteCommands));
+        assertTrue(universal.isMuteCommand("msg", muteCommands),
+                "Command should be blocked as it matches exactly a mute command");
+        assertTrue(universal.isMuteCommand("plugin:reply", muteCommands),
+                "Command should be blocked as a mute command regardless of colon");
+        assertFalse(universal.isMuteCommand("fly", muteCommands),
+                "Command not in the mute commands list should not be blocked");
+        assertFalse(universal.isMuteCommand("replyall", muteCommands),
+                "Command not in the mute commands list, but similar to a command in the list, should not be blocked");
     }
     
     @Test
     public void shouldBlockCommandsStartingWithMuteCommandWords() {
         Universal universal = Universal.get();
         String muteCommand = "party msg";
-        Assert.assertTrue("Subcommand with arguments should be blocked as a mute command",
-                universal.muteCommandMatches("party msg user hello".split(" "), muteCommand));
-        Assert.assertTrue("Subcommand without arguments should be blocked as a mute command",
-                universal.muteCommandMatches("party msg".split(" "), muteCommand));
+        assertTrue(universal.muteCommandMatches("party msg user hello".split(" "), muteCommand),
+                "Subcommand with arguments should be blocked as a mute command");
+        assertTrue(universal.muteCommandMatches("party msg".split(" "), muteCommand),
+                "Subcommand without arguments should be blocked as a mute command");
 
-        Assert.assertFalse("Base command should not be blocked as a mute command although it partially matches",
-                universal.muteCommandMatches("party".split(" "), muteCommand));
+        assertFalse(universal.muteCommandMatches("party".split(" "), muteCommand),
+                "Base command should not be blocked as a mute command although it partially matches");
 
-        Assert.assertFalse("Different subcommand with arguments should not be blocked as a mute command",
-                universal.muteCommandMatches("party invite user".split(" "), muteCommand));
-        Assert.assertFalse("Different subcommand without arguments should not be blocked as a mute command",
-                universal.muteCommandMatches("party invite".split(" "), muteCommand));
+        assertFalse(universal.muteCommandMatches("party invite user".split(" "), muteCommand),
+                "Different subcommand with arguments should not be blocked as a mute command");
+        assertFalse(universal.muteCommandMatches("party invite".split(" "), muteCommand),
+                "Different subcommand without arguments should not be blocked as a mute command");
 
-        Assert.assertFalse("Different base command entirely should not be blocked as a mute command",
-                universal.muteCommandMatches("broadcast party msg".split(" "), muteCommand));
+        assertFalse(universal.muteCommandMatches("broadcast party msg".split(" "), muteCommand),
+                "Different base command entirely should not be blocked as a mute command");
     }
 
     @AfterAll

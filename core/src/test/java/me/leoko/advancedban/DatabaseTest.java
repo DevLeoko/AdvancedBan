@@ -1,17 +1,24 @@
 package me.leoko.advancedban;
 
+import java.io.File;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Created by Leo on 07.08.2017.
  */
 
 public class DatabaseTest {
+
+    @TempDir
+    public static File dataFolder;
+
     @BeforeAll
     public static void setupUniversal(){
-        Universal.get().setup(new TestMethods());
+        Universal.get().setup(new TestMethods(dataFolder));
     }
 
     @Test
