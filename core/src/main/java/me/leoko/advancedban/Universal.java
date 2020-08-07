@@ -1,8 +1,6 @@
 package me.leoko.advancedban;
 
 import com.google.gson.Gson;
-import lombok.Getter;
-import lombok.Setter;
 import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
@@ -31,15 +29,19 @@ import java.util.Scanner;
 public class Universal {
 
     private static Universal instance = null;
-    private final @Getter Map<String, String> ips = new HashMap<>();
+
+    public static void setRedis(boolean redis) {
+        Universal.redis = redis;
+    }
+
+    private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
     private LogManager logManager;
 
-    @Getter @Setter
     private static boolean redis = false;
 
 
-    private final @Getter Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
 
 
@@ -150,6 +152,18 @@ public class Universal {
      */
     public boolean isBungee() {
         return mi.isBungee();
+    }
+
+    public Map<String, String> getIps() {
+        return ips;
+    }
+
+    public static boolean isRedis() {
+        return redis;
+    }
+
+    public Gson getGson() {
+        return gson;
     }
 
     /**

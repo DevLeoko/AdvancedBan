@@ -1,20 +1,19 @@
 package me.leoko.advancedban.utils.tabcompletion;
 
-import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-@AllArgsConstructor
 public class PunishmentTabCompleter implements TabCompleter {
 
     private final boolean temporary;
 
+    public PunishmentTabCompleter(boolean temporary) {
+        this.temporary = temporary;
+    }
 
     @Override
     public List<String> onTabComplete(Object user, String[] args) {

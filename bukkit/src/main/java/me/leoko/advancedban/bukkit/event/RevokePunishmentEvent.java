@@ -1,6 +1,5 @@
 package me.leoko.advancedban.bukkit.event;
 
-import lombok.Getter;
 import me.leoko.advancedban.utils.Punishment;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,7 +7,6 @@ import org.bukkit.event.HandlerList;
 /**
  * Event fired when a punishment is revoked
  */
-@Getter
 public class RevokePunishmentEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Punishment punishment;
@@ -18,6 +16,14 @@ public class RevokePunishmentEvent extends Event {
         super(true);
         this.punishment = punishment;
         this.massClear = massClear;
+    }
+
+    public Punishment getPunishment() {
+        return punishment;
+    }
+
+    public boolean isMassClear() {
+        return massClear;
     }
 
     @Override

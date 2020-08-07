@@ -1,6 +1,5 @@
 package me.leoko.advancedban.utils.commands;
 
-import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
@@ -16,9 +15,12 @@ import java.util.function.Function;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
 
-@AllArgsConstructor
 public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private PunishmentType type;
+
+    public PunishmentProcessor(PunishmentType type) {
+        this.type = type;
+    }
 
     @Override
     public void accept(Command.CommandInput input) {

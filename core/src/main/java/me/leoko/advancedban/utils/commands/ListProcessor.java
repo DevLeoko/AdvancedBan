@@ -1,6 +1,5 @@
 package me.leoko.advancedban.utils.commands;
 
-import lombok.AllArgsConstructor;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
@@ -9,19 +8,24 @@ import me.leoko.advancedban.utils.Punishment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static me.leoko.advancedban.utils.CommandUtils.processName;
 
-@AllArgsConstructor
 public class ListProcessor implements Consumer<Command.CommandInput> {
     private Function<String, List<Punishment>> listSupplier;
     private String config;
     private boolean history;
     private boolean hasTarget;
+
+    public ListProcessor(Function<String, List<Punishment>> listSupplier, String config, boolean history, boolean hasTarget) {
+        this.listSupplier = listSupplier;
+        this.config = config;
+        this.history = history;
+        this.hasTarget = hasTarget;
+    }
 
     @Override
     public void accept(Command.CommandInput input) {

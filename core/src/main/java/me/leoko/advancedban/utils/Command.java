@@ -1,6 +1,5 @@
 package me.leoko.advancedban.utils;
 
-import lombok.Getter;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
@@ -26,7 +25,6 @@ import java.util.function.Predicate;
 import static me.leoko.advancedban.utils.CommandUtils.*;
 import static me.leoko.advancedban.utils.tabcompletion.MutableTabCompleter.list;
 
-@Getter
 public enum Command {
     BAN(
             PunishmentType.BAN.getPerms(),
@@ -571,7 +569,26 @@ public enum Command {
         return null;
     }
 
-    @Getter
+    public String getPermission() {
+        return this.permission;
+    }
+
+    public Predicate<String[]> getSyntaxValidator() {
+        return this.syntaxValidator;
+    }
+
+    public Consumer<CommandInput> getCommandHandler() {
+        return this.commandHandler;
+    }
+
+    public String getUsagePath() {
+        return this.usagePath;
+    }
+
+    public String[] getNames() {
+        return this.names;
+    }
+
     public static class CommandInput {
         private Object sender;
         private String[] args;
@@ -599,6 +616,14 @@ public enum Command {
 
         public boolean hasNext() {
             return args.length > 0;
+        }
+
+        public Object getSender() {
+            return this.sender;
+        }
+
+        public String[] getArgs() {
+            return this.args;
         }
     }
 }

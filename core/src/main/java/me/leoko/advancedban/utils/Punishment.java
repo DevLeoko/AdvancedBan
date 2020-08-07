@@ -1,7 +1,5 @@
 package me.leoko.advancedban.utils;
 
-import lombok.Getter;
-import lombok.ToString;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
@@ -19,8 +17,6 @@ import java.util.List;
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
-@Getter
-@ToString
 public class Punishment {
 
     private static final MethodInterface mi = Universal.get().getMethods();
@@ -88,7 +84,7 @@ public class Punishment {
             try {
                 DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
                 try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name())) {
-                	if (rs.next()) {
+                    if (rs.next()) {
                         id = rs.getInt("id");
                     } else {
                         Universal.get().log("!! Not able to update ID of punishment! Please restart the server to resolve this issue!");
@@ -110,10 +106,10 @@ public class Punishment {
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
                 mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
             } else {
-            	if (getType().getBasic() != PunishmentType.NOTE)
-	                for (String str : getLayout()) {
-	                    mi.sendMessage(p, str);
-	                }
+                if (getType().getBasic() != PunishmentType.NOTE)
+                    for (String str : getLayout()) {
+                        mi.sendMessage(p, str);
+                    }
                 PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
@@ -129,7 +125,7 @@ public class Punishment {
                     cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
                 }
             }
-            if(cmd != null){
+            if (cmd != null) {
                 final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
                 mi.runSync(() -> {
                     mi.executeCommand(finalCmd);
@@ -262,4 +258,39 @@ public class Punishment {
         return getType().isTemp() && getEnd() <= TimeManager.getTime();
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public String getOperator() {
+        return this.operator;
+    }
+
+    public String getCalculation() {
+        return this.calculation;
+    }
+
+    public long getStart() {
+        return this.start;
+    }
+
+    public long getEnd() {
+        return this.end;
+    }
+
+    public PunishmentType getType() {
+        return this.type;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String toString() {
+        return "Punishment(name=" + this.getName() + ", uuid=" + this.getUuid() + ", operator=" + this.getOperator() + ", calculation=" + this.getCalculation() + ", start=" + this.getStart() + ", end=" + this.getEnd() + ", type=" + this.getType() + ", reason=" + this.getReason() + ", id=" + this.getId() + ")";
+    }
 }
