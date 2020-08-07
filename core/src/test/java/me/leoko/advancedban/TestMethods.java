@@ -2,33 +2,24 @@ package me.leoko.advancedban;
 
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.fail;
+import java.util.Objects;
 
 /**
  * Created by Leo on 07.08.2017.
  */
 public class TestMethods implements MethodInterface {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    private File dataFolder;
 
-    public TestMethods(){
-        try {
-            folder.create();
-            dataFolder = folder.newFolder(UUID.randomUUID().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	private final File dataFolder;
+	
+    public TestMethods(File dataFolder){
+    	this.dataFolder = Objects.requireNonNull(dataFolder);
     }
 
     @Override
