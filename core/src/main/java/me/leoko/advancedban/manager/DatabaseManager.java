@@ -107,7 +107,7 @@ public class DatabaseManager {
         return executeStatement(sql.toString(), result, parameters);
     }
 
-    private synchronized ResultSet executeStatement(String sql, boolean result, Object... parameters) {
+    private ResultSet executeStatement(String sql, boolean result, Object... parameters) {
     	try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
 
     		for (int i = 0; i < parameters.length; i++) {
