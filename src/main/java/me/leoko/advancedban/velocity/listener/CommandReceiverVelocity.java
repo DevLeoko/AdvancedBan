@@ -11,9 +11,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandReceiver implements Command {
+public class CommandReceiverVelocity implements Command {
     private final String cmd;
-    public CommandReceiver(String cmd) {
+    public CommandReceiverVelocity(String cmd) {
         this.cmd = cmd;
     }
 

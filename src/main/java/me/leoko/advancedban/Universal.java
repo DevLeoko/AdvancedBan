@@ -7,7 +7,6 @@ import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -409,7 +408,7 @@ public class Universal {
             logManager.checkLastLog(false);
         }
         try {
-            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + ChatColor.stripColor(msg.toString()) + "\n", Charsets.UTF_8, true);
+            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + msg.toString().replace("§", "") + "\n", Charsets.UTF_8, true);
         } catch (IOException ex) {
             System.out.print("An error has occurred writing to 'latest.log' file.");
             System.out.print(ex.getMessage());
