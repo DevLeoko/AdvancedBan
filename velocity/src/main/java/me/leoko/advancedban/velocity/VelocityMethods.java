@@ -9,6 +9,7 @@ import com.velocitypowered.api.proxy.Player;
 import de.leonhard.storage.LightningBuilder;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
+import jdk.nashorn.internal.parser.JSONParser;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -21,6 +22,8 @@ import me.leoko.advancedban.velocity.listener.CommandReceiverVelocity;
 import net.kyori.text.TextComponent;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -72,7 +75,12 @@ public class VelocityMethods implements MethodInterface {
 
     @Override
     public String getVersion() {
-        return VelocityMain.VelocityPluginInfo.PLUGIN_VERSION;
+        String version = "Unknown";
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("velocity-plugin.json"); InputStreamReader read = new InputStreamReader(stream)) {
+            JsonObject obj = new JsonParser().parse(read).getAsJsonObject();
+            version = obj.get("version").getAsString();
+        } catch (IOException ignored) { }
+        return version;
     }
 
     @Override
