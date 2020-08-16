@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import de.leonhard.storage.LightningBuilder;
 import de.leonhard.storage.Yaml;
 import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VelocityMethods implements MethodInterface {
 
-    private File configFile = new File(getDataFolder(), "config.yml");
+    private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
     private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
@@ -42,18 +43,10 @@ public class VelocityMethods implements MethodInterface {
 
     @Override
     public void loadFiles() {
-        config = new Yaml(configFile).addDefaultsFromInputStream(getResource(configFile.getName()));
-        messages = new Yaml(messageFile).addDefaultsFromInputStream(getResource(messageFile.getName()));
-        layouts = new Yaml(layoutFile).addDefaultsFromInputStream(getResource(layoutFile.getName()));
-        mysql = new Yaml(mysqlFile).addDefaultsFromInputStream(getResource(mysqlFile.getName()));
-        config.setReloadSettings(ReloadSettings.MANUALLY);
-        config.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
-        messages.setReloadSettings(ReloadSettings.MANUALLY);
-        messages.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
-        layouts.setReloadSettings(ReloadSettings.MANUALLY);
-        layouts.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
-        mysql.setReloadSettings(ReloadSettings.MANUALLY);
-        mysql.setConfigSettings(ConfigSettings.PRESERVE_COMMENTS);
+        config = LightningBuilder.fromFile(configFile).addInputStreamFromResource(configFile.getName()).setConfigSettings(ConfigSettings.PRESERVE_COMMENTS).createYaml();
+        messages = LightningBuilder.fromFile(messageFile).addInputStreamFromResource(messageFile.getName()).setConfigSettings(ConfigSettings.PRESERVE_COMMENTS).createYaml();
+        layouts = LightningBuilder.fromFile(layoutFile).addInputStreamFromResource(layoutFile.getName()).setConfigSettings(ConfigSettings.PRESERVE_COMMENTS).createYaml();
+        mysql = LightningBuilder.fromFile(mysqlFile).setConfigSettings(ConfigSettings.PRESERVE_COMMENTS).createYaml();
     }
 
     @Override

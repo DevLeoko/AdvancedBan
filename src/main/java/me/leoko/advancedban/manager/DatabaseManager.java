@@ -49,14 +49,13 @@ public class DatabaseManager {
 
         try {
             dataSource = new DynamicDataSource(useMySQL).generateDataSource();
+            executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
+            executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
         } catch (ClassNotFoundException ex) {
             Universal.get().log("§cERROR: Failed to configure data source!");
             Universal.get().debug(ex.getMessage());
             return;
         }
-
-        executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
-        executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
     }
 
     /**
