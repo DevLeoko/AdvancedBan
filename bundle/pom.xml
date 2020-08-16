@@ -26,6 +26,12 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>me.leoko.advancedban</groupId>
+            <artifactId>AdvancedBan-Velocity</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     
     <build>
@@ -55,6 +61,14 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>${project.groupId}.shaded.org.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>de.leonhard.storage</pattern>
+                            <shadedPattern>${project.groupId}.shaded.de.leonhard.storage</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.mysql</pattern>
+                            <shadedPattern>${project.groupId}.shaded.com.mysql</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>
