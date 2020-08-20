@@ -16,3 +16,5 @@ bin
 .idea
 **/target
 out/
+# VS Code
+.vscode/
