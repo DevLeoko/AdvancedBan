@@ -17,14 +17,17 @@ public class UUIDManager {
     private static UUIDManager instance = null;
     private FetcherMode mode;
     private final Map<String, String> activeUUIDs = new HashMap<>();
-    private final MethodInterface mi = Universal.get().getMethods();
+    
+    private MethodInterface mi() {
+    	return Universal.get().getMethods();
+    }
 
     /**
      * Get the uuid manager.
      *
      * @return the uuid manager instance
      */
-    public static UUIDManager get() {
+    public static synchronized UUIDManager get() {
         return instance == null ? instance = new UUIDManager() : instance;
     }
 
@@ -33,6 +36,7 @@ public class UUIDManager {
      * based on the configured preference and the servers capabilities.
      */
     public void setup() {
+    	MethodInterface mi = mi();
         if (mi.getBoolean(mi.getConfig(), "UUID-Fetcher.Dynamic", true)) {
             if (!mi.isOnlineMode()) {
                 mode = FetcherMode.DISABLED;
@@ -62,6 +66,7 @@ public class UUIDManager {
      * @return the uuid
      */
     public String getInitialUUID(String name) {
+    	MethodInterface mi = mi();
         name = name.toLowerCase();
         if (mode == FetcherMode.DISABLED)
             return name;
@@ -172,6 +177,7 @@ public class UUIDManager {
      * @return the name from uuid
      */
     public String getNameFromUUID(String uuid, boolean forceInitial) {
+    	MethodInterface mi = mi();
         if (mode == FetcherMode.DISABLED)
             return uuid;
 
@@ -200,6 +206,7 @@ public class UUIDManager {
 
 
     private String askAPI(String url, String name, String key) throws IOException {
+    	MethodInterface mi = mi();
         name = name.toLowerCase();
         HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
         request.connect();

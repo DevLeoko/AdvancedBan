@@ -15,7 +15,7 @@ public class CommandManager {
      *
      * @return the command manager instance
      */
-    public static CommandManager get() {
+    public static synchronized CommandManager get() {
         return instance == null ? instance = new CommandManager() : instance;
     }
 
