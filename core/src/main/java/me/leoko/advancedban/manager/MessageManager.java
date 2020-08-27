@@ -13,7 +13,9 @@ import java.util.List;
  */
 public class MessageManager {
 
-    private static final MethodInterface mi = Universal.get().getMethods();
+    private static MethodInterface mi() {
+    	return Universal.get().getMethods();
+    }
 
     /**
      * Get the message from the given path.<br>
@@ -24,6 +26,7 @@ public class MessageManager {
      * @return the message
      */
     public static String getMessage(String path, String... parameters) {
+    	MethodInterface mi = mi();
         String str = mi.getString(mi.getMessages(), path);
         if (str == null) {
             str = "Failed! See console for details!";
@@ -49,6 +52,7 @@ public class MessageManager {
      * @return the message
      */
     public static String getMessage(String path, boolean prefix, String... parameters) {
+    	MethodInterface mi = mi();
         String prefixStr = "";
         if(prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false))
             prefixStr = getMessage("General.Prefix")+" ";
@@ -67,6 +71,7 @@ public class MessageManager {
      * @return the layout
      */
     public static List<String> getLayout(Object file, String path, String... parameters) {
+    	MethodInterface mi = mi();
         if (mi.contains(file, path)) {
             List<String> list = new ArrayList<>();
             for (String str : mi.getStringList(file, path)) {
@@ -74,10 +79,11 @@ public class MessageManager {
             }
             return list;
         }
-		System.out.println("!! Message-Error in " + mi.getFileName(file) + "!\n"
+        String fileName = mi.getFileName(file);
+		System.out.println("!! Message-Error in " + fileName + "!\n"
 		        + "In order to solve the problem please:"
-		        + "\n  - Check the " + mi.getFileName(file) + "-File for any missing or double \" or '"
-		        + "\n  - Visit yamllint.com to  validate your " + mi.getFileName(file)
+		        + "\n  - Check the " + fileName + "-File for any missing or double \" or '"
+		        + "\n  - Visit yamllint.com to  validate your " + fileName
 		        + "\n  - Delete the message file and restart the server");
 		return Collections.singletonList("Failed! See console for details!");
     }
@@ -97,6 +103,7 @@ public class MessageManager {
      * @param parameters the parameters
      */
     public static void sendMessage(Object receiver, String path, boolean prefix, String... parameters) {
+    	MethodInterface mi = mi();
         mi.sendMessage(receiver, (prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? getMessage("General.Prefix") + " " : "") + getMessage(path, parameters));
     }
 

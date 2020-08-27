@@ -23,7 +23,7 @@ public class UpdateManager {
      *
      * @return the update manager instance
      */
-    public static UpdateManager get() {
+    public static synchronized UpdateManager get() {
         return instance == null ? instance = new UpdateManager() : instance;
     }
 

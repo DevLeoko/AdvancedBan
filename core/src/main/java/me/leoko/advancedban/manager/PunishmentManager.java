@@ -17,17 +17,20 @@ import java.util.*;
 public class PunishmentManager {
 
     private static PunishmentManager instance = null;
-    private final Universal universal = Universal.get();
     private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
     private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
     private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
+    
+    private Universal universal() {
+    	return Universal.get();
+    }
 
     /**
      * Get the punishment manager.
      *
      * @return the punishment manager instance
      */
-    public static PunishmentManager get() {
+    public static synchronized PunishmentManager get() {
         return instance == null ? instance = new PunishmentManager() : instance;
     }
 
@@ -69,6 +72,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
+        	Universal universal = universal();
             universal.log("An error has occurred loading the punishments from the database.");
             universal.debugSqlException(ex);
             return null;
@@ -139,6 +143,7 @@ public class PunishmentManager {
                     }
                 }
             } catch (SQLException ex) {
+            	Universal universal = universal();
                 universal.log("An error has occurred getting the punishments for " + target);
                 universal.debugSqlException(ex);
             }
@@ -165,6 +170,7 @@ public class PunishmentManager {
             }
             rs.close();
         } catch (SQLException ex) {
+        	Universal universal = universal();
             universal.log("An error has occurred executing a query in the database.");
             universal.debug("Query: \n" + sqlQuery);
             universal.debugSqlException(ex);
@@ -193,6 +199,7 @@ public class PunishmentManager {
                     return punishment;
             }
         } catch (SQLException ex) {
+        	Universal universal = universal();
             universal.log("An error has occurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
             universal.debugSqlException(ex);
@@ -334,6 +341,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
+        	Universal universal = universal();
             universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
             universal.debugSqlException(ex);
         }

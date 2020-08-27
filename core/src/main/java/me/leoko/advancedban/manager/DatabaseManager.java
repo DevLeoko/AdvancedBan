@@ -35,7 +35,7 @@ public class DatabaseManager {
      *
      * @return the database manager instance
      */
-    public static DatabaseManager get() {
+    public static synchronized DatabaseManager get() {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
 
