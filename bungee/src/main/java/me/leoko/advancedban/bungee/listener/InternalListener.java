@@ -41,7 +41,7 @@ public class InternalListener implements Listener {
 
     @EventHandler
     public void onPluginMessageEvent(PluginMessageEvent e) {
-        if (!e.getTag().equals("AdvancedBan")) {
+        if (!e.getTag().equals("advancedban:main")) {
             return;
         }
         if (e.getSender() instanceof ProxiedPlayer) {
@@ -84,6 +84,6 @@ public class InternalListener implements Listener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(channel);
         messages.forEach(out::writeUTF);
-        ProxyServer.getInstance().getServers().keySet().forEach(server -> ProxyServer.getInstance().getServerInfo(server).sendData("AdvancedBan", out.toByteArray(), true));
+        ProxyServer.getInstance().getServers().keySet().forEach(server -> ProxyServer.getInstance().getServerInfo(server).sendData("advancedban:main", out.toByteArray(), true));
     }
 }

@@ -203,7 +203,7 @@ public class BungeeMethods implements MethodInterface {
         if(BungeeMain.getCloudSupport() != null){
             BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
         }else if (Universal.isRedis()) {
-            RedisBungee.getApi().sendChannelMessage("AdvancedBan", "kick " + player + " " + reason);
+            RedisBungee.getApi().sendChannelMessage("advancedban:main", "kick " + player + " " + reason);
         } else {
             getPlayer(player).disconnect(TextComponent.fromLegacyText(reason));
         }
@@ -392,7 +392,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void notify(String perm, List<String> notification) {
         if (Universal.isRedis()) {
-            notification.forEach((str) -> RedisBungee.getApi().sendChannelMessage("AdvancedBan", "notification " + perm + " " + str));
+            notification.forEach((str) -> RedisBungee.getApi().sendChannelMessage("advancedban:main", "notification " + perm + " " + str));
         } else {
             ProxyServer.getInstance().getPlayers()
                     .stream()

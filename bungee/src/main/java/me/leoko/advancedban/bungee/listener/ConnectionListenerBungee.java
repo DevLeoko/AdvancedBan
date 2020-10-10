@@ -36,7 +36,7 @@ public class ConnectionListenerBungee implements Listener {
             }
 
             if (Universal.isRedis()) {
-                RedisBungee.getApi().sendChannelMessage("AdvancedBanConnection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
+                RedisBungee.getApi().sendChannelMessage("advancedban:connection", event.getConnection().getName() + "," + event.getConnection().getAddress().getAddress().getHostAddress());
             }
             event.completeIntent((BungeeMain) Universal.get().getMethods().getPlugin());
         });
