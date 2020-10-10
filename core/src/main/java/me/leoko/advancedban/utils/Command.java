@@ -85,7 +85,7 @@ public enum Command {
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
             "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
-            new PunishmentTabCompleter(false),
+            new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_WARNING),
             PunishmentType.TEMP_WARNING.getConfSection("Usage"),
             "tempwarn"),
