@@ -23,7 +23,7 @@ jobs:
       run: |
         mvn -B package --file pom.xml
         mkdir artifact
-        mv target/Adv*.jar artifact/
+        mv bundle/target/Adv*.jar artifact/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
@@ -37,7 +37,7 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: crazy-max/ghaction-github-pages@v1.3.0
       with:
-        build_dir: target/site/apidocs
+        build_dir: core/target/site/apidocs
       env:
         GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
 
