@@ -18,13 +18,17 @@ import java.util.zip.GZIPOutputStream;
  *
  * @author Beelzebu
  */
-public class LogManager {
-	
+public class LogManager { //TODO move to Logger class
+    private static LogManager instance = null;
+
+    public static LogManager getInstance() {
+        return instance == null ? instance = new LogManager() : instance;
+    }
+
     private final File logsFolder;
 
-    public LogManager() {
-        Universal universal = Universal.get();
-        logsFolder = new File(universal.getMethods().getDataFolder(), "logs");
+    private LogManager() {
+        logsFolder = Universal.get(); //TODO
         if (!logsFolder.exists()) {
             logsFolder.mkdirs();
         }

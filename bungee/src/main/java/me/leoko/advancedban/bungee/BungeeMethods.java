@@ -13,7 +13,7 @@ import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
-import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.punishment.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;

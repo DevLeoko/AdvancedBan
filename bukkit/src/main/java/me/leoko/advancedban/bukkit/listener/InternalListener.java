@@ -2,7 +2,7 @@ package me.leoko.advancedban.bukkit.listener;
 
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
-import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

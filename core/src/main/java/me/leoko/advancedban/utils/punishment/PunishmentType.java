@@ -1,4 +1,4 @@
-package me.leoko.advancedban.utils;
+package me.leoko.advancedban.utils.punishment;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.

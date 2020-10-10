@@ -1,6 +1,6 @@
 package me.leoko.advancedban;
 
-import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.punishment.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import static org.junit.jupiter.api.Assertions.fail;

@@ -1,6 +1,6 @@
 package me.leoko.advancedban;
 
-import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.punishment.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
@@ -269,100 +269,6 @@ public interface MethodInterface {
      * @return the string
      */
     String parseJSON(String json, String key);
-
-    /**
-     * Get boolean at the given path from the given file.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the boolean
-     */
-    Boolean getBoolean(Object file, String path);
-
-    /**
-     * Get string at the given path from the given file.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the string
-     */
-    String getString(Object file, String path);
-
-    /**
-     * Get long at the given path from the given file.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the long
-     */
-    Long getLong(Object file, String path);
-
-    /**
-     * Get integer at the given path from the given file.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the integer
-     */
-    Integer getInteger(Object file, String path);
-
-    /**
-     * Get string list at the given path from the given file.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the string list
-     */
-    List<String> getStringList(Object file, String path);
-
-    /**
-     * Get boolean at the given path from the given file or default if not present.
-     *
-     * @param file the file
-     * @param path the path
-     * @param def  the def
-     * @return the boolean
-     */
-    boolean getBoolean(Object file, String path, boolean def);
-
-    /**
-     * Get string at the given path from the given file or default if not present.
-     *
-     * @param file the file
-     * @param path the path
-     * @param def  the def
-     * @return the string
-     */
-    String getString(Object file, String path, String def);
-
-    /**
-     * Get long at the given path from the given file or default if not present.
-     *
-     * @param file the file
-     * @param path the path
-     * @param def  the def
-     * @return the long
-     */
-    long getLong(Object file, String path, long def);
-
-    /**
-     * Get integer at the given path from the given file or default if not present.
-     *
-     * @param file the file
-     * @param path the path
-     * @param def  the def
-     * @return the integer
-     */
-    int getInteger(Object file, String path, int def);
-
-    /**
-     * Check whether file contains given path.
-     *
-     * @param file the file
-     * @param path the path
-     * @return the boolean
-     */
-    boolean contains(Object file, String path);
 
     /**
      * Get file name.

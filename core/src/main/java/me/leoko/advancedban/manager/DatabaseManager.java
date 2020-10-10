@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.DynamicDataSource;
 import me.leoko.advancedban.utils.SQLQuery;
+import me.leoko.advancedban.utils.punishment.Punishment;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetFactory;
@@ -17,7 +18,7 @@ import java.sql.SQLException;
  * The Database Manager is used to interact directly with the database is use.<br>
  * Will automatically direct the requests to either MySQL or HSQLDB.
  * <br><br>
- * Looking to request {@link me.leoko.advancedban.utils.Punishment Punishments} from the Database?
+ * Looking to request {@link Punishment Punishments} from the Database?
  * Use {@link PunishmentManager#getPunishments(SQLQuery, Object...)} or
  * {@link PunishmentManager#getPunishmentFromResultSet(ResultSet)} for already parsed data.
  */

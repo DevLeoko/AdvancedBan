@@ -3,8 +3,7 @@ package me.leoko.advancedban.utils.commands;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
-import me.leoko.advancedban.utils.Command;
-import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.punishment.Punishment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static me.leoko.advancedban.utils.CommandUtils.processName;
+import static me.leoko.advancedban.utils.commands.CommandUtils.processName;
 
 public class ListProcessor implements Consumer<Command.CommandInput> {
     private Function<String, List<Punishment>> listSupplier;
@@ -78,7 +77,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         for (int i = (page - 1) * 5; i < page * 5 && punishments.size() > i; i++) {
             Punishment punishment = punishments.get(i);
-            String nameOrIp = punishment.getType().isIpOrientated() ? punishment.getName() + " / " +punishment.getUuid() : punishment.getName();
+            String nameOrIp = punishment.getType().isIpOrientated() ? punishment.getName() + " / " +punishment.getIdentifier() : punishment.getName();
             List<String> entryLayout = MessageManager.getLayout(mi.getMessages(), config + ".Entry",
                     "PREFIX", prefix,
                     "NAME", nameOrIp,

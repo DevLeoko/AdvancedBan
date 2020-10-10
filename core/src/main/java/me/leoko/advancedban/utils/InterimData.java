@@ -1,6 +1,9 @@
 package me.leoko.advancedban.utils;
 
 import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.utils.punishment.Identifier;
+import me.leoko.advancedban.utils.punishment.Punishment;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
 
 import java.util.Set;
 
@@ -9,10 +12,11 @@ import java.util.Set;
  */
 public class InterimData {
 
-    private final String uuid, name, ip;
+    private final String  name;
+    private final Identifier uuid, ip;
     private final Set<Punishment> punishments, history;
 
-    public InterimData(String uuid, String name, String ip, Set<Punishment> punishments, Set<Punishment> history) {
+    public InterimData(String name, Identifier uuid, Identifier ip, Set<Punishment> punishments, Set<Punishment> history) {
         this.uuid = uuid;
         this.name = name;
         this.ip = ip;
@@ -20,7 +24,7 @@ public class InterimData {
         this.history = history;
     }
 
-    public String getUuid() {
+    public Identifier getUuid() {
         return uuid;
     }
 
@@ -28,7 +32,7 @@ public class InterimData {
         return name;
     }
 
-    public String getIp() {
+    public Identifier getIp() {
         return ip;
     }
 

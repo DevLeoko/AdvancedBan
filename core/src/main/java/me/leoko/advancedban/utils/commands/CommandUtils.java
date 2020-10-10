@@ -1,10 +1,12 @@
-package me.leoko.advancedban.utils;
+package me.leoko.advancedban.utils.commands;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.punishment.Punishment;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
 
 public class CommandUtils {
     public static Punishment getPunishment(String target, PunishmentType type) {

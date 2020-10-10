@@ -1,4 +1,4 @@
-package me.leoko.advancedban.utils;
+package me.leoko.advancedban.utils.commands;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
@@ -6,10 +6,9 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
-import me.leoko.advancedban.utils.commands.ListProcessor;
-import me.leoko.advancedban.utils.commands.PunishmentProcessor;
-import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
-import me.leoko.advancedban.utils.commands.RevokeProcessor;
+import me.leoko.advancedban.utils.punishment.Punishment;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
+import me.leoko.advancedban.utils.SQLQuery;
 import me.leoko.advancedban.utils.tabcompletion.BasicTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.CleanTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static me.leoko.advancedban.utils.CommandUtils.*;
+import static me.leoko.advancedban.utils.commands.CommandUtils.*;
 import static me.leoko.advancedban.utils.tabcompletion.MutableTabCompleter.list;
 
 public enum Command {

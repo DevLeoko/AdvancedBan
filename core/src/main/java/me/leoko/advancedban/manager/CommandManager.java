@@ -1,7 +1,7 @@
 package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.utils.Command;
+import me.leoko.advancedban.utils.commands.Command;
 
 /**
  * The Command Manager is used to handle commands based on the sender, command-name and arguments.

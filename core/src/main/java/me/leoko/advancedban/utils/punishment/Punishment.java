@@ -1,11 +1,12 @@
-package me.leoko.advancedban.utils;
+package me.leoko.advancedban.utils.punishment;
 
-import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
+import me.leoko.advancedban.utils.SQLQuery;
+import me.leoko.advancedban.utils.abstraction.Target;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,32 +19,23 @@ import java.util.List;
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class Punishment {
-
-    private static final MethodInterface mi = Universal.get().getMethods();
-    private final String name, uuid, operator, calculation;
-    private final long start, end;
+    private final Target target;
+    private final long start;
+    private final Duration duration;
+    private final String operator;
     private final PunishmentType type;
 
-    private String reason;
+    private Reason reason;
     private int id;
 
-    public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id) {
-        this.name = name;
-        this.uuid = uuid;
+    public Punishment(Target target, Reason reason, String operator, PunishmentType type, long start, Duration duration, int id) {
+        this.target = target;
         this.reason = reason;
         this.operator = operator;
         this.type = type;
         this.start = start;
-        this.end = end;
-        this.calculation = calculation;
+        this.duration = duration;
         this.id = id;
-    }
-
-    public static void create(String name, String target, String reason, String operator, PunishmentType type, Long end,
-                              String calculation, boolean silent) {
-        new Punishment(name, target, reason, operator, end == -1 ? type.getPermanent() : type,
-                TimeManager.getTime(), end, calculation, -1)
-                .create(silent);
     }
 
     public String getReason() {
@@ -70,20 +62,20 @@ public class Punishment {
             return;
         }
 
-        if (uuid == null) {
+        if (identifier == null) {
             Universal.get().log("!! Failed! AB has not saved the " + getType().getName() + " because there is no fetched UUID");
             Universal.get().log("!! Failed at: " + toString());
             return;
         }
 
-        final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) : 0;
+        final int cWarnings = getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getIdentifier()) + 1) : 0;
 
-        DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+        DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT_HISTORY, getName(), getIdentifier(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
 
         if (getType() != PunishmentType.KICK) {
             try {
-                DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
-                try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name())) {
+                DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getIdentifier(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
+                try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getIdentifier(), getStart(), getType().name())) {
                     if (rs.next()) {
                         id = rs.getInt("id");
                     } else {
@@ -206,7 +198,7 @@ public class Punishment {
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),
-                "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getUuid()) + 1) + "" : "0");
+                "COUNT", getType().getBasic() == PunishmentType.WARNING ? (PunishmentManager.get().getCurrentWarns(getIdentifier()) + 1) + "" : "0");
     }
 
     public String getDuration(boolean fromStart) {
@@ -262,8 +254,8 @@ public class Punishment {
         return this.name;
     }
 
-    public String getUuid() {
-        return this.uuid;
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     public String getOperator() {
@@ -291,6 +283,6 @@ public class Punishment {
     }
 
     public String toString() {
-        return "Punishment(name=" + this.getName() + ", uuid=" + this.getUuid() + ", operator=" + this.getOperator() + ", calculation=" + this.getCalculation() + ", start=" + this.getStart() + ", end=" + this.getEnd() + ", type=" + this.getType() + ", reason=" + this.getReason() + ", id=" + this.getId() + ")";
+        return "Punishment(name=" + this.getName() + ", uuid=" + this.getIdentifier() + ", operator=" + this.getOperator() + ", calculation=" + this.getCalculation() + ", start=" + this.getStart() + ", end=" + this.getEnd() + ", type=" + this.getType() + ", reason=" + this.getReason() + ", id=" + this.getId() + ")";
     }
 }

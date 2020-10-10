@@ -5,15 +5,14 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
-import me.leoko.advancedban.utils.Command;
-import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.punishment.Punishment;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static me.leoko.advancedban.utils.CommandUtils.*;
+import static me.leoko.advancedban.utils.commands.CommandUtils.*;
 
 public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private PunishmentType type;

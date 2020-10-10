@@ -2,8 +2,9 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.InterimData;
-import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.punishment.Identifier;
+import me.leoko.advancedban.utils.punishment.Punishment;
+import me.leoko.advancedban.utils.punishment.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
 
 import java.sql.ResultSet;
@@ -20,10 +21,7 @@ public class PunishmentManager {
     private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
     private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
     private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
-    
-    private Universal universal() {
-    	return Universal.get();
-    }
+    private final Map<String, Identifier> ipCache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Get the punishment manager.
@@ -39,7 +37,7 @@ public class PunishmentManager {
      */
     public void setup() {
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_OLD_PUNISHMENTS, TimeManager.getTime());
-        // Seems useless as the Interim Data which get's loaded just is ignored
+        // Seems useless as the Interim Data which get's loaded just is ignored TODO
 //        for (Object player : mi.getOnlinePlayers()) {
 //            String name = mi.getName(player).toLowerCase();
 //            load(name, UUIDManager.get().getUUID(name), mi.getIP(player));
@@ -57,10 +55,10 @@ public class PunishmentManager {
      * @param ip   the users ip
      * @return the interim data
      */
-    public InterimData load(String name, String uuid, String ip) {
+    public InterimData load(String name, Identifier uuid, Identifier ip) {
         Set<Punishment> punishments = new HashSet<>();
         Set<Punishment> history = new HashSet<>();
-        try (ResultSet resultsPunishments = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip); ResultSet resultsHistory = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip)) {
+        try (ResultSet resultsPunishments = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid.toString(), ip.toString()); ResultSet resultsHistory = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip)) {
             if (resultsHistory == null || resultsPunishments == null)
                 return null;
 
@@ -77,7 +75,7 @@ public class PunishmentManager {
             universal.debugSqlException(ex);
             return null;
         }
-        return new InterimData(uuid, name, ip, punishments, history);
+        return new InterimData(name, uuid, ip, punishments, history);
     }
 
     /**
@@ -96,7 +94,7 @@ public class PunishmentManager {
         Iterator<Punishment> iterator = punishments.iterator();
         while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
+            if (punishment.getIdentifier().equals(uuid) || punishment.getIdentifier().equals(ip)) {
                 iterator.remove();
             }
         }
@@ -104,7 +102,7 @@ public class PunishmentManager {
         iterator = history.iterator();
         while (iterator.hasNext()) {
             Punishment punishment = iterator.next();
-            if (punishment.getUuid().equals(uuid) || punishment.getUuid().equals(ip)) {
+            if (punishment.getIdentifier().equals(uuid) || punishment.getIdentifier().equals(ip)) {
                 iterator.remove();
             }
         }
@@ -125,7 +123,7 @@ public class PunishmentManager {
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
-                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
+                if ((put == null || put == pt.getType().getBasic()) && pt.getIdentifier().equals(target)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -330,7 +328,7 @@ public class PunishmentManager {
      */
     public int getCalculationLevel(String uuid, String layout) {
         if (isCached(uuid)) {
-            return (int) history.stream().filter(pt -> pt.getUuid().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
+            return (int) history.stream().filter(pt -> pt.getIdentifier().equals(uuid) && layout.equalsIgnoreCase(pt.getCalculation())).count();
         }
 
         int i = 0;
@@ -417,7 +415,7 @@ public class PunishmentManager {
     }
 
 
-//    public long getCalculation(String layout, String name, String uuid) {
+//    public long getCalculation(String layout, String name, String uuid) { TODO
 //        long end = TimeManager.getTime();
 //        MethodInterface mi = Universal.get().getMethods();
 //
@@ -430,4 +428,9 @@ public class PunishmentManager {
 //
 //        return end;
 //    }
+
+
+    public Map<String, Identifier> getIpCache() {
+        return ipCache;
+    }
 }

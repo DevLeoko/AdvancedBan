@@ -2,8 +2,7 @@ package me.leoko.advancedban.utils.commands;
 
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
-import me.leoko.advancedban.utils.Command;
-import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.punishment.Punishment;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
