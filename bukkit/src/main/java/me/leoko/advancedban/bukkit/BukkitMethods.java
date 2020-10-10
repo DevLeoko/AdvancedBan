@@ -370,12 +370,12 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        Bukkit.getPluginManager().callEvent(new PunishmentEvent(punishment));
+        runSync(() -> Bukkit.getPluginManager().callEvent(new PunishmentEvent(punishment)));
     }
 
     @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
-        Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear));
+        runSync(() -> Bukkit.getPluginManager().callEvent(new RevokePunishmentEvent(punishment, massClear)));
     }
 
     @Override
