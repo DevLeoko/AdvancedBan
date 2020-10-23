@@ -104,7 +104,11 @@ public class MessageManager {
      */
     public static void sendMessage(Object receiver, String path, boolean prefix, String... parameters) {
     	MethodInterface mi = mi();
-        mi.sendMessage(receiver, (prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? getMessage("General.Prefix") + " " : "") + getMessage(path, parameters));
+        final String message = getMessage(path, parameters);
+        if(!message.isEmpty()) {
+            final String prefixString = prefix && !mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? getMessage("General.Prefix") + " " : "";
+            mi.sendMessage(receiver, prefixString + message);
+        }
     }
 
     private static String replace(String str, String... parameters) {
