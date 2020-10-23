@@ -21,6 +21,9 @@ public class ConnectionListenerBungee implements Listener {
     @SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
     public void onConnection(LoginEvent event) {
+        if(event.isCancelled())
+            return;
+
         UUIDManager.get().supplyInternUUID(event.getConnection().getName(), event.getConnection().getUniqueId());
         event.registerIntent((BungeeMain)Universal.get().getMethods().getPlugin());
         Universal.get().getMethods().runAsync(() -> {
