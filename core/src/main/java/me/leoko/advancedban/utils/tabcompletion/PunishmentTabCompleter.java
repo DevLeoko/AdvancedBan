@@ -58,8 +58,7 @@ public class PunishmentTabCompleter implements TabCompleter {
 
         if(args.length > 0){
             String[] finalArgs = args;
-            suggestions.stream().filter(s -> s.startsWith(finalArgs[finalArgs.length - 1]))
-                    .forEach(suggestions::remove);
+            suggestions.removeIf(s -> !s.startsWith(finalArgs[finalArgs.length - 1]));
         }
 
         return suggestions;

@@ -14,7 +14,7 @@ public class PunishmentEvent extends Event {
     private final Punishment punishment;
 
     public PunishmentEvent(Punishment punishment) {
-        super(true);
+        super(false);
         this.punishment = punishment;
     }
 

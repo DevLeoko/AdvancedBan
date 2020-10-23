@@ -13,7 +13,7 @@ public class RevokePunishmentEvent extends Event {
     private final boolean massClear;
 
     public RevokePunishmentEvent(Punishment punishment, boolean massClear) {
-        super(true);
+        super(false);
         this.punishment = punishment;
         this.massClear = massClear;
     }
