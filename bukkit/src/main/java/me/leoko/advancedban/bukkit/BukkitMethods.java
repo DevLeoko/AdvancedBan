@@ -8,6 +8,7 @@ import me.leoko.advancedban.bukkit.listener.CommandReceiver;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.bstats.bukkit.Metrics;
@@ -183,16 +184,12 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public boolean hasOfflinePerms(String name, String perms) {
-        if (permissionVault == null)
-            return false;
-
+    public Permissionable getOfflinePermissionPlayer(String name) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+        if(permissionVault == null || player == null || !player.hasPlayedBefore())
+            return permission -> false;
 
-        if (player == null || !player.hasPlayedBefore())
-            return false;
-
-        return permissionVault.apply(player, perms);
+        return permission -> permissionVault.apply(player, permission);
     }
 
     @SuppressWarnings("deprecation")

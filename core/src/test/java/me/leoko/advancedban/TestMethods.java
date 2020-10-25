@@ -1,9 +1,8 @@
 package me.leoko.advancedban;
 
+import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -11,11 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * Created by Leo on 07.08.2017.
  */
 public class TestMethods implements MethodInterface {
-
 	private final File dataFolder;
 	
     public TestMethods(File dataFolder){
@@ -128,8 +128,8 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public boolean hasOfflinePerms(String name, String perms) {
-        return false;
+    public Permissionable getOfflinePermissionPlayer(String name) {
+        return permission -> false;
     }
 
     @Override

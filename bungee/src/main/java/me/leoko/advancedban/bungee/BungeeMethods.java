@@ -10,11 +10,11 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
-import me.leoko.advancedban.bungee.utils.LuckPermsPermissionProvider;
-import me.leoko.advancedban.bungee.utils.OfflinePermissionProvider;
+import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import net.md_5.bungee.api.ChatColor;
@@ -52,13 +52,14 @@ public class BungeeMethods implements MethodInterface {
     private Configuration layouts;
     private Configuration mysql;
 
-    private OfflinePermissionProvider offlinePermissionProvider;
+    private final boolean luckPermsSupport;
 
     public BungeeMethods() {
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
-            offlinePermissionProvider = new LuckPermsPermissionProvider();
+            luckPermsSupport = true;
             log("[AdvancedBan] Offline permission support through LuckPerms active");
         } else {
+            luckPermsSupport = false;
             log("[AdvancedBan] No offline permission support through LuckPerms");
         }
     }
@@ -185,22 +186,10 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void requestOfflinePermissionPlayer(String name) {
-        if(offlinePermissionProvider != null) {
-            offlinePermissionProvider.requestOfflinePermissionPlayer(name);
-        }
-    }
+    public Permissionable getOfflinePermissionPlayer(String name) {
+        if(luckPermsSupport) return new LuckPermsOfflineUser(name);
 
-    @Override
-    public void releaseOfflinePermissionPlayer(String name) {
-        if(offlinePermissionProvider != null) {
-            offlinePermissionProvider.releaseOfflinePermissionPlayer(name);
-        }
-    }
-
-    @Override
-    public boolean hasOfflinePerms(String name, String perms) {
-        return offlinePermissionProvider != null && offlinePermissionProvider.hasOfflinePerms(name, perms);
+        return permission -> false;
     }
 
     @Override

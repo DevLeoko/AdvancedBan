@@ -6,6 +6,7 @@ import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.Command;
+import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 
@@ -118,17 +119,17 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         MethodInterface mi = Universal.get().getMethods();
         String dataName = name.toLowerCase();
 
-        boolean onlineExempt = false;
+        boolean exempt = false;
         if (mi.isOnline(dataName)) {
             Object onlineTarget = mi.getPlayer(dataName);
-            onlineExempt = canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasPerms(onlineTarget, perms), type.getName());
+            exempt = canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasPerms(onlineTarget, perms), type.getName());
+        } else {
+            final Permissionable offlinePermissionPlayer = mi.getOfflinePermissionPlayer(name);
+            exempt = Universal.get().isExemptPlayer(dataName) ||
+                    canNotPunish((perms) -> mi.hasPerms(sender, perms), offlinePermissionPlayer::hasPermission, type.getName());
         }
 
-        mi.requestOfflinePermissionPlayer(name);
-        boolean offlineExempt = !onlineExempt && (Universal.get().isExemptPlayer(dataName) || canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasOfflinePerms(name, perms), type.getName()));
-        mi.releaseOfflinePermissionPlayer(name);
-
-        if (onlineExempt || offlineExempt) {
+        if (exempt) {
             MessageManager.sendMessage(sender, type.getBasic().getName() + ".Exempt",
                     true, "NAME", name);
             return true;

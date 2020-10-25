@@ -1,5 +1,6 @@
 package me.leoko.advancedban;
 
+import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
@@ -151,27 +152,12 @@ public interface MethodInterface {
     boolean hasPerms(Object player, String perms);
 
     /**
-     * Load necessary permission data for an offline permission check
+     * Get a Permissionable player that can be checked for offline permissions.
      *
-     * @param name the player's name
+     * @param name the name of the user
+     * @return the offline permission user
      */
-    default void requestOfflinePermissionPlayer(String name){}
-
-    /**
-     * Release cached permission data of a player after all requests are done
-     *
-     * @param name the player's name
-     */
-    default void releaseOfflinePermissionPlayer(String name){}
-
-    /**
-     * Check if an offline player has the given permission.
-     *
-     * @param name server intern identifier for player
-     * @param perms  the perms
-     * @return the boolean
-     */
-    boolean hasOfflinePerms(String name, String perms);
+    Permissionable getOfflinePermissionPlayer(String name);
 
     /**
      * Check whether player is online.
