@@ -10,6 +10,8 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
+import me.leoko.advancedban.bungee.utils.LuckPermsPermissionProvider;
+import me.leoko.advancedban.bungee.utils.OfflinePermissionProvider;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -49,6 +51,17 @@ public class BungeeMethods implements MethodInterface {
     private Configuration messages;
     private Configuration layouts;
     private Configuration mysql;
+
+    private OfflinePermissionProvider offlinePermissionProvider;
+
+    public BungeeMethods() {
+        if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
+            offlinePermissionProvider = new LuckPermsPermissionProvider();
+            log("[AdvancedBan] Offline permission support through LuckPerms active");
+        } else {
+            log("[AdvancedBan] No offline permission support through LuckPerms");
+        }
+    }
 
     @Override
     public void loadFiles() {
@@ -172,8 +185,22 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
+    public void requestOfflinePermissionPlayer(String name) {
+        if(offlinePermissionProvider != null) {
+            offlinePermissionProvider.requestOfflinePermissionPlayer(name);
+        }
+    }
+
+    @Override
+    public void releaseOfflinePermissionPlayer(String name) {
+        if(offlinePermissionProvider != null) {
+            offlinePermissionProvider.releaseOfflinePermissionPlayer(name);
+        }
+    }
+
+    @Override
     public boolean hasOfflinePerms(String name, String perms) {
-        return false;
+        return offlinePermissionProvider != null && offlinePermissionProvider.hasOfflinePerms(name, perms);
     }
 
     @Override

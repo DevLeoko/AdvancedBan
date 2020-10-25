@@ -151,6 +151,20 @@ public interface MethodInterface {
     boolean hasPerms(Object player, String perms);
 
     /**
+     * Load necessary permission data for an offline permission check
+     *
+     * @param name the player's name
+     */
+    default void requestOfflinePermissionPlayer(String name){}
+
+    /**
+     * Release cached permission data of a player after all requests are done
+     *
+     * @param name the player's name
+     */
+    default void releaseOfflinePermissionPlayer(String name){}
+
+    /**
      * Check if an offline player has the given permission.
      *
      * @param name server intern identifier for player

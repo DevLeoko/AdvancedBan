@@ -124,7 +124,9 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
             onlineExempt = canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasPerms(onlineTarget, perms), type.getName());
         }
 
+        mi.requestOfflinePermissionPlayer(name);
         boolean offlineExempt = !onlineExempt && (Universal.get().isExemptPlayer(dataName) || canNotPunish((perms) -> mi.hasPerms(sender, perms), (perms) -> mi.hasOfflinePerms(name, perms), type.getName()));
+        mi.releaseOfflinePermissionPlayer(name);
 
         if (onlineExempt || offlineExempt) {
             MessageManager.sendMessage(sender, type.getBasic().getName() + ".Exempt",
