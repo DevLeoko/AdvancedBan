@@ -58,6 +58,8 @@ public class PunishmentManager {
      * @return the interim data
      */
     public InterimData load(String name, String uuid, String ip) {
+        Universal universal = universal();
+        universal.log("Loading interim data...");
         Set<Punishment> punishments = new HashSet<>();
         Set<Punishment> history = new HashSet<>();
         try (ResultSet resultsPunishments = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_WITH_IP, uuid, ip); ResultSet resultsHistory = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_WITH_IP, uuid, ip)) {
@@ -67,16 +69,17 @@ public class PunishmentManager {
             while (resultsPunishments.next()) {
                 punishments.add(getPunishmentFromResultSet(resultsPunishments));
             }
+            
             while (resultsHistory.next()) {
                 history.add(getPunishmentFromResultSet(resultsHistory));
             }
 
         } catch (SQLException ex) {
-        	Universal universal = universal();
             universal.log("An error has occurred loading the punishments from the database.");
             universal.debugSqlException(ex);
             return null;
         }
+        universal.log("Loaded active punishments " + punishments);
         return new InterimData(uuid, name, ip, punishments, history);
     }
 

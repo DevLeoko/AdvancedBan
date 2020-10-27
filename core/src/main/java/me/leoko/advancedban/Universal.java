@@ -304,6 +304,7 @@ public class Universal {
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
 
         if (interimData == null) {
+        	log("InterimData is null, returning empty message");
             if (getMethods().getBoolean(mi.getConfig(), "LockdownOnError", true)) {
                 return "[AdvancedBan] Failed to load player data!";
             } else {
@@ -312,6 +313,7 @@ public class Universal {
         }
 
         Punishment pt = interimData.getBan();
+        log("Found ban " + ((pt == null) ? "NONE" : pt));
 
         if (pt == null) {
             interimData.accept();
