@@ -21,6 +21,7 @@ public class ConnectionListener implements Listener {
         if(event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED){
             UUIDManager.get().supplyInternUUID(event.getName(), event.getUniqueId());
             String result = Universal.get().callConnection(event.getName(), event.getAddress().getHostAddress());
+            BukkitMain.get().getLogger().info("Layout result is " + result);
             if (result != null) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, result);
             }

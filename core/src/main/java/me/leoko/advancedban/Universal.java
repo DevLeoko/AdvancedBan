@@ -320,7 +320,9 @@ public class Universal {
             return null;
         }
 
-        return pt.getLayoutBSN();
+        String layout = pt.getLayoutBSN();
+        log("Blocking player with layout " + layout);
+        return layout;
     }
 
     /**
