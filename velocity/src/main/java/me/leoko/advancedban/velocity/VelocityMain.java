@@ -22,11 +22,9 @@ public class VelocityMain {
 
   private final ProxyServer server;
   private Path dataDirectory;
-  private static VelocityMain instance;
 
   @Inject
   public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory) {
-    this.instance = this;
     this.server = server;
     this.dataDirectory = dataDirectory;
   }
@@ -34,7 +32,7 @@ public class VelocityMain {
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
 
-    Universal.get().setup(new VelocityMethods(dataDirectory));
+    Universal.get().setup(new VelocityMethods(dataDirectory, server));
 
     server.getEventManager().register(this, new ChatListenerVelocity());
     server.getEventManager().register(this, new ConnectionListenerVelocity());
@@ -49,8 +47,6 @@ public class VelocityMain {
   public Path getDataFolder() {
     return this.dataDirectory;
   }
-
-  public static VelocityMain get() { return instance; }
 
 
 }

@@ -24,6 +24,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,23 +42,21 @@ import java.util.concurrent.TimeUnit;
 
 public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> {
 
-  @Inject
-  private ProxyServer server;
+  private final @MonotonicNonNull ProxyServer server;
 
-  private Path dataDirectory;
+  private final Path dataDirectory;
 
   private boolean luckPermsSupport;
 
-  public VelocityMethods(Path dataDirectory) {
+  @Inject
+  public VelocityMethods(Path dataDirectory,
+                         final @NonNull ProxyServer server) {
     super(dataDirectory);
+    this.dataDirectory = dataDirectory;
+    this.server = server;
 
-    if(server.getPluginManager().getPlugin("LuckPerms") != null) {
-      luckPermsSupport = true;
-      log("[AdvancedBan] Offline permission support through LuckPerms active");
-    } else {
-      luckPermsSupport = false;
-      log("[AdvancedBan] No offline permission support through LuckPerms");
-    }
+    // LuckPerms check stuff here
+
   }
 
 
@@ -64,8 +64,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   protected ConfigurationNode loadConfiguration(Path configPath) throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
       YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(configPath).build();
-      ConfigurationNode root = loader.load();
-      return root;
+      return loader.load();
     }
   }
 
