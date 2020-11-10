@@ -26,12 +26,6 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>me.leoko.advancedban</groupId>
-            <artifactId>AdvancedBan-Velocity</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
     
     <build>
@@ -46,10 +40,10 @@
                     		<pattern>org.apache.commons</pattern>
                     		<shadedPattern>${project.groupId}.shaded.org.apache.commons</shadedPattern>
                     	</relocation>
-                    	<relocation>
-                    		<pattern>org.slf4j</pattern>
-                    		<shadedPattern>${project.groupId}.shaded.org.slf4j</shadedPattern>
-                    	</relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.slf4j</shadedPattern>
+                        </relocation>
                     	<relocation>
                     		<pattern>com.zaxxer.hikari</pattern>
                     		<shadedPattern>${project.groupId}.shaded.com.zaxxer.hikari</shadedPattern>
