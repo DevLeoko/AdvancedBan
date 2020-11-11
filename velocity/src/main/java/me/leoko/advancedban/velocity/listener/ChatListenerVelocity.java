@@ -12,12 +12,10 @@ public class ChatListenerVelocity {
       if (Universal.get().getMethods().callChat(event.getPlayer())) {
         event.setResult(PlayerChatEvent.ChatResult.denied());
       }
-    } else {
-      if (Universal.get().getMethods().callCMD(event.getPlayer(), event.getMessage())) {
+    } else if (Universal.get().getMethods().callCMD(event.getPlayer(), event.getMessage())) {
         event.setResult(PlayerChatEvent.ChatResult.denied());
       }
     }
-  }
 }
 
 

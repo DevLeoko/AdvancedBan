@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -24,36 +23,35 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> {
 
-  private final @MonotonicNonNull ProxyServer server;
-
+  private final ProxyServer server;
   private final Path dataDirectory;
+  private final Logger logger;
 
   private boolean luckPermsSupport;
 
-  @Inject
   public VelocityMethods(Path dataDirectory,
-                         final @NonNull ProxyServer server) {
+                         final @NonNull ProxyServer server,
+                         Logger logger) {
     super(dataDirectory);
     this.dataDirectory = dataDirectory;
     this.server = server;
+    this.logger = logger;
 
     // LuckPerms check stuff here
 
@@ -62,10 +60,8 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   protected ConfigurationNode loadConfiguration(Path configPath) throws IOException {
-    try (BufferedReader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
       YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(configPath).build();
       return loader.load();
-    }
   }
 
   @Override
@@ -104,6 +100,9 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     // no bstats for velocity yet
   }
 
+  /**
+   * To be re-written as isProxy()
+   */
   @Override
   public boolean isBungee() {
     return false;
@@ -111,12 +110,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String clearFormatting(String text) {
-    return text.replaceAll("-\\d{1}", "");
+    return text.replaceAll("(&[^\\s])+", "");
   }
 
   @Override
   public Object getPlugin() {
-    return server;
+    return VelocityMain.get();
   }
 
   @Override
@@ -126,17 +125,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
-    server.getCommandManager().register(new CommandRecieverVelocity(cmd), cmd);
+    server.getCommandManager().register(new CommandRecieverVelocity(server, cmd), cmd);
   }
 
   @Override
   public void sendMessage(Object player, String msg) {
-    if (player instanceof Player) {
-      ((Player) player).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
-    } else {
       ((CommandSource) player).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));;
-    }
-
   }
 
   @Override
@@ -150,10 +144,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getName(String uuid) {
-    if (server.getPlayer(uuid).isPresent()) {
-      return server.getPlayer(uuid).get().getUsername();
-    }
-    return null;
+      return server.getPlayer(UUID.fromString(uuid)).get().getUsername();
   }
 
   @Override
@@ -174,11 +165,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public boolean hasPerms(Object player, String perms) {
-    if (player instanceof Player) {
-      return ((Player) player).hasPermission(perms);
-    } else {
       return ((CommandSource) player).hasPermission(perms);
-    }
   }
 
   @Override
@@ -194,7 +181,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   @Override
-  public Object getPlayer(String name) {
+  public Player getPlayer(String name) {
     return server.getPlayer(name).get();
   }
 
@@ -204,18 +191,18 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   @Override
-  public Object[] getOnlinePlayers() {
+  public Player[] getOnlinePlayers() {
     return server.getAllPlayers().toArray(new Player[0]);
   }
 
   @Override
   public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-    server.getScheduler().buildTask(getPlugin(), rn).repeat(l2*50, TimeUnit.SECONDS);
+    server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).repeat(l2*50, TimeUnit.MILLISECONDS);
   }
 
   @Override
   public void scheduleAsync(Runnable rn, long l1) {
-    server.getScheduler().buildTask(getPlugin(), rn).schedule();
+    server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).schedule();
   }
 
   @Override
@@ -285,23 +272,23 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getString(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path).getString();
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getString();
   }
 
   @Override
   public Long getLong(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path).getLong();
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getLong();
   }
 
   @Override
   public Integer getInteger(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path).getInt();
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getInt();
   }
 
   @Override
   public List<String> getStringList(Object file, String path) {
     try {
-      return ((ConfigurationNode)file).getNode(path).getList(TypeToken.of(String.class));
+      return ((ConfigurationNode)file).getNode(path.split("\\.")).getList(TypeToken.of(String.class));
     } catch (ObjectMappingException e) {
       e.printStackTrace();
       return null;
@@ -310,27 +297,27 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public boolean getBoolean(Object file, String path, boolean def) {
-    return ((ConfigurationNode)file).getNode(path).getBoolean(def);
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getBoolean(def);
   }
 
   @Override
   public String getString(Object file, String path, String def) {
-    return ((ConfigurationNode)file).getNode(path).getString(def);
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getString(def);
   }
 
   @Override
   public long getLong(Object file, String path, long def) {
-    return ((ConfigurationNode)file).getNode(path).getLong(def);
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getLong(def);
   }
 
   @Override
   public int getInteger(Object file, String path, int def) {
-    return ((ConfigurationNode)file).getNode(path).getInt(def);
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getInt(def);
   }
 
   @Override
   public boolean contains(Object file, String path) {
-    return (!((ConfigurationNode)file).getNode(path).isEmpty());
+    return (!((ConfigurationNode)file).getNode(path.split("\\.")).isEmpty());
   }
 
   @Override
@@ -360,8 +347,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void log(String msg) {
-    server.getConsoleCommandSource().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
-
+    // Needs re-writing as it did not work
   }
 
   @Override

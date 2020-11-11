@@ -10,29 +10,35 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.velocity.listener.ChatListenerVelocity;
 import me.leoko.advancedban.velocity.listener.ConnectionListenerVelocity;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
 @Plugin(
     id = "advancedban",
     name = "AdvancedBan",
-    version = "${project.version}"
+    version = "@version"
 )
 public class VelocityMain {
 
   private final ProxyServer server;
-  private Path dataDirectory;
+  private final Path dataDirectory;
+  private final Logger logger;
+
+  private static VelocityMain instance;
 
   @Inject
-  public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory) {
+  public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger) {
+    this.instance = this;
     this.server = server;
     this.dataDirectory = dataDirectory;
+    this.logger = logger;
   }
 
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
 
-    Universal.get().setup(new VelocityMethods(dataDirectory, server));
+    Universal.get().setup(new VelocityMethods(dataDirectory, server, logger));
 
     server.getEventManager().register(this, new ChatListenerVelocity());
     server.getEventManager().register(this, new ConnectionListenerVelocity());
@@ -44,9 +50,9 @@ public class VelocityMain {
     Universal.get().shutdown();
   }
 
-  public Path getDataFolder() {
-    return this.dataDirectory;
-  }
 
+  public static VelocityMain get() {
+    return instance;
+  }
 
 }
