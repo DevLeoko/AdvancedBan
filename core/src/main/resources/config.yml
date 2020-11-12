@@ -13,7 +13,7 @@ MySQL:
   Username: admin
   Password: superSecret
   Port: 3306
-  Properties: 'verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8'
+  Properties: 'verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=UTF-8'
 
 # Set to false if you want to have only short messages in the console
 # On startup and on the shutdown.
