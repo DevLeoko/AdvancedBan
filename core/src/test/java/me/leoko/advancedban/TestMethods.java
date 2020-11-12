@@ -71,6 +71,16 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
+    public boolean isProxy() {
+        return false;
+    }
+
+    @Override
+    public String getProxyType() {
+        return "TEST";
+    }
+
+    @Override
     public String clearFormatting(String text) {
         return text;
     }
