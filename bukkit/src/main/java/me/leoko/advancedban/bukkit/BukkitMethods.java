@@ -106,9 +106,19 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
-    @Override
+    @Override @Deprecated
     public boolean isBungee() {
         return false;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
+    }
+
+    @Override
+    public String getProxyType() {
+        return null;
     }
 
     @Override

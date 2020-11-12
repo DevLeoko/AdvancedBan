@@ -100,12 +100,20 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     // no bstats for velocity yet
   }
 
-  /**
-   * To be re-written as isProxy()
-   */
-  @Override
+
+  @Override @Deprecated
   public boolean isBungee() {
     return false;
+  }
+
+  @Override
+  public boolean isProxy() {
+    return true;
+  }
+
+  @Override
+  public String getProxyType() {
+    return "Velocity";
   }
 
   @Override

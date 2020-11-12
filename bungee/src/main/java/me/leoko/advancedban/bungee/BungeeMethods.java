@@ -105,9 +105,19 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
-    @Override
+    @Override @Deprecated
     public boolean isBungee() {
         return true;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return true;
+    }
+
+    @Override
+    public String getProxyType() {
+        return "Bungeecord";
     }
 
     @Override

@@ -154,6 +154,14 @@ public class Universal {
         return mi.isBungee();
     }
 
+    public boolean isProxy() {
+        return mi.isProxy();
+    }
+
+    public String getProxyType() {
+        return mi.getProxyType();
+    }
+
     public Map<String, String> getIps() {
         return ips;
     }
