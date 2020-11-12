@@ -47,13 +47,7 @@ public class DatabaseManager {
     public void setup(boolean useMySQLServer) {
         useMySQL = useMySQLServer;
 
-        try {
-            dataSource = new DynamicDataSource(useMySQL).generateDataSource();
-        } catch (ClassNotFoundException ex) {
-            Universal.get().log("§cERROR: Failed to configure data source!");
-            Universal.get().debug(ex.getMessage());
-            return;
-        }
+        dataSource = new DynamicDataSource(useMySQL).generateDataSource();
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
