@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 
 import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
@@ -116,8 +117,8 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
     }
 
     @Override
-    public String getProxyType() {
-        return "Bungeecord";
+    public ServerType getServerType() {
+        return ServerType.BUNGEECORD;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -53,7 +54,13 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     this.server = server;
     this.logger = logger;
 
-    // LuckPerms check stuff here
+    if (server.getPluginManager().getPlugin("luckperms").isPresent()) {
+      luckPermsSupport = true;
+      log("[AdvancedBan] Offline permission support through LuckPerms active");
+    } else {
+      luckPermsSupport = false;
+      log("[AdvancedBan] No offline permission support through LuckPerms");
+    }
 
   }
 
@@ -87,7 +94,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getVersion() {
-    return server.getVersion().toString();
+    return "2.3.0";
   }
 
   @Override
@@ -112,8 +119,8 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   @Override
-  public String getProxyType() {
-    return "Velocity";
+  public ServerType getServerType() {
+    return ServerType.VELOCITY;
   }
 
   @Override
@@ -350,12 +357,13 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void notify(String perm, List<String> notification) {
-    server.getAllPlayers().forEach(player -> notification.forEach(str -> sendMessage(player, str)));
+    server.getAllPlayers().forEach(player -> {
+      if(player.hasPermission(perm)) notification.forEach(str -> sendMessage(player, str));});
   }
 
   @Override
   public void log(String msg) {
-    // Needs re-writing as it did not work
+    logger.info(msg);
   }
 
   @Override

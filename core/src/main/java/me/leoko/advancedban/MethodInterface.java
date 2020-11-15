@@ -73,7 +73,7 @@ public interface MethodInterface {
 
     boolean isProxy();
 
-    String getProxyType();
+    ServerType getServerType();
 
     String clearFormatting(String text);
 

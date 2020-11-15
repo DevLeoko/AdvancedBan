@@ -76,8 +76,8 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public String getProxyType() {
-        return "TEST";
+    public ServerType getServerType() {
+        return ServerType.TEST;
     }
 
     @Override

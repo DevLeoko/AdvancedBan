@@ -40,15 +40,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.1.2</version>
+            <version>2.7.0</version>
         </dependency>
     </dependencies>
 
@@ -72,6 +66,10 @@
                             <pattern>org.hsqldb</pattern>
                             <shadedPattern>${project.groupId}.shaded.org.hsqldb</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.mariadb.jdbc</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.mariadb.jdbc</shadedPattern>
+                        </relocation>
                     </relocations>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
@@ -85,6 +83,31 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>${basedir}/src/main/java/me/leoko/advancedban/velocity/VelocityMain.java</include>
+                        <include>${basedir}/src/main/java/me/leoko/advancedban/velocity/VelocityMethods.java</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>@version</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
             </plugin>
         </plugins>
     </build>

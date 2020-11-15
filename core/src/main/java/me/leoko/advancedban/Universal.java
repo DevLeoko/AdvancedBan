@@ -158,8 +158,8 @@ public class Universal {
         return mi.isProxy();
     }
 
-    public String getProxyType() {
-        return mi.getProxyType();
+    public ServerType getServerType() {
+        return mi.getServerType();
     }
 
     public Map<String, String> getIps() {

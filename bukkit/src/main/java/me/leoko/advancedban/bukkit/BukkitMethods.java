@@ -1,6 +1,7 @@
 package me.leoko.advancedban.bukkit;
 
 import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
@@ -117,8 +118,8 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
     }
 
     @Override
-    public String getProxyType() {
-        return null;
+    public ServerType getServerType() {
+        return ServerType.SPIGOT;
     }
 
     @Override
