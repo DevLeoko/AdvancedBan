@@ -13,7 +13,7 @@ public enum ServerType {
     this.serverType = serverType;
   }
 
-  public String getString() {
+  public String toString() {
     return this.serverType;
   }
 
