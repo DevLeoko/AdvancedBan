@@ -3,6 +3,7 @@ package me.leoko.advancedban.utils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 
 public class DynamicDataSource {
@@ -18,6 +19,10 @@ public class DynamicDataSource {
             String properties = mi.getString(mi.getMySQLFile(), "MySQL.Properties", "verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=UTF-8");
             int port = mi.getInteger(mi.getMySQLFile(), "MySQL.Port", 3306);
 
+            if(Universal.get().getServerType() == ServerType.VELOCITY) {
+                config.setDriverClassName("org.mariadb.jdbc.Driver");
+            }
+
             config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?"+properties);
             config.setUsername(usrName);
             config.setPassword(password);
@@ -25,6 +30,10 @@ public class DynamicDataSource {
             config.setJdbcUrl("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false");
             config.setUsername("SA");
             config.setPassword("");
+
+            if(Universal.get().getServerType() == ServerType.VELOCITY) {
+                config.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
+            }
         }
     }
 
