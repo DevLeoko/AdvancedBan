@@ -33,7 +33,7 @@ public class VelocityMain {
 
   @Inject
   public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger) {
-    this.velocityMain = this;
+    velocityMain = this;
     this.server = server;
     this.dataDirectory = dataDirectory;
     this.logger = logger;
