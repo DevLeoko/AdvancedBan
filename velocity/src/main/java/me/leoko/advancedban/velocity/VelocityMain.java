@@ -29,11 +29,11 @@ public class VelocityMain {
   private final Path dataDirectory;
   private final Logger logger;
 
-  private static VelocityMain instance;
+  private static VelocityMain velocityMain;
 
   @Inject
   public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger) {
-    this.instance = this;
+    this.velocityMain = this;
     this.server = server;
     this.dataDirectory = dataDirectory;
     this.logger = logger;
@@ -56,7 +56,7 @@ public class VelocityMain {
 
 
   public static VelocityMain get() {
-    return instance;
+    return velocityMain;
   }
 
 }

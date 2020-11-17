@@ -30,10 +30,7 @@ public class DynamicDataSource {
             config.setJdbcUrl("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false");
             config.setUsername("SA");
             config.setPassword("");
-
-            if(Universal.get().getServerType() == ServerType.VELOCITY) {
-                config.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
-            }
+            config.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
         }
     }
 

@@ -77,8 +77,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
       HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
       request.connect();
 
-      JsonParser jp = new JsonParser();
-      JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
+      JsonObject json = (JsonObject) JsonParser.parseReader(new InputStreamReader(request.getInputStream()));
 
       String[] keys = key.split("\\|");
       for (int i = 0; i < keys.length - 1; i++) {
@@ -197,7 +196,10 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public Player getPlayer(String name) {
-    return server.getPlayer(name).get();
+    if(server.getPlayer(name).isPresent()) {
+      return server.getPlayer(name).get();
+    }
+    return null;
   }
 
   @Override
