@@ -18,7 +18,7 @@ import java.nio.file.Path;
 @Plugin(
     id = "advancedban",
     name = "AdvancedBan",
-    version = "2.3.0",
+    version = "@version",
     dependencies = {
         @Dependency(id = "luckperms", optional = true)
     }

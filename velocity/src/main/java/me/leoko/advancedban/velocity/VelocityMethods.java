@@ -93,7 +93,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getVersion() {
-    return "2.3.0";
+    return "@version";
   }
 
   @Override
