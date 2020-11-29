@@ -32,14 +32,13 @@ public class CommandRecieverVelocity implements SimpleCommand {
   public List<String> suggest(Invocation invocation) {
     String[] args = invocation.arguments();
     CommandSource source = invocation.source();
-    try {
       final me.leoko.advancedban.utils.Command command = me.leoko.advancedban.utils.Command.getByName(cmd.substring(1));
       if (command.getPermission() == null || Universal.get().getMethods().hasPerms(source, command.getPermission())) {
-        return command.getTabCompleter().onTabComplete(source, args);
+        if(command.getTabCompleter().onTabComplete(source, args) != null) {
+          return command.getTabCompleter().onTabComplete(source, args);
+        }
+        return Collections.emptyList();
       }
       return Collections.emptyList();
-    } catch (NullPointerException e){
-      return Collections.emptyList();
-    }
   }
 }

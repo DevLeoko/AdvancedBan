@@ -98,7 +98,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String[] getKeys(Object file, String path) {
-    return new String[0];
+    return ((ConfigurationNode)file).getNode(path.split("\\.")).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
   }
 
   @Override
@@ -209,7 +209,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public Player[] getOnlinePlayers() {
-    return server.getAllPlayers().toArray(new Player[0]);
+    return server.getAllPlayers().toArray(new Player[]{});
   }
 
   @Override
