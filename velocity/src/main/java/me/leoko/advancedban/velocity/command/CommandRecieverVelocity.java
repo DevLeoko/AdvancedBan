@@ -30,14 +30,11 @@ public class CommandRecieverVelocity implements SimpleCommand {
 
   @Override
   public List<String> suggest(Invocation invocation) {
-    String[] args = invocation.arguments();
-    CommandSource source = invocation.source();
-      final me.leoko.advancedban.utils.Command command = me.leoko.advancedban.utils.Command.getByName(cmd.substring(1));
+      String[] args = invocation.arguments();
+      CommandSource source = invocation.source();
+      final me.leoko.advancedban.utils.Command command = me.leoko.advancedban.utils.Command.getByName(cmd);
       if (command.getPermission() == null || Universal.get().getMethods().hasPerms(source, command.getPermission())) {
-        if(command.getTabCompleter().onTabComplete(source, args) != null) {
-          return command.getTabCompleter().onTabComplete(source, args);
-        }
-        return Collections.emptyList();
+        return command.getTabCompleter().onTabComplete(source, args);
       }
       return Collections.emptyList();
   }
