@@ -8,12 +8,12 @@ import me.leoko.advancedban.manager.CommandManager;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandRecieverVelocity implements SimpleCommand {
+public class CommandReceiverVelocity implements SimpleCommand {
 
   private final ProxyServer server;
   private final String cmd;
 
-  public CommandRecieverVelocity(ProxyServer server, String cmd) {
+  public CommandReceiverVelocity(ProxyServer server, String cmd) {
     this.cmd = cmd;
     this.server = server;
   }

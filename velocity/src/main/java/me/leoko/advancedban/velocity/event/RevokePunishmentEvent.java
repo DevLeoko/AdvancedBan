@@ -1,12 +1,13 @@
 package me.leoko.advancedban.velocity.event;
 
 import me.leoko.advancedban.utils.Punishment;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class RevokePunishmentEvent {
   private final Punishment punishment;
   private final boolean massClear;
 
-  public RevokePunishmentEvent(Punishment punishment, boolean massClear) {
+  public RevokePunishmentEvent(@NonNull Punishment punishment, boolean massClear) {
     this.punishment = punishment;
     this.massClear = massClear;
   }

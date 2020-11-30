@@ -13,6 +13,7 @@ public enum ServerType {
     this.serverType = serverType;
   }
 
+  @Override
   public String toString() {
     return this.serverType;
   }

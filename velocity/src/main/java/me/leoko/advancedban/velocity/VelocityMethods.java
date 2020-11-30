@@ -17,7 +17,7 @@ import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-import me.leoko.advancedban.velocity.command.CommandRecieverVelocity;
+import me.leoko.advancedban.velocity.command.CommandReceiverVelocity;
 import me.leoko.advancedban.velocity.event.PunishmentEvent;
 import me.leoko.advancedban.velocity.event.RevokePunishmentEvent;
 import me.leoko.advancedban.velocity.utils.LuckPermsOfflineUser;
@@ -97,6 +97,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     return "@version";
   }
 
+  // Object.toString() is considered safe in this scenario (as per Configurate Docs)
   @Override
   public String[] getKeys(Object file, String path) {
     return ((ConfigurationNode)file).getNode(path.split("\\.")).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
@@ -141,7 +142,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
     CommandMeta meta = server.getCommandManager().metaBuilder(cmd).build();
-    server.getCommandManager().register(meta, new CommandRecieverVelocity(server, cmd));
+    server.getCommandManager().register(meta, new CommandReceiverVelocity(server, cmd));
   }
 
   @Override
@@ -199,7 +200,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public Player getPlayer(String name) {
     if(server.getPlayer(name).isPresent()) {
-      return server.getPlayer(name).get();
+      return server.getPlayer(name).orElse(null);
     }
     return null;
   }
@@ -309,8 +310,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     try {
       return ((ConfigurationNode)file).getNode(path.split("\\.")).getList(TypeToken.of(String.class));
     } catch (ObjectMappingException e) {
-      e.printStackTrace();
-      return null;
+      throw new RuntimeException(e);
     }
   }
 
