@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -139,7 +140,8 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
-    server.getCommandManager().register(new CommandRecieverVelocity(server, cmd), cmd);
+    CommandMeta meta = server.getCommandManager().metaBuilder(cmd).build();
+    server.getCommandManager().register(meta, new CommandRecieverVelocity(server, cmd));
   }
 
   @Override
