@@ -92,7 +92,7 @@ public class Punishment {
                     }
                 }
             } catch (SQLException ex) {
-                Universal.get().debugSqlException(ex);
+                throw new UncheckedSQLException("While updating ID of punishment " + this, ex);
             }
         }
 

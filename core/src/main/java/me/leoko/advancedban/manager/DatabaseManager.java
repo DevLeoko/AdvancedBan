@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.utils.DynamicDataSource;
 import me.leoko.advancedban.utils.SQLQuery;
+import me.leoko.advancedban.utils.UncheckedSQLException;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetFactory;
@@ -12,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 /**
  * The Database Manager is used to interact directly with the database is use.<br>
@@ -58,11 +60,11 @@ public class DatabaseManager {
      */
     public void shutdown() {
         if (!useMySQL) {
-            try(Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")){
+            try (Connection connection = dataSource.getConnection();
+                    PreparedStatement statement = connection.prepareStatement("SHUTDOWN")) {
                 statement.execute();
-            }catch (SQLException | NullPointerException exc){
-                Universal.get().log("An unexpected error has occurred turning off the database");
-                Universal.get().debugException(exc);
+            } catch (SQLException ex) {
+                throw new UncheckedSQLException(ex);
             }
         }
 
@@ -114,22 +116,8 @@ public class DatabaseManager {
     			return results;
     		}
    			statement.execute();
-    	} catch (SQLException ex) {
-    		Universal.get().log(
-   					"An unexpected error has occurred executing an Statement in the database\n"
-   							+ "Please check the plugins/AdvancedBan/logs/latest.log file and report this "
-    						+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
-    				);
-    		Universal.get().debug("Query: \n" + sql);
-    		Universal.get().debugSqlException(ex);
-       	} catch (NullPointerException ex) {
-            Universal.get().log(
-                    "An unexpected error has occurred connecting to the database\n"
-                            + "Check if your MySQL data is correct and if your MySQL-Server is online\n"
-                            + "Please check the plugins/AdvancedBan/logs/latest.log file and report this "
-                            + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
-            );
-            Universal.get().debugException(ex);
+        } catch (SQLException ex) {
+            throw new UncheckedSQLException("Query " + sql + " with parameters " + Arrays.toString(parameters), ex);
         }
         return null;
     }
