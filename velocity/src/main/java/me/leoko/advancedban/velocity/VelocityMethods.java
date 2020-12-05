@@ -2,7 +2,6 @@ package me.leoko.advancedban.velocity;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandMeta;
@@ -17,7 +16,7 @@ import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-import me.leoko.advancedban.velocity.command.CommandReceiverVelocity;
+import me.leoko.advancedban.velocity.listener.CommandReceiverVelocity;
 import me.leoko.advancedban.velocity.event.PunishmentEvent;
 import me.leoko.advancedban.velocity.event.RevokePunishmentEvent;
 import me.leoko.advancedban.velocity.utils.LuckPermsOfflineUser;
@@ -199,10 +198,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public Player getPlayer(String name) {
-    if(server.getPlayer(name).isPresent()) {
-      return server.getPlayer(name).orElse(null);
-    }
-    return null;
+    return server.getPlayer(name).orElse(null);
   }
 
   @Override
@@ -237,7 +233,10 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void executeCommand(String cmd) {
-    server.getCommandManager().executeImmediatelyAsync(server.getConsoleCommandSource(), cmd);
+    server.getCommandManager().executeAsync(server.getConsoleCommandSource(), cmd).exceptionally((ex) -> {
+      ex.printStackTrace();
+      return null;
+    });
   }
 
   @Override
@@ -267,48 +266,48 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String parseJSON(InputStreamReader json, String key) {
-    JsonElement element = new JsonParser().parse(json);
-    if (element instanceof JsonNull) {
+    JsonObject element = (JsonObject) JsonParser.parseReader(json);
+    if (element.isJsonNull()) {
       return null;
     }
-    JsonElement obj = ((JsonObject) element).get(key);
+    JsonElement obj = (element).get(key);
     return obj != null ? obj.toString().replaceAll("\"", "") : null;
   }
 
   @Override
   public String parseJSON(String json, String key) {
-    JsonElement element = new JsonParser().parse(json);
-    if (element instanceof JsonNull) {
+    JsonObject element = (JsonObject) JsonParser.parseString(json);
+    if (element.isJsonNull()) {
       return null;
     }
-    JsonElement obj = ((JsonObject) element).get(key);
+    JsonElement obj = (element).get(key);
     return obj != null ? obj.toString().replaceAll("\"", "") : null;
   }
 
   @Override
   public Boolean getBoolean(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path).getBoolean();
+    return getConfigNode(file, path).getBoolean();
   }
 
   @Override
   public String getString(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getString();
+    return getConfigNode(file, path).getString();
   }
 
   @Override
   public Long getLong(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getLong();
+    return getConfigNode(file, path).getLong();
   }
 
   @Override
   public Integer getInteger(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getInt();
+    return getConfigNode(file, path).getInt();
   }
 
   @Override
   public List<String> getStringList(Object file, String path) {
     try {
-      return ((ConfigurationNode)file).getNode(path.split("\\.")).getList(TypeToken.of(String.class));
+      return getConfigNode(file, path).getList(TypeToken.of(String.class));
     } catch (ObjectMappingException e) {
       throw new RuntimeException(e);
     }
@@ -316,27 +315,27 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public boolean getBoolean(Object file, String path, boolean def) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getBoolean(def);
+    return getConfigNode(file, path).getBoolean(def);
   }
 
   @Override
   public String getString(Object file, String path, String def) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getString(def);
+    return getConfigNode(file, path).getString(def);
   }
 
   @Override
   public long getLong(Object file, String path, long def) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getLong(def);
+    return getConfigNode(file, path).getLong(def);
   }
 
   @Override
   public int getInteger(Object file, String path, int def) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getInt(def);
+    return getConfigNode(file, path).getInt(def);
   }
 
   @Override
   public boolean contains(Object file, String path) {
-    return (!((ConfigurationNode)file).getNode(path.split("\\.")).isEmpty());
+    return getConfigNode(file, path).isEmpty();
   }
 
   @Override
@@ -373,5 +372,9 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public boolean isUnitTesting() {
     return false;
+  }
+
+  private ConfigurationNode getConfigNode(Object file, String path) {
+    return ((ConfigurationNode) file).getNode((Object[]) path.split("\\."));
   }
 }
