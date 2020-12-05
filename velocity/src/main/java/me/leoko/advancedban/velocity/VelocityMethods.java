@@ -147,7 +147,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void sendMessage(Object player, String msg) {
-      ((CommandSource) player).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));;
+      ((CommandSource) player).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
   }
 
   @Override
