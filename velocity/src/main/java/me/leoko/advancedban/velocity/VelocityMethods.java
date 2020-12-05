@@ -166,7 +166,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getIP(Object player) {
-    return ((Player)player).getRemoteAddress().getAddress().getHostAddress();
+    return ((Player)player).getRemoteAddress().getHostName();
   }
 
   @Override
