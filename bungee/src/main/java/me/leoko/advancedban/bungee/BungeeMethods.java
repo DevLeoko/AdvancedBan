@@ -381,7 +381,8 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     @Override
     public void log(String msg) {
-        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg.replaceAll("&", "§")));
+        ProxyServer.getInstance().getConsole().sendMessage(
+        		TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', msg)));
     }
 
     @Override
