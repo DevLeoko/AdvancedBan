@@ -355,7 +355,7 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
 
     @Override
     public void log(String msg) {
-        Bukkit.getServer().getConsoleSender().sendMessage(msg.replaceAll("&", "§"));
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
     }
 
     @Override
