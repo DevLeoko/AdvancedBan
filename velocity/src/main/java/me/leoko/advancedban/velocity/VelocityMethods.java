@@ -280,7 +280,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   public String parseJSON(String json, String key) {
     JsonObject element;
     try {
-      element = (JsonObject) JsonParser.parseString(json);
+      element = (JsonObject) JsonParser.parseString(json).getAsJsonObject();
     } catch (IllegalStateException e) {
       return null;
     }
