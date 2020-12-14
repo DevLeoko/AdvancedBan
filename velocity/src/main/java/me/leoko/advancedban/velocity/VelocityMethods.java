@@ -266,21 +266,25 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String parseJSON(InputStreamReader json, String key) {
-    JsonObject element = (JsonObject) JsonParser.parseReader(json);
-    if (element.isJsonNull()) {
+    JsonObject element;
+    try {
+      element = JsonParser.parseReader(json).getAsJsonObject();
+    } catch (IllegalStateException e) {
       return null;
     }
-    JsonElement obj = (element).get(key);
+    JsonElement obj = element.get(key);
     return obj != null ? obj.toString().replaceAll("\"", "") : null;
   }
 
   @Override
   public String parseJSON(String json, String key) {
-    JsonObject element = (JsonObject) JsonParser.parseString(json);
-    if (element.isJsonNull()) {
+    JsonObject element;
+    try {
+      element = (JsonObject) JsonParser.parseString(json);
+    } catch (IllegalStateException e) {
       return null;
     }
-    JsonElement obj = (element).get(key);
+    JsonElement obj = element.get(key);
     return obj != null ? obj.toString().replaceAll("\"", "") : null;
   }
 
