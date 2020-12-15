@@ -51,13 +51,13 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
             return;
         }
 
-        punishments
-                .stream()
-                .filter(punishment -> punishment.isExpired() && !history)
-                .forEach(punishment -> {
-                    punishment.delete();
-                    punishments.remove(punishment);
-                });
+        punishments.removeIf(punishment -> {
+           boolean remove = punishment.isExpired() && !history;
+           if(remove)
+               punishment.delete();
+
+           return remove;
+        });
 
         int page = input.hasNext() ? Integer.parseInt(input.getPrimary()) : 1;
         if (punishments.size() / 5.0 + 1 <= page) {
