@@ -17,6 +17,9 @@ import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -187,7 +190,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-        if(luckPermsSupport) return new LuckPermsOfflineUser(name);
+        if (luckPermsSupport) return new LuckPermsOfflineUser(name);
 
         return permission -> false;
     }
@@ -216,9 +219,9 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if(BungeeMain.getCloudSupport() != null){
+        if (BungeeMain.getCloudSupport() != null) {
             BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
-        }else if (Universal.isRedis()) {
+        } else if (Universal.isRedis()) {
             RedisBungee.getApi().sendChannelMessage("advancedban:main", "kick " + player + " " + reason);
         } else {
             getPlayer(player).disconnect(TextComponent.fromLegacyText(reason));
@@ -277,6 +280,12 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getInternUUID(String player) {
+        if (luckPermsSupport) {
+            UUID uuid = LuckPermsProvider.get().getUserManager().lookupUniqueId(player).join();
+            if(uuid != null) {
+                return uuid.toString().replaceAll("-", "");
+            }
+        }
         ProxiedPlayer proxiedPlayer = getPlayer(player);
         if (proxiedPlayer == null) {
             return null;
