@@ -14,9 +14,8 @@ public class ChatListenerVelocity {
       }
     } else if (Universal.get().getMethods().callCMD(event.getPlayer(), event.getMessage())) {
         event.setResult(PlayerChatEvent.ChatResult.denied());
-      }
     }
+  }
 }
-
 
 
