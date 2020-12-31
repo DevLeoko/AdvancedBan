@@ -213,7 +213,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-    server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).repeat(l2*50, TimeUnit.MILLISECONDS);
+    server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).repeat(l2*50, TimeUnit.MILLISECONDS).schedule();
   }
 
   @Override
@@ -349,12 +349,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void callPunishmentEvent(Punishment punishment) {
-    server.getEventManager().fire(new PunishmentEvent(punishment));
+    server.getEventManager().fireAndForget(new PunishmentEvent(punishment));
   }
 
   @Override
   public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
-    server.getEventManager().fire(new RevokePunishmentEvent(punishment, massClear));
+    server.getEventManager().fireAndForget(new RevokePunishmentEvent(punishment, massClear));
   }
 
   @Override
@@ -365,7 +365,11 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public void notify(String perm, List<String> notification) {
     server.getAllPlayers().forEach(player -> {
-      if(player.hasPermission(perm)) notification.forEach(str -> sendMessage(player, str));});
+    server.getAllPlayers().forEach(player -> {
+        if (player.hasPermission(perm)) {
+            notification.forEach(str -> sendMessage(player, str));
+        }
+    });
   }
 
   @Override
