@@ -138,6 +138,7 @@ public class Universal {
      *
      * @return the boolean
      */
+    @Deprecated
     public boolean isBungee() {
         return mi.isBungee();
     }
