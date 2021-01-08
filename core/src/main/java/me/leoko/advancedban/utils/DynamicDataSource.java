@@ -25,6 +25,7 @@ public class DynamicDataSource {
             config.setJdbcUrl("jdbc:hsqldb:file:" + mi.getDataFolder().getPath() + "/data/storage;hsqldb.lock_file=false");
             config.setUsername("SA");
             config.setPassword("");
+            config.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
         }
     }
 
