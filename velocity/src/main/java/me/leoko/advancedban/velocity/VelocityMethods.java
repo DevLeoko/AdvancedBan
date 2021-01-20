@@ -365,7 +365,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public void notify(String perm, List<String> notification) {
     server.getAllPlayers().forEach(player -> {
-    server.getAllPlayers().forEach(player -> {
         if (player.hasPermission(perm)) {
             notification.forEach(str -> sendMessage(player, str));
         }

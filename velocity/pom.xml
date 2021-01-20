@@ -44,6 +44,13 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>2.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <!-- Should be the same version as HikariCP uses -->
+            <version>1.7.30</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -72,7 +79,8 @@
                         </relocation>
                     </relocations>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                     </transformers>
                 </configuration>
                 <executions>
