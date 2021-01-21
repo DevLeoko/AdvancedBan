@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.AbstractMethodInterface;
 import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.VersionInfo;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
@@ -93,7 +94,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String getVersion() {
-    return "@version";
+    return VersionInfo.VERSION;
   }
 
   // Object.toString() is considered safe in this scenario (as per Configurate Docs)

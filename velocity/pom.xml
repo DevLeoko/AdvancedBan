@@ -93,29 +93,21 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <id>filter-src</id>
                         <goals>
-                            <goal>replace</goal>
+                            <goal>filter-sources</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/java-templates</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java-templates</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <includes>
-                        <include>${basedir}/src/main/java/me/leoko/advancedban/velocity/VelocityMain.java</include>
-                        <include>${basedir}/src/main/java/me/leoko/advancedban/velocity/VelocityMethods.java</include>
-                    </includes>
-                    <replacements>
-                        <replacement>
-                            <token>@version</token>
-                            <value>${project.version}</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
             </plugin>
         </plugins>
     </build>

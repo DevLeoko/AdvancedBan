@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.VersionInfo;
 import me.leoko.advancedban.velocity.listener.ChatListenerVelocity;
 import me.leoko.advancedban.velocity.listener.ConnectionListenerVelocity;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import java.nio.file.Path;
 @Plugin(
     id = "advancedban",
     name = "AdvancedBan",
-    version = "@version",
+    version = VersionInfo.VERSION,
     dependencies = {
         @Dependency(id = "luckperms", optional = true)
     }
