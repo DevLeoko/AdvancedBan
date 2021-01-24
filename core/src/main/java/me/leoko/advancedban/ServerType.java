@@ -5,6 +5,7 @@ public enum ServerType {
   BUNGEECORD("Bungeecord"),
   VELOCITY("Velocity"),
   SPIGOT("Spigot"),
+  SPONGE("Sponge"),
   TEST("Test");
 
   private String serverType;
