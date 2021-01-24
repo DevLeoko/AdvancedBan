@@ -1,6 +1,7 @@
 package me.leoko.advancedban.bukkit;
 
 import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
@@ -106,9 +107,19 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
-    @Override
+    @Override @Deprecated
     public boolean isBungee() {
         return false;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.SPIGOT;
     }
 
     @Override

@@ -138,8 +138,17 @@ public class Universal {
      *
      * @return the boolean
      */
+    @Deprecated
     public boolean isBungee() {
         return mi.isBungee();
+    }
+
+    public boolean isProxy() {
+        return mi.isProxy();
+    }
+
+    public ServerType getServerType() {
+        return mi.getServerType();
     }
 
     public Map<String, String> getIps() {
