@@ -61,7 +61,7 @@
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
             <version>3.7.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

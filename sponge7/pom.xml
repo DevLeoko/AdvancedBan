@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
-            <version>7.3.0</version>
+            <version>7.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -51,6 +51,18 @@
             <version>1.7.30</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>3.7.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -76,6 +88,18 @@
                         <relocation>
                             <pattern>org.mariadb.jdbc</pattern>
                             <shadedPattern>${project.groupId}.shaded.org.mariadb.jdbc</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>ninja.leaping.configurate</pattern>
+                            <shadedPattern>${project.groupId}.shaded.ninja.leaping.configurate</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.checkerframework</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.checkerframework</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.yaml.snakeyaml</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.yaml.snakeyaml</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>

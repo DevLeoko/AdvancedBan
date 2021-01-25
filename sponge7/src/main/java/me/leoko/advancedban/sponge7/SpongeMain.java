@@ -1,5 +1,6 @@
 package me.leoko.advancedban.sponge7;
 
+import com.google.inject.Inject;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.VersionInfo;
 import me.leoko.advancedban.sponge7.listener.ChatListenerSponge;
