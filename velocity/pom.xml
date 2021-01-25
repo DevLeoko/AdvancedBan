@@ -51,6 +51,12 @@
             <version>1.7.30</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.1.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

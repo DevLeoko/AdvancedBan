@@ -8,10 +8,7 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.leoko.advancedban.AbstractMethodInterface;
-import me.leoko.advancedban.ServerType;
-import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.VersionInfo;
+import me.leoko.advancedban.*;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
@@ -39,7 +36,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> {
+public class VelocityMethods extends AbstractConfigurateMethodInterface {
 
   private final ProxyServer server;
   private final Path dataDirectory;
@@ -63,13 +60,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
       log("[AdvancedBan] No offline permission support through LuckPerms");
     }
 
-  }
-
-
-  @Override
-  protected ConfigurationNode loadConfiguration(Path configPath) throws IOException {
-      YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(configPath).build();
-      return loader.load();
   }
 
   @Override
@@ -290,60 +280,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   @Override
-  public Boolean getBoolean(Object file, String path) {
-    return getConfigNode(file, path).getBoolean();
-  }
-
-  @Override
-  public String getString(Object file, String path) {
-    return getConfigNode(file, path).getString();
-  }
-
-  @Override
-  public Long getLong(Object file, String path) {
-    return getConfigNode(file, path).getLong();
-  }
-
-  @Override
-  public Integer getInteger(Object file, String path) {
-    return getConfigNode(file, path).getInt();
-  }
-
-  @Override
-  public List<String> getStringList(Object file, String path) {
-    try {
-      return getConfigNode(file, path).getList(TypeToken.of(String.class));
-    } catch (ObjectMappingException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public boolean getBoolean(Object file, String path, boolean def) {
-    return getConfigNode(file, path).getBoolean(def);
-  }
-
-  @Override
-  public String getString(Object file, String path, String def) {
-    return getConfigNode(file, path).getString(def);
-  }
-
-  @Override
-  public long getLong(Object file, String path, long def) {
-    return getConfigNode(file, path).getLong(def);
-  }
-
-  @Override
-  public int getInteger(Object file, String path, int def) {
-    return getConfigNode(file, path).getInt(def);
-  }
-
-  @Override
-  public boolean contains(Object file, String path) {
-    return getConfigNode(file, path).isEmpty();
-  }
-
-  @Override
   public String getFileName(Object file) {
     return "[Only Available in the Bukkit Version!]";
   }
@@ -380,9 +316,5 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   @Override
   public boolean isUnitTesting() {
     return false;
-  }
-
-  private ConfigurationNode getConfigNode(Object file, String path) {
-    return ((ConfigurationNode) file).getNode((Object[]) path.split("\\."));
   }
 }
