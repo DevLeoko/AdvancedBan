@@ -4,7 +4,6 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.CommandManager;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -27,7 +26,7 @@ public class CommandReceiverSponge implements CommandCallable {
     }
 
     @Override
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) {
         String[] splitArg = arguments.split(" ");
         if (splitArg.length > 0) {
             splitArg[0] = (this.game.getServer().getPlayer(splitArg[0]).isPresent() ? this.game.getServer().getPlayer(splitArg[0]).get().getName() : splitArg[0]);
@@ -37,7 +36,7 @@ public class CommandReceiverSponge implements CommandCallable {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) {
         final me.leoko.advancedban.utils.Command command = me.leoko.advancedban.utils.Command.getByName(cmd);
         if (command.getPermission() == null || Universal.get().getMethods().hasPerms(source, command.getPermission())) {
             return command.getTabCompleter().onTabComplete(source, arguments.split(" "));
@@ -62,6 +61,6 @@ public class CommandReceiverSponge implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return null;
+        return Text.of("");
     }
 }

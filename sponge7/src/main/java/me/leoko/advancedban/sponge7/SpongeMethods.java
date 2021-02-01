@@ -323,8 +323,6 @@ public class SpongeMethods extends AbstractConfigurateMethodInterface {
         return false;
     }
 
-
-
     private Server getServer() {
         return this.game.getServer();
     }

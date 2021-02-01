@@ -11,6 +11,10 @@
     </parent>
 
     <artifactId>AdvancedBan-Sponge7</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <packaging>jar</packaging>
 
     <repositories>

@@ -44,6 +44,7 @@ public class SpongeMain {
 
     @Listener
     public void onProxyInitialization(GameStartedServerEvent event) {
+        spongeMain = this;
 
         Universal.get().setup(new SpongeMethods(dataDirectory, game, logger));
 
