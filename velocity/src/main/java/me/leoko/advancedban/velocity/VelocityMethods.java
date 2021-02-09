@@ -340,7 +340,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public boolean contains(Object file, String path) {
-    return getConfigNode(file, path).isEmpty();
+    return !getConfigNode(file, path).isEmpty();
   }
 
   @Override
