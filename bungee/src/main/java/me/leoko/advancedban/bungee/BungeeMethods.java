@@ -57,13 +57,13 @@ public class BungeeMethods implements MethodInterface {
 
     public BungeeMethods() {
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
-        	permissionable = LuckPermsOfflineUser.class;
+            permissionable = LuckPermsOfflineUser.class;
 
             log("[AdvancedBan] Offline permission support through LuckPerms active");
         } else if (ProxyServer.getInstance().getPluginManager().getPlugin("CloudNet-CloudPerms") != null) {
-        	permissionable = CloudNetCloudPermsOfflineUser.class;
+            permissionable = CloudNetCloudPermsOfflineUser.class;
 
-        	log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
+            log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
         } else {
             permissionable = null;
 
@@ -194,12 +194,11 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-    	
-    	if (permissionable != null) {
-	    	try {
-	    		 return permissionable.getConstructor(String.class).newInstance(name);
-	    	} catch (Exception ignored) {}
-    	}
+        if (permissionable != null) {
+            try {
+                return permissionable.getConstructor(String.class).newInstance(name);
+            } catch (Exception ignored) {}
+        }
 
         return permission -> false;
     }
