@@ -14,6 +14,7 @@ import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
@@ -171,7 +172,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
-        ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd));
+        ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd, Command.getByName(cmd).getPermission()));
     }
 
     @SuppressWarnings("deprecation")
