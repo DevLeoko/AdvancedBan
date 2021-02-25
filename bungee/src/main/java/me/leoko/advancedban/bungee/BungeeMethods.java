@@ -10,6 +10,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
+import me.leoko.advancedban.bungee.utils.CloudNetCloudPermsOfflineUser;
 import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -52,15 +53,21 @@ public class BungeeMethods implements MethodInterface {
     private Configuration layouts;
     private Configuration mysql;
 
-    private final boolean luckPermsSupport;
+    private final Class<? extends Permissionable> permissionable;
 
     public BungeeMethods() {
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
-            luckPermsSupport = true;
+        	permissionable = LuckPermsOfflineUser.class;
+
             log("[AdvancedBan] Offline permission support through LuckPerms active");
+        } else if (ProxyServer.getInstance().getPluginManager().getPlugin("CloudNet-CloudPerms") != null) {
+        	permissionable = CloudNetCloudPermsOfflineUser.class;
+
+        	log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
         } else {
-            luckPermsSupport = false;
-            log("[AdvancedBan] No offline permission support through LuckPerms");
+            permissionable = null;
+
+            log("[AdvancedBan] No offline permission support through LuckPerms or CloudNet-CloudPerms");
         }
     }
 
@@ -187,7 +194,12 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-        if(luckPermsSupport) return new LuckPermsOfflineUser(name);
+    	
+    	if (permissionable != null) {
+	    	try {
+	    		 return permissionable.getConstructor(String.class).newInstance(name);
+	    	} catch (Exception ignored) {}
+    	}
 
         return permission -> false;
     }
