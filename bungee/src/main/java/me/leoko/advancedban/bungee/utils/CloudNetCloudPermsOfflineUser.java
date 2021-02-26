@@ -11,13 +11,11 @@ public class CloudNetCloudPermsOfflineUser implements Permissionable {
     private IPermissionUser permissionUser;
 
     public CloudNetCloudPermsOfflineUser(String name) {
-    	final List <IPermissionUser> users = CloudNetDriver.getInstance().getPermissionManagement().getUsers(name);
-    	
-    	if (!users.isEmpty()) {
-        	this.permissionUser = users.get(0);
-    	} else {
-    		this.permissionUser = null;
-    	}
+        final List <IPermissionUser> users = CloudNetDriver.getInstance().getPermissionManagement().getUsers(name);
+
+        if (!users.isEmpty()) {
+            this.permissionUser = users.get(0);
+        }
     }
 
     @Override
