@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -53,19 +54,19 @@ public class BungeeMethods implements MethodInterface {
     private Configuration layouts;
     private Configuration mysql;
 
-    private final Class<? extends Permissionable> permissionable;
+    private final Function<String, Permissionable> permissionableGenerator;
 
     public BungeeMethods() {
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
-            permissionable = LuckPermsOfflineUser.class;
+            permissionableGenerator = LuckPermsOfflineUser::new;
 
             log("[AdvancedBan] Offline permission support through LuckPerms active");
         } else if (ProxyServer.getInstance().getPluginManager().getPlugin("CloudNet-CloudPerms") != null) {
-            permissionable = CloudNetCloudPermsOfflineUser.class;
+            permissionableGenerator = CloudNetCloudPermsOfflineUser::new;
 
             log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
         } else {
-            permissionable = null;
+            permissionableGenerator = null;
 
             log("[AdvancedBan] No offline permission support through LuckPerms or CloudNet-CloudPerms");
         }
@@ -194,10 +195,8 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-        if (permissionable != null) {
-            try {
-                return permissionable.getConstructor(String.class).newInstance(name);
-            } catch (Exception ignored) {}
+        if (permissionableGenerator != null) {
+            return permissionableGenerator.apply(name);
         }
 
         return permission -> false;
