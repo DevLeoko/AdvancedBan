@@ -374,7 +374,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void log(String msg) {
-    logger.info(msg);
+    server.getConsoleCommandSource().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
   }
 
   @Override
