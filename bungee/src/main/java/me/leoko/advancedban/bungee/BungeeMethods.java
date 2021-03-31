@@ -12,6 +12,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
+import me.leoko.advancedban.bungee.utils.CloudNetCloudPermsOfflineUser;
 import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -42,22 +43,29 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
-    private final boolean luckPermsSupport;
+    private final Function<String, Permissionable> permissionableGenerator;
 
     public BungeeMethods() {
     	super(BungeeMain.get().getDataFolder().toPath());
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
-            luckPermsSupport = true;
+            permissionableGenerator = LuckPermsOfflineUser::new;
+
             log("[AdvancedBan] Offline permission support through LuckPerms active");
+        } else if (ProxyServer.getInstance().getPluginManager().getPlugin("CloudNet-CloudPerms") != null) {
+            permissionableGenerator = CloudNetCloudPermsOfflineUser::new;
+
+            log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
         } else {
-            luckPermsSupport = false;
-            log("[AdvancedBan] No offline permission support through LuckPerms");
+            permissionableGenerator = null;
+
+            log("[AdvancedBan] No offline permission support through LuckPerms or CloudNet-CloudPerms");
         }
     }
 
@@ -154,7 +162,9 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-        if(luckPermsSupport) return new LuckPermsOfflineUser(name);
+        if (permissionableGenerator != null) {
+            return permissionableGenerator.apply(name);
+        }
 
         return permission -> false;
     }
