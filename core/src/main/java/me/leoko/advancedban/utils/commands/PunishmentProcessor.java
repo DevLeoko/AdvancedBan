@@ -5,10 +5,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
-import me.leoko.advancedban.utils.Command;
-import me.leoko.advancedban.utils.Permissionable;
-import me.leoko.advancedban.utils.Punishment;
-import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.*;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -81,7 +78,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         String time = input.getPrimary();
         input.next();
         MethodInterface mi = Universal.get().getMethods();
-        if (time.matches("#.+")) {
+        if (Regex.TIME_LAYOUT.matches(time)) {
             String layout = time.substring(1);
             if (!mi.contains(mi.getLayouts(), "Time." + layout)) {
                 MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound", true, "NAME", layout);

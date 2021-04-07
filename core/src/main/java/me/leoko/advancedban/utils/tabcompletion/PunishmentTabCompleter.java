@@ -2,6 +2,7 @@ package me.leoko.advancedban.utils.tabcompletion;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.Regex;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
@@ -37,11 +38,11 @@ public class PunishmentTabCompleter implements TabCompleter {
             suggestions.add("[Name]");
         } else if(temporary && args.length == 2){
             String current = args[args.length-1];
-            String amount = current.toLowerCase().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)")[0];
+            String amount = Regex.Split.LETTERS_AND_DIGITS.split(current.toLowerCase())[0];
             if(current.equals(""))
                 amount = "X";
 
-            if(amount.matches("\\d+|X")){
+            if(Regex.DIGITS_OR_X.matches(amount)){
                 for(String unit : new String[]{"s", "m", "h", "d", "w", "mo", "yr"}){
                     suggestions.add(amount + unit);
                 }

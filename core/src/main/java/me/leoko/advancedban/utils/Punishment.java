@@ -47,7 +47,8 @@ public class Punishment {
     }
 
     public String getReason() {
-        return (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
+        String temp = (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason);
+        return Regex.Replace.SINGLE_QUOTE.remove(temp);
     }
 
     public String getHexId() {
@@ -126,7 +127,9 @@ public class Punishment {
                 }
             }
             if (cmd != null) {
-                final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
+                final Regex.Replace[] placeholders = new Regex.Replace[]{Regex.Replace.PLACEHOLDER_PLAYER, Regex.Replace.PLACEHOLDER_COUNT, Regex.Replace.PLACEHOLDER_REASON};
+                final String[] replacements = new String[]{getName(), Integer.toString(cWarnings), getReason()};
+                final String finalCmd = Regex.Replace.replace(cmd, placeholders, replacements);
                 mi.runSync(() -> {
                     mi.executeCommand(finalCmd);
                     Universal.get().log("Executing command: " + finalCmd);
@@ -198,11 +201,11 @@ public class Punishment {
 
         return MessageManager.getLayout(
                 isLayout ? mi.getLayouts() : mi.getMessages(),
-                isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getName() + ".Layout",
+                isLayout ? "Message." + Regex.Split.SPACE.split(getReason())[0].substring(1) : getType().getName() + ".Layout",
                 "OPERATOR", getOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
-                "REASON", isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason(),
+                "REASON", isLayout ? (Regex.Split.SPACE.split(getReason()).length < 2 ? "" : getReason().substring(Regex.Split.SPACE.split(getReason())[0].length() + 1)) : getReason(),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
                 "DATE", getDate(start),

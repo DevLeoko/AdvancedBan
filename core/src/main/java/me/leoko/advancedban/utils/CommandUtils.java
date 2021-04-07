@@ -30,7 +30,7 @@ public class CommandUtils {
     public static String processIP(Command.CommandInput input) {
         String name = input.getPrimaryData();
         input.next();
-        if (name.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+        if (Regex.IP.matches(name)) {
             return name;
         }
 		String ip = Universal.get().getIps().get(name);
@@ -47,7 +47,7 @@ public class CommandUtils {
         MethodInterface mi = Universal.get().getMethods();
         String reason = String.join(" ", input.getArgs());
 
-        if (reason.matches("[~@].+") && !mi.contains(mi.getLayouts(), "Message." + input.getPrimary().substring(1))) {
+        if (Regex.REASON_LAYOUT.matches(reason) && !mi.contains(mi.getLayouts(), "Message." + input.getPrimary().substring(1))) {
             MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound",
                     true, "NAME", input.getPrimary().substring(1));
             return null;

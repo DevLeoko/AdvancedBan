@@ -5,6 +5,7 @@ import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
+import me.leoko.advancedban.utils.Regex;
 
 import java.util.function.Consumer;
 
@@ -23,7 +24,7 @@ public class RevokeProcessor implements Consumer<Command.CommandInput> {
         String name = input.getPrimary();
 
         String target = name;
-        if(!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+        if(!Regex.IP.matches(target)) {
             target = processName(input);
             if (target == null)
                 return;

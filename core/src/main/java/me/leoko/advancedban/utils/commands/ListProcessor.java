@@ -5,6 +5,7 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.Regex;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
         if (hasTarget) {
             target = input.getPrimary();
             name = target;
-            if (!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+            if (!Regex.IP.matches(target)) {
                 target = processName(input);
                 if (target == null)
                     return;

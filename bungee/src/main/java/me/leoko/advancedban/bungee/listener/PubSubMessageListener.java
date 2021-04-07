@@ -3,6 +3,7 @@ package me.leoko.advancedban.bungee.listener;
 import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.Regex;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
@@ -20,7 +21,7 @@ public class PubSubMessageListener implements Listener {
 	@EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
         if (e.getChannel().equals("advancedban:main")) {
-            String[] msg = e.getMessage().split(" ");
+            String[] msg = Regex.Split.SPACE.split(e.getMessage());
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
                     ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
@@ -40,7 +41,7 @@ public class PubSubMessageListener implements Listener {
                 }
             }
         } else if (e.getChannel().equals("advancedban:connection")) {
-            String[] msg = e.getMessage().split(",");
+            String[] msg = Regex.Split.COMMA.split(e.getMessage());
             Universal.get().getIps().remove(msg[0].toLowerCase());
             Universal.get().getIps().put(msg[0].toLowerCase(), msg[1]);
         }

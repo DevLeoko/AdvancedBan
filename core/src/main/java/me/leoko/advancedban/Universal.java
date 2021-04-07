@@ -5,6 +5,7 @@ import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.Regex;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,10 +203,10 @@ public class Universal {
      * @return true if the command matched any of the mute commands.
      */
     boolean isMuteCommand(String cmd, List<String> muteCommands) {
-        String[] words = cmd.split(" ");
+        String[] words = Regex.Split.SPACE.split(cmd);
         // Handle commands with colons
         if (words[0].indexOf(':') != -1) {
-            words[0] = words[0].split(":", 2)[1];
+            words[0] = Regex.Split.COLON.split(words[0], 2)[1];
         }
         for (String muteCommand : muteCommands) {
             if (muteCommandMatches(words, muteCommand)) {
@@ -230,7 +231,7 @@ public class Universal {
         // Advanced equality check
         // Essentially a case-insensitive "startsWith" for arrays
         if (muteCommand.indexOf(' ') != -1) {
-            String[] muteCommandWords = muteCommand.split(" ");
+            String[] muteCommandWords = Regex.Split.SPACE.split(muteCommand);
             if (muteCommandWords.length > commandWords.length) {
                 return false;
             }

@@ -1,6 +1,7 @@
 package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.Regex;
 
 import java.util.Date;
 
@@ -26,7 +27,7 @@ public class TimeManager {
      */
     public static long toMilliSec(String s) {
         // This is not my regex :P | From: http://stackoverflow.com/a/8270824
-        String[] sl = s.toLowerCase().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+        String[] sl = Regex.Split.LETTERS_AND_DIGITS.split(s.toLowerCase());
 
         long i = Long.parseLong(sl[0]);
         switch (sl[1]) {

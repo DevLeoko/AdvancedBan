@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static me.leoko.advancedban.utils.CommandUtils.*;
 import static me.leoko.advancedban.utils.tabcompletion.MutableTabCompleter.list;
@@ -234,7 +235,7 @@ public enum Command {
             input -> {
                 Punishment punishment;
 
-                if (input.getPrimaryData().matches("[0-9]*")) {
+                if (Regex.DIGIT.matches(input.getPrimaryData())) {
                     int id = Integer.parseInt(input.getPrimaryData());
                     input.next();
 
@@ -244,7 +245,7 @@ public enum Command {
                     input.next();
 
                     String target = input.getPrimary();
-                    if (!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+                    if (!Regex.IP.matches(target)) {
                         target = processName(input);
                         if (target == null)
                             return;
@@ -303,13 +304,13 @@ public enum Command {
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if(args.length == 2 && !args[0].matches("\\d+"))
+                else if(args.length == 2 && !Regex.DIGITS.matches(args[0]))
                     return list("<Page>");
                 else
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
+                if (input.hasNext() && !Regex.TWO_DIGITS.matches(input.getPrimary())) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -341,13 +342,13 @@ public enum Command {
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if(args.length == 2 && !args[0].matches("\\d+"))
+                else if(args.length == 2 && !Regex.DIGITS.matches(args[0]))
                     return list("<Page>");
                 else
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
+                if (input.hasNext() && !Regex.TWO_DIGITS.matches(input.getPrimary())) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.notes.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -542,7 +543,13 @@ public enum Command {
 
     Command(String permission, String regex, TabCompleter tabCompleter, Consumer<CommandInput> commandHandler,
             String usagePath, String... names) {
-        this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath, names);
+        final Pattern pattern = Pattern.compile(regex);
+        this.permission = permission;
+        this.syntaxValidator = (args) -> pattern.matcher(String.join(" ", args)).matches();
+        this.tabCompleter = tabCompleter;
+        this.commandHandler = commandHandler;
+        this.usagePath = usagePath;
+        this.names = names;
     }
 
     public boolean validateArguments(String[] args) {

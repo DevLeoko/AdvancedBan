@@ -19,6 +19,7 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.Regex;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -85,12 +86,12 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             JsonParser jp = new JsonParser();
             JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            String[] keys = key.split("\\|");
+            String[] keys = Regex.Split.VERTICAL_LINE.split(key);
             for (int i = 0; i < keys.length - 1; i++) {
                 json = json.getAsJsonObject(keys[i]);
             }
 
-            return json.get(keys[keys.length - 1]).toString().replaceAll("\"", "");
+            return Regex.Replace.DOUBLE_QUOTE.remove(json.get(keys[keys.length - 1]).toString());
 
         } catch (Exception exc) {
             return null;
@@ -249,7 +250,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     @Override
     public String getInternUUID(Object player) {
-        return player instanceof ProxiedPlayer ? ((ProxiedPlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
+        return player instanceof ProxiedPlayer ? Regex.Replace.DASH.remove(((ProxiedPlayer) player).getUniqueId().toString()) : "none";
     }
 
     @Override
@@ -259,7 +260,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             return null;
         }
         UUID uniqueId = proxiedPlayer.getUniqueId();
-        return uniqueId == null ? null : uniqueId.toString().replaceAll("-", "");
+        return uniqueId == null ? null : Regex.Replace.DASH.remove(uniqueId.toString());
     }
 
     @Override
@@ -294,7 +295,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             return null;
         }
         JsonElement obj = ((JsonObject) element).get(key);
-        return obj != null ? obj.toString().replaceAll("\"", "") : null;
+        return obj != null ? Regex.Replace.DOUBLE_QUOTE.remove(obj.toString()) : null;
     }
 
     @Override
@@ -304,7 +305,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             return null;
         }
         JsonElement obj = ((JsonObject) element).get(key);
-        return obj != null ? obj.toString().replaceAll("\"", "") : null;
+        return obj != null ? Regex.Replace.DOUBLE_QUOTE.remove(obj.toString()) : null;
     }
 
     @Override

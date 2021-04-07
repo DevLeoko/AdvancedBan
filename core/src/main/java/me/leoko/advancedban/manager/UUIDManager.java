@@ -2,6 +2,7 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.Regex;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -208,7 +209,10 @@ public class UUIDManager {
     private String askAPI(String url, String name, String key) throws IOException {
     	MethodInterface mi = mi();
         name = name.toLowerCase();
-        HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
+
+        Regex.Replace[] placeholders = new Regex.Replace[]{Regex.Replace.PLACEHOLDER_NAME, Regex.Replace.PLACEHOLDER_TIMESTAMP};
+        String[] replacements = new String[]{name, Long.toString(new Date().getTime())};
+        HttpURLConnection request = (HttpURLConnection) new URL(Regex.Replace.replace(url, placeholders, replacements)).openConnection();
         request.connect();
 
         String uuid = mi.parseJSON(new InputStreamReader(request.getInputStream()), key);

@@ -11,6 +11,7 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.Regex;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -80,7 +81,7 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
             JSONParser jp = new JSONParser();
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            String[] keys = key.split("\\|");
+            String[] keys = Regex.Split.VERTICAL_LINE.split(key);
             for (int i = 0; i < keys.length - 1; i++) {
                 json = (JSONObject) json.get(keys[i]);
             }
@@ -238,13 +239,13 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
 
     @Override
     public String getInternUUID(Object player) {
-        return player instanceof OfflinePlayer ? ((OfflinePlayer) player).getUniqueId().toString().replaceAll("-", "") : "none";
+        return player instanceof OfflinePlayer ? Regex.Replace.DASH.remove(((OfflinePlayer) player).getUniqueId().toString()) : "none";
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public String getInternUUID(String player) {
-        return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replaceAll("-", "");
+        return Regex.Replace.DASH.remove(Bukkit.getOfflinePlayer(player).getUniqueId().toString());
     }
 
     @Override

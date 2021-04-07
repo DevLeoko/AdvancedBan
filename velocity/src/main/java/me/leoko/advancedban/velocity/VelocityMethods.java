@@ -16,6 +16,7 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.Regex;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import me.leoko.advancedban.velocity.listener.CommandReceiverVelocity;
 import me.leoko.advancedban.velocity.event.PunishmentEvent;
@@ -80,12 +81,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
       JsonObject json = (JsonObject) JsonParser.parseReader(new InputStreamReader(request.getInputStream()));
 
-      String[] keys = key.split("\\|");
+      String[] keys = Regex.Split.VERTICAL_LINE.split(key);
       for (int i = 0; i < keys.length - 1; i++) {
         json = json.getAsJsonObject(keys[i]);
       }
 
-      return json.get(keys[keys.length - 1]).toString().replaceAll("\"", "");
+      return Regex.Replace.DOUBLE_QUOTE.remove(json.get(keys[keys.length - 1]).toString());
 
     } catch (Exception exc) {
       return null;
@@ -100,7 +101,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   // Object.toString() is considered safe in this scenario (as per Configurate Docs)
   @Override
   public String[] getKeys(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(path.split("\\.")).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
+    return ((ConfigurationNode)file).getNode(Regex.Split.DOT.split(path)).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
   }
 
   @Override
@@ -126,7 +127,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public String clearFormatting(String text) {
-    return text.replaceAll("(&[^\\s])+", "");
+    return Regex.Replace.COLORS.remove(text);
   }
 
   @Override
@@ -274,7 +275,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
       return null;
     }
     JsonElement obj = element.get(key);
-    return obj != null ? obj.toString().replaceAll("\"", "") : null;
+    return obj != null ? Regex.Replace.DOUBLE_QUOTE.remove(obj.toString()) : null;
   }
 
   @Override
@@ -286,7 +287,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
       return null;
     }
     JsonElement obj = element.get(key);
-    return obj != null ? obj.toString().replaceAll("\"", "") : null;
+    return obj != null ? Regex.Replace.DOUBLE_QUOTE.remove(obj.toString()) : null;
   }
 
   @Override
@@ -383,6 +384,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   private ConfigurationNode getConfigNode(Object file, String path) {
-    return ((ConfigurationNode) file).getNode((Object[]) path.split("\\."));
+    return ((ConfigurationNode) file).getNode((Object[]) Regex.Split.DOT.split(path));
   }
 }
