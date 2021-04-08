@@ -235,7 +235,7 @@ public enum Command {
             input -> {
                 Punishment punishment;
 
-                if (Regex.DIGIT.matches(input.getPrimaryData())) {
+                if (Regex.ZERO_OR_N_DIGITS.matches(input.getPrimaryData())) {
                     int id = Integer.parseInt(input.getPrimaryData());
                     input.next();
 

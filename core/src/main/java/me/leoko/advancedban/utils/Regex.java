@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
  */
 public enum Regex {
 
-    DIGIT("[0-9]*"),
-    DIGITS("d+"),
+    ZERO_OR_N_DIGITS("[0-9]*"),
+    DIGITS("\\d+"),
     DIGITS_OR_X("\\d+|X"),
     IP("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"),
     REASON_LAYOUT("[~@].+"),
@@ -33,7 +33,7 @@ public enum Regex {
 
     public enum Replace {
 
-        COLORS("(&[^\\s])+"),
+        COLORS("&[a-fA-Fk-oK-OrR0-9]"),
         DASH("-"),
         DOUBLE_QUOTE("\""),
         PLACEHOLDER_COUNT("%COUNT%"),
