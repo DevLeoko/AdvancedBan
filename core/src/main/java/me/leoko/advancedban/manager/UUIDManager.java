@@ -18,7 +18,7 @@ public class UUIDManager {
     private static UUIDManager instance = null;
     private FetcherMode mode;
     private final Map<String, String> activeUUIDs = new HashMap<>();
-    
+
     private MethodInterface mi() {
     	return Universal.get().getMethods();
     }
@@ -210,9 +210,9 @@ public class UUIDManager {
     	MethodInterface mi = mi();
         name = name.toLowerCase();
 
-        Regex.Replace[] placeholders = new Regex.Replace[]{Regex.Replace.PLACEHOLDER_NAME, Regex.Replace.PLACEHOLDER_TIMESTAMP};
-        String[] replacements = new String[]{name, Long.toString(new Date().getTime())};
-        HttpURLConnection request = (HttpURLConnection) new URL(Regex.Replace.replace(url, placeholders, replacements)).openConnection();
+        String formattedUrl = url.replace("%NAME%", name)
+                .replace("%TIMESTAMP%", Long.toString(new Date().getTime()));
+        HttpURLConnection request = (HttpURLConnection) new URL(formattedUrl).openConnection();
         request.connect();
 
         String uuid = mi.parseJSON(new InputStreamReader(request.getInputStream()), key);

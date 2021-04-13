@@ -235,7 +235,7 @@ public enum Command {
             input -> {
                 Punishment punishment;
 
-                if (Regex.ZERO_OR_N_DIGITS.matches(input.getPrimaryData())) {
+                if (Regex.DIGITS.matches(input.getPrimaryData())) {
                     int id = Integer.parseInt(input.getPrimaryData());
                     input.next();
 
@@ -310,7 +310,7 @@ public enum Command {
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !Regex.TWO_DIGITS.matches(input.getPrimary())) {
+                if (input.hasNext() && !Regex.DIGITS.matches(input.getPrimary())) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -348,7 +348,7 @@ public enum Command {
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !Regex.TWO_DIGITS.matches(input.getPrimary())) {
+                if (input.hasNext() && !Regex.DIGITS.matches(input.getPrimary())) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.notes.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;

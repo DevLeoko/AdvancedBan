@@ -81,7 +81,7 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
       JsonObject json = (JsonObject) JsonParser.parseReader(new InputStreamReader(request.getInputStream()));
 
-      String[] keys = Regex.Split.VERTICAL_LINE.split(key);
+      String[] keys = key.split("\\|");
       for (int i = 0; i < keys.length - 1; i++) {
         json = json.getAsJsonObject(keys[i]);
       }
@@ -101,7 +101,9 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   // Object.toString() is considered safe in this scenario (as per Configurate Docs)
   @Override
   public String[] getKeys(Object file, String path) {
-    return ((ConfigurationNode)file).getNode(Regex.Split.DOT.split(path)).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
+    return ((ConfigurationNode) file).getNode(path.split("\\.")).getChildrenMap().keySet().stream()
+            .map(Object::toString)
+            .toArray(String[]::new);
   }
 
   @Override
@@ -384,6 +386,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   private ConfigurationNode getConfigNode(Object file, String path) {
-    return ((ConfigurationNode) file).getNode((Object[]) Regex.Split.DOT.split(path));
+    return ((ConfigurationNode) file).getNode((Object[]) path.split("\\."));
   }
 }

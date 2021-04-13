@@ -86,7 +86,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             JsonParser jp = new JsonParser();
             JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            String[] keys = Regex.Split.VERTICAL_LINE.split(key);
+            String[] keys = key.split("\\|");
             for (int i = 0; i < keys.length - 1; i++) {
                 json = json.getAsJsonObject(keys[i]);
             }
@@ -250,7 +250,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     @Override
     public String getInternUUID(Object player) {
-        return player instanceof ProxiedPlayer ? Regex.Replace.DASH.remove(((ProxiedPlayer) player).getUniqueId().toString()) : "none";
+        return player instanceof ProxiedPlayer ? ((ProxiedPlayer) player).getUniqueId().toString().replace("-", "") : "none";
     }
 
     @Override
@@ -260,7 +260,7 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
             return null;
         }
         UUID uniqueId = proxiedPlayer.getUniqueId();
-        return uniqueId == null ? null : Regex.Replace.DASH.remove(uniqueId.toString());
+        return uniqueId == null ? null : uniqueId.toString().replace("-", "");
     }
 
     @Override

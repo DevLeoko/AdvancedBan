@@ -81,7 +81,7 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
             JSONParser jp = new JSONParser();
             JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
 
-            String[] keys = Regex.Split.VERTICAL_LINE.split(key);
+            String[] keys = key.split("\\|");
             for (int i = 0; i < keys.length - 1; i++) {
                 json = (JSONObject) json.get(keys[i]);
             }
@@ -239,13 +239,13 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
 
     @Override
     public String getInternUUID(Object player) {
-        return player instanceof OfflinePlayer ? Regex.Replace.DASH.remove(((OfflinePlayer) player).getUniqueId().toString()) : "none";
+        return player instanceof OfflinePlayer ? ((OfflinePlayer) player).getUniqueId().toString().replace("-", "") : "none";
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public String getInternUUID(String player) {
-        return Regex.Replace.DASH.remove(Bukkit.getOfflinePlayer(player).getUniqueId().toString());
+        return Bukkit.getOfflinePlayer(player).getUniqueId().toString().replace("-", "");
     }
 
     @Override

@@ -127,9 +127,9 @@ public class Punishment {
                 }
             }
             if (cmd != null) {
-                final Regex.Replace[] placeholders = new Regex.Replace[]{Regex.Replace.PLACEHOLDER_PLAYER, Regex.Replace.PLACEHOLDER_COUNT, Regex.Replace.PLACEHOLDER_REASON};
-                final String[] replacements = new String[]{getName(), Integer.toString(cWarnings), getReason()};
-                final String finalCmd = Regex.Replace.replace(cmd, placeholders, replacements);
+                final String finalCmd = cmd.replace("%PLAYER%", getName())
+                                           .replace("%COUNT%", Integer.toString(cWarnings))
+                                           .replace("%REASON%", getReason());
                 mi.runSync(() -> {
                     mi.executeCommand(finalCmd);
                     Universal.get().log("Executing command: " + finalCmd);
