@@ -13,6 +13,7 @@ import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
 import me.leoko.advancedban.utils.commands.RevokeProcessor;
 import me.leoko.advancedban.utils.tabcompletion.BasicTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.CleanTabCompleter;
+import me.leoko.advancedban.utils.tabcompletion.NullTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
@@ -418,7 +419,7 @@ public enum Command {
 
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
-            null,
+            new NullTabCompleter(),
             input -> {
                 MethodInterface mi = Universal.get().getMethods();
                 Calendar calendar = new GregorianCalendar();

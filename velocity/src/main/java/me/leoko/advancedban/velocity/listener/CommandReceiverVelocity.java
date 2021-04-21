@@ -5,6 +5,8 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.CommandManager;
+import me.leoko.advancedban.utils.Command;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -32,9 +34,11 @@ public class CommandReceiverVelocity implements SimpleCommand {
   public List<String> suggest(Invocation invocation) {
       String[] args = invocation.arguments();
       CommandSource source = invocation.source();
-      final me.leoko.advancedban.utils.Command command = me.leoko.advancedban.utils.Command.getByName(cmd);
-      if (command.getPermission() == null || Universal.get().getMethods().hasPerms(source, command.getPermission())) {
-        return command.getTabCompleter().onTabComplete(source, args);
+      final Command command = Command.getByName(cmd);
+      if (command != null) {
+        if (command.getPermission() == null || Universal.get().getMethods().hasPerms(source, command.getPermission())) {
+          return command.getTabCompleter().onTabComplete(source, args);
+        }
       }
       return Collections.emptyList();
   }
