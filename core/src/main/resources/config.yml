@@ -14,6 +14,10 @@ MySQL:
   Password: superSecret
   Port: 3306
   Properties: 'verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8'
+  # Don't touch this unless you know you need to change it
+  # If you are getting errors like 'Failed to validate connection (No operations allowed after connection closed.)', this may help
+  # Controls the maximum time, in milliseconds a connection in the pool can stay alive
+  Max-Lifetime: 1800000
 
 # Set to false if you want to have only short messages in the console
 # On startup and on the shutdown.
