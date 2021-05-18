@@ -82,7 +82,7 @@ EnableAllPermissionNodes: false
 # If you use external REST-APIs they will have to respond in JSON
 # The given APIs will only be used for NAME -> UUID
 # For UUID -> NAME will either use the official MojangAPI or the InternFetcher
-# To check if you can use the intern fetcher do /systemPerfs and compare your uuid
+# To check if you can use the intern fetcher do /systemPrefs and compare your uuid
 #   to the one you can see online on http://NamesMC.com
 #   if they are similar we recommend using the InternFetcher
 UUID-Fetcher:
