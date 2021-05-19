@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.leoko.advancedban</groupId>
         <artifactId>AdvancedBan</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
 
     <artifactId>AdvancedBan-Core</artifactId>
@@ -47,14 +47,6 @@
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <!-- Should be the same version as HikariCP uses -->
-            <version>1.7.25</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

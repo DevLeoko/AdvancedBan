@@ -23,6 +23,7 @@ jobs:
           mvn -B package --file pom.xml
           mkdir artifact
           mv bundle/target/Adv*.jar artifact/
+          mv velocity/target/Adv*.jar artifact/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v1

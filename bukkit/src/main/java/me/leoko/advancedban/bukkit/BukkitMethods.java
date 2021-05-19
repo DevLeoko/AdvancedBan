@@ -1,6 +1,7 @@
 package me.leoko.advancedban.bukkit;
 
-import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
@@ -17,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -25,10 +27,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -37,19 +44,12 @@ import java.util.function.BiFunction;
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
-public class BukkitMethods implements MethodInterface {
+public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
 
-    private final File messageFile = new File(getDataFolder(), "Messages.yml");
-    private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
-    private YamlConfiguration config;
-    private File configFile = new File(getDataFolder(), "config.yml");
-    private YamlConfiguration messages;
-    private YamlConfiguration layouts;
-    private YamlConfiguration mysql;
     private BiFunction<OfflinePlayer, String, Boolean> permissionVault;
 
     public BukkitMethods() {
+    	super(BukkitMain.get().getDataFolder().toPath());
         // Vault support
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
             RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
@@ -58,32 +58,18 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void loadFiles() {
-        if (!configFile.exists()) {
-            getPlugin().saveResource("config.yml", true);
-        }
-        if (!messageFile.exists()) {
-            getPlugin().saveResource("Messages.yml", true);
-        }
-        if (!layoutFile.exists()) {
-            getPlugin().saveResource("Layouts.yml", true);
-        }
+	protected YamlConfiguration loadConfiguration(Path path) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 
-        try {
-            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
-            messages = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(messageFile), StandardCharsets.UTF_8));
-            layouts = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(layoutFile), StandardCharsets.UTF_8));
+			YamlConfiguration config = new YamlConfiguration();
+			config.load(reader);
+			return config;
 
-            if (mysqlFile.exists()) {
-                mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(mysqlFile), StandardCharsets.UTF_8));
-            } else {
-                mysql = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
-            }
-        } catch (FileNotFoundException exc) {
-            // We just saved the files, so that should really not happen.
-            Universal.get().debugException(exc);
-        }
-    }
+		} catch (InvalidConfigurationException ex) {
+			throw new IllegalStateException(
+					"Unable to load configuration file " + path + ". Please check the file for YAML syntax errors", ex);
+		}
+	}
 
     @Override
     public String getFromUrlJson(String url, String key) {
@@ -116,29 +102,24 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public YamlConfiguration getConfig() {
-        return config;
-    }
-
-    @Override
-    public YamlConfiguration getMessages() {
-        return messages;
-    }
-
-    @Override
-    public YamlConfiguration getLayouts() {
-        return layouts;
-    }
-
-    @Override
     public void setupMetrics() {
         Metrics metrics = new Metrics(getPlugin());
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
-    @Override
+    @Override @Deprecated
     public boolean isBungee() {
         return false;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.SPIGOT;
     }
 
     @Override
@@ -287,11 +268,6 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public YamlConfiguration getMySQLFile() {
-        return mysql;
-    }
-
-    @Override
     public String parseJSON(InputStreamReader json, String key) {
         try {
             return ((JSONObject) new JSONParser().parse(json)).get(key).toString();
@@ -390,7 +366,7 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void log(String msg) {
-        Bukkit.getServer().getConsoleSender().sendMessage(msg.replaceAll("&", "§"));
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
     }
 
     @Override

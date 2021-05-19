@@ -68,7 +68,12 @@ public interface MethodInterface {
      */
     void setupMetrics();
 
+    @Deprecated
     boolean isBungee();
+
+    boolean isProxy();
+
+    ServerType getServerType();
 
     String clearFormatting(String text);
 

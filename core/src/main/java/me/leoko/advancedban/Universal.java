@@ -5,18 +5,13 @@ import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +31,6 @@ public class Universal {
 
     private final Map<String, String> ips = new HashMap<>();
     private MethodInterface mi;
-    private LogManager logManager;
 
     private static boolean redis = false;
 
@@ -64,16 +58,10 @@ public class Universal {
     public void setup(MethodInterface mi) {
         this.mi = mi;
         mi.loadFiles();
-        logManager = new LogManager();
         UpdateManager.get().setup();
         UUIDManager.get().setup();
 
-        try {
-            DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
-        } catch (Exception ex) {
-            log("Failed enabling database-manager...");
-            debugException(ex);
-        }
+        DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
 
         mi.setupMetrics();
         PunishmentManager.get().setup();
@@ -150,8 +138,17 @@ public class Universal {
      *
      * @return the boolean
      */
+    @Deprecated
     public boolean isBungee() {
         return mi.isBungee();
+    }
+
+    public boolean isProxy() {
+        return mi.isProxy();
+    }
+
+    public ServerType getServerType() {
+        return mi.getServerType();
     }
 
     public Map<String, String> getIps() {
@@ -344,14 +341,14 @@ public class Universal {
         return false;
     }
 
+    private static final String LOG_PREFIX = "&8[&cAdvancedBan&8] &7";
     /**
      * Log.
      *
      * @param msg the msg
      */
     public void log(String msg) {
-        mi.log("§8[§cAdvancedBan§8] §7" + msg);
-        debugToFile(msg);
+        mi.log(LOG_PREFIX + msg);
     }
 
     /**
@@ -361,49 +358,8 @@ public class Universal {
      */
     public void debug(Object msg) {
         if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            mi.log("§8[§cAdvancedBan§8] §cDebug: §7" + msg.toString());
+            mi.log(LOG_PREFIX + "&cDebug: &7" + msg.toString());
         }
-        debugToFile(msg);
     }
 
-    public void debugException(Exception exc) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        exc.printStackTrace(pw);
-        debug(sw.toString());
-    }
-
-    /**
-     * Debug.
-     *
-     * @param ex the ex
-     */
-    public void debugSqlException(SQLException ex) {
-        if (mi.getBoolean(mi.getConfig(), "Debug", false)) {
-            debug("§7An error has occurred with the database, the error code is: '" + ex.getErrorCode() + "'");
-            debug("§7The state of the sql is: " + ex.getSQLState());
-            debug("§7Error message: " + ex.getMessage());
-        }
-        debugException(ex);
-    }
-
-    private void debugToFile(Object msg) {
-        File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
-        if (!debugFile.exists()) {
-            try {
-                debugFile.createNewFile();
-            } catch (IOException ex) {
-                System.out.print("An error has occurred creating the 'latest.log' file again, check your server.");
-                System.out.print("Error message" + ex.getMessage());
-            }
-        } else {
-            logManager.checkLastLog(false);
-        }
-        try {
-            FileUtils.writeStringToFile(debugFile, "[" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()) + "] " + mi.clearFormatting(msg.toString()) + "\n", "UTF8", true);
-        } catch (IOException ex) {
-            System.out.print("An error has occurred writing to 'latest.log' file.");
-            System.out.print(ex.getMessage());
-        }
-    }
 }
