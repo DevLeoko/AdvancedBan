@@ -2,10 +2,13 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Message Manager is used for a convenient way to retrieve messages from configuration files.<br>
@@ -111,7 +114,16 @@ public class MessageManager {
         }
     }
 
+    private static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
     private static String replace(String str, String... parameters) {
+        Matcher matcher = hexPattern.matcher(str);
+        while (matcher.find()) {
+            String color = str.substring(matcher.start(), matcher.end());
+            str = str.replace(color, ChatColor.of(color) + "");
+            matcher = hexPattern.matcher(str);
+        }
+        str = ChatColor.translateAlternateColorCodes('&', str);
+
         for (int i = 0; i < parameters.length - 1; i = i + 2) {
             str = str.replaceAll("%" + parameters[i] + "%", parameters[i + 1]);
         }
