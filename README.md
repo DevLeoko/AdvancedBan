@@ -27,7 +27,7 @@ Add AdvancedBan to you project by adding the AdvancedBan.jar to your build-path 
 <dependency>
   <groupId>me.leoko.advancedban</groupId>
   <artifactId>AdvancedBan</artifactId>
-  <version>2.1.6</version>
+  <version>2.3.0</version>
 </dependency>
 ```
 https://github.com/DevLeoko/AdvancedBan/packages/147493
