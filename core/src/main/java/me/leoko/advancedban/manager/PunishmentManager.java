@@ -5,10 +5,19 @@ import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
+import me.leoko.advancedban.utils.UncheckedSQLException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 
 /**
  * The Punishment Manager handles the punishments. It loads and parses them from the database, caches them
@@ -72,10 +81,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
-        	Universal universal = universal();
-            universal.log("An error has occurred loading the punishments from the database.");
-            universal.debugSqlException(ex);
-            return null;
+            throw new UncheckedSQLException("While loading punishments from the database", ex);
         }
         return new InterimData(uuid, name, ip, punishments, history);
     }
@@ -143,9 +149,7 @@ public class PunishmentManager {
                     }
                 }
             } catch (SQLException ex) {
-            	Universal universal = universal();
-                universal.log("An error has occurred getting the punishments for " + target);
-                universal.debugSqlException(ex);
+                throw new UncheckedSQLException("While getting the punishments for " + target, ex);
             }
         }
         return ptList;
@@ -170,10 +174,8 @@ public class PunishmentManager {
             }
             rs.close();
         } catch (SQLException ex) {
-        	Universal universal = universal();
-            universal.log("An error has occurred executing a query in the database.");
-            universal.debug("Query: \n" + sqlQuery);
-            universal.debugSqlException(ex);
+            throw new UncheckedSQLException("While getting punishments from query " + sqlQuery + " with parameters "
+                    + Arrays.toString(parameters), ex);
         }
         return ptList;
     }
@@ -199,10 +201,7 @@ public class PunishmentManager {
                     return punishment;
             }
         } catch (SQLException ex) {
-        	Universal universal = universal();
-            universal.log("An error has occurred getting a punishment by his id.");
-            universal.debug("Punishment id: '" + id + "'");
-            universal.debugSqlException(ex);
+            throw new UncheckedSQLException("While getting a punishment by its id " + id, ex);
         }
 
         return null;
@@ -341,9 +340,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
-        	Universal universal = universal();
-            universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
-            universal.debugSqlException(ex);
+            throw new UncheckedSQLException("While getting the level for the layout '" + layout + "' for '" + uuid + "'", ex);
         }
         return i;
     }

@@ -42,7 +42,7 @@ public class PunishmentTabCompleter implements TabCompleter {
                 amount = "X";
 
             if(amount.matches("\\d+|X")){
-                for(String unit : new String[]{"s", "m", "h", "d", "w", "mo"}){
+                for(String unit : new String[]{"s", "m", "h", "d", "w", "mo", "yr"}){
                     suggestions.add(amount + unit);
                 }
             }

@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.leoko.advancedban</groupId>
         <artifactId>AdvancedBan</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
 
     <artifactId>AdvancedBan-Bundle</artifactId>
@@ -26,6 +26,14 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <!-- Should be the same version as HikariCP uses -->
+            <version>1.7.25</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     
     <build>
@@ -40,10 +48,10 @@
                     		<pattern>org.apache.commons</pattern>
                     		<shadedPattern>${project.groupId}.shaded.org.apache.commons</shadedPattern>
                     	</relocation>
-                    	<relocation>
-                    		<pattern>org.slf4j</pattern>
-                    		<shadedPattern>${project.groupId}.shaded.org.slf4j</shadedPattern>
-                    	</relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.slf4j</shadedPattern>
+                        </relocation>
                     	<relocation>
                     		<pattern>com.zaxxer.hikari</pattern>
                     		<shadedPattern>${project.groupId}.shaded.com.zaxxer.hikari</shadedPattern>
