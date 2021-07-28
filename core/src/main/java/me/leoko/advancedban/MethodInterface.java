@@ -92,7 +92,7 @@ public interface MethodInterface {
      * @param cmd the cmd
      * @param tabCompleter behaviour when tab completion is triggered
      */
-    void setCommandExecutor(String cmd, TabCompleter tabCompleter);
+    void setCommandExecutor(String cmd, String permission, TabCompleter tabCompleter);
 
     /**
      * Send a message to a specific player.

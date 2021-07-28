@@ -87,7 +87,7 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
+    public void setCommandExecutor(String cmd, String permission, TabCompleter tabCompleter) {
         //Command executors are not being registered for testing
     }
 

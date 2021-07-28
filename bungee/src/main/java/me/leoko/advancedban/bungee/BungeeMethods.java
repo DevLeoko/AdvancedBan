@@ -178,8 +178,8 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
-        ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd));
+    public void setCommandExecutor(String cmd, String permission, TabCompleter tabCompleter) {
+        ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd, permission));
     }
 
     @SuppressWarnings("deprecation")
