@@ -5,7 +5,9 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import me.leoko.advancedban.MethodInterface;
+
+import me.leoko.advancedban.AbstractMethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
@@ -29,12 +31,15 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -43,20 +48,12 @@ import java.util.function.Function;
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
-public class BungeeMethods implements MethodInterface {
-
-    private final File configFile = new File(getDataFolder(), "config.yml");
-    private final File messageFile = new File(getDataFolder(), "Messages.yml");
-    private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
-    private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
-    private Configuration config;
-    private Configuration messages;
-    private Configuration layouts;
-    private Configuration mysql;
+public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     private final Function<String, Permissionable> permissionableGenerator;
 
     public BungeeMethods() {
+    	super(BungeeMain.get().getDataFolder().toPath());
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
             permissionableGenerator = LuckPermsOfflineUser::new;
 
@@ -73,36 +70,11 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public void loadFiles() {
-        try {
-            if (!getDataFolder().exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                getDataFolder().mkdirs();
-            }
-            if (!configFile.exists()) {
-                Files.copy(getPlugin().getResourceAsStream("config.yml"), configFile.toPath());
-            }
-            if (!messageFile.exists()) {
-                Files.copy(getPlugin().getResourceAsStream("Messages.yml"), messageFile.toPath());
-            }
-            if (!layoutFile.exists()) {
-                Files.copy(getPlugin().getResourceAsStream("Layouts.yml"), layoutFile.toPath());
-            }
-
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
-            messages = ConfigurationProvider.getProvider(YamlConfiguration.class).load(messageFile);
-            layouts = ConfigurationProvider.getProvider(YamlConfiguration.class).load(layoutFile);
-
-            if (mysqlFile.exists()) {
-                mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(mysqlFile);
-            } else {
-                mysql = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
+	protected Configuration loadConfiguration(Path path) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			return ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
+		}
+	}
 
     @Override
     public String getFromUrlJson(String url, String key) {
@@ -137,29 +109,24 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public Configuration getConfig() {
-        return config;
-    }
-
-    @Override
-    public Configuration getMessages() {
-        return messages;
-    }
-
-    @Override
-    public Configuration getLayouts() {
-        return layouts;
-    }
-
-    @Override
     public void setupMetrics() {
         Metrics metrics = new Metrics(getPlugin());
         metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
-    @Override
+    @Override @Deprecated
     public boolean isBungee() {
         return true;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return true;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.BUNGEECORD;
     }
 
     @Override
@@ -321,11 +288,6 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public Object getMySQLFile() {
-        return mysql;
-    }
-
-    @Override
     public String parseJSON(InputStreamReader json, String key) {
         JsonElement element = new JsonParser().parse(json);
         if (element instanceof JsonNull) {
@@ -429,7 +391,8 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void log(String msg) {
-        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg.replaceAll("&", "§")));
+        ProxyServer.getInstance().getConsole().sendMessage(
+        		TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', msg)));
     }
 
     @Override

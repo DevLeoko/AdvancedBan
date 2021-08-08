@@ -42,6 +42,9 @@ public class TimeManager {
                 return i * 1000 * 60 * 60 * 24 * 7;
             case "mo":
                 return i * 1000 * 60 * 60 * 24 * 30;
+            case "y":
+            case "yr":
+                return i * 1000 * 60 * 60 * 24 * 365;
             default:
                 return -1;
         }

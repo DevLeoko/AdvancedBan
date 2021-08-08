@@ -1,6 +1,7 @@
 package me.leoko.advancedban.utils;
 
 import me.leoko.advancedban.MethodInterface;
+import me.leoko.advancedban.ServerType;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
@@ -12,6 +13,7 @@ import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
 import me.leoko.advancedban.utils.commands.RevokeProcessor;
 import me.leoko.advancedban.utils.tabcompletion.BasicTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.CleanTabCompleter;
+import me.leoko.advancedban.utils.tabcompletion.NullTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
@@ -417,7 +419,7 @@ public enum Command {
 
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
-            null,
+            new NullTabCompleter(),
             input -> {
                 MethodInterface mi = Universal.get().getMethods();
                 Calendar calendar = new GregorianCalendar();
@@ -511,8 +513,8 @@ public enum Command {
                 mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
                 mi.sendMessage(sender, "  §cLicense §8• §7Public");
                 mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
-                mi.sendMessage(sender, "  §cServer §8• §7" + (Universal.get().isBungee() ? "Bungeecord" : "Spigot/Bukkit"));
-                if (Universal.get().isBungee()) {
+                mi.sendMessage(sender, "  §cServer §8• §7" + Universal.get().getServerType().toString());
+                if (Universal.get().isProxy() && Universal.get().getServerType() == ServerType.BUNGEECORD) {
                     mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.isRedis() ? "true" : "false"));
                 }
                 mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());

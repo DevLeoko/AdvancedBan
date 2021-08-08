@@ -41,7 +41,7 @@ public class UUIDManager {
             if (!mi.isOnlineMode()) {
                 mode = FetcherMode.DISABLED;
             } else {
-                if (Universal.get().isBungee()) {
+                if (Universal.get().isProxy()) {
                     mode = FetcherMode.MIXED;
                 } else {
                     mode = FetcherMode.INTERN;
