@@ -23,11 +23,16 @@ public class Punishment {
     private final String name, uuid, operator, calculation;
     private final long start, end;
     private final PunishmentType type;
+    private final boolean silent;
 
     private String reason;
     private int id;
 
     public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id) {
+        this(name, uuid, reason, operator, type, start, end, calculation, id, false);
+    }
+
+    public Punishment(String name, String uuid, String reason, String operator, PunishmentType type, long start, long end, String calculation, int id, boolean silent) {
         this.name = name;
         this.uuid = uuid;
         this.reason = reason;
@@ -37,13 +42,14 @@ public class Punishment {
         this.end = end;
         this.calculation = calculation;
         this.id = id;
+        this.silent = silent;
     }
 
     public static void create(String name, String target, String reason, String operator, PunishmentType type, Long end,
                               String calculation, boolean silent) {
         new Punishment(name, target, reason, operator, end == -1 ? type.getPermanent() : type,
-                TimeManager.getTime(), end, calculation, -1)
-                .create(silent);
+                TimeManager.getTime(), end, calculation, -1, silent)
+                .create();
     }
 
     public String getReason() {
@@ -60,7 +66,7 @@ public class Punishment {
     }
 
     public void create() {
-        create(false);
+        create(silent);
     }
 
     public void create(boolean silent) {
@@ -290,7 +296,11 @@ public class Punishment {
         return this.id;
     }
 
+    public boolean isSilent() {
+        return silent;
+    }
+
     public String toString() {
-        return "Punishment(name=" + this.getName() + ", uuid=" + this.getUuid() + ", operator=" + this.getOperator() + ", calculation=" + this.getCalculation() + ", start=" + this.getStart() + ", end=" + this.getEnd() + ", type=" + this.getType() + ", reason=" + this.getReason() + ", id=" + this.getId() + ")";
+        return "Punishment(name=" + this.getName() + ", uuid=" + this.getUuid() + ", operator=" + this.getOperator() + ", calculation=" + this.getCalculation() + ", start=" + this.getStart() + ", end=" + this.getEnd() + ", type=" + this.getType() + ", reason=" + this.getReason() + ", id=" + this.getId() + ", silent=" + this.isSilent() + ")";
     }
 }
