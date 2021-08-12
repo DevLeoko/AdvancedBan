@@ -343,7 +343,12 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        runSync(() -> Bukkit.getPluginManager().callEvent(new PunishmentEvent(punishment)));
+        callPunishmentEvent(punishment, false);
+    }
+
+    @Override
+    public void callPunishmentEvent(Punishment punishment, boolean silent) {
+        runSync(() -> Bukkit.getPluginManager().callEvent(new PunishmentEvent(punishment, silent)));
     }
 
     @Override

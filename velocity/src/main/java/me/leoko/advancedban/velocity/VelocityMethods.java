@@ -350,7 +350,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
   @Override
   public void callPunishmentEvent(Punishment punishment) {
-    server.getEventManager().fireAndForget(new PunishmentEvent(punishment));
+    callPunishmentEvent(punishment, false);
+  }
+
+  @Override
+  public void callPunishmentEvent(Punishment punishment, boolean silent) {
+    server.getEventManager().fireAndForget(new PunishmentEvent(punishment, silent));
   }
 
   @Override

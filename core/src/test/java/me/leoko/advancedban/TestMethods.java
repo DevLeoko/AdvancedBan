@@ -290,6 +290,11 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
+    public void callPunishmentEvent(Punishment punishment, boolean silent) {
+        System.out.println("Called punishment event!");
+    }
+
+    @Override
     public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
         System.out.println("Called punishment-revoke event!");
     }
