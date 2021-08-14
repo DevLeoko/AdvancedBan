@@ -364,7 +364,12 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        getPlugin().getProxy().getPluginManager().callEvent(new PunishmentEvent(punishment));
+        callPunishmentEvent(punishment, false);
+    }
+
+    @Override
+    public void callPunishmentEvent(Punishment punishment, boolean silent) {
+        getPlugin().getProxy().getPluginManager().callEvent(new PunishmentEvent(punishment, silent));
     }
 
     @Override

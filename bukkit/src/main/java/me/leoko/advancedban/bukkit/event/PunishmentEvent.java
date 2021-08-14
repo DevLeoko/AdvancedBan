@@ -12,10 +12,16 @@ public class PunishmentEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     
     private final Punishment punishment;
+    private final boolean silent;
 
     public PunishmentEvent(Punishment punishment) {
+        this(punishment, false);
+    }
+
+    public PunishmentEvent(Punishment punishment, boolean silent) {
         super(false);
         this.punishment = punishment;
+        this.silent = silent;
     }
 
     public static HandlerList getHandlerList() {
@@ -29,5 +35,9 @@ public class PunishmentEvent extends Event {
 
     public Punishment getPunishment() {
         return this.punishment;
+    }
+
+    public boolean isSilent() {
+        return silent;
     }
 }

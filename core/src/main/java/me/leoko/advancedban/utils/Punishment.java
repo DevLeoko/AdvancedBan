@@ -116,7 +116,7 @@ public class Punishment {
 
         PunishmentManager.get().getLoadedHistory().add(this);
 
-        mi.callPunishmentEvent(this);
+        mi.callPunishmentEvent(this, silent);
 
         if (getType().getBasic() == PunishmentType.WARNING) {
             String cmd = null;

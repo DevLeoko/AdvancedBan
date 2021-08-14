@@ -385,6 +385,14 @@ public interface MethodInterface {
     void callPunishmentEvent(Punishment punishment);
 
     /**
+     * Call punishment event.
+     *
+     * @param punishment the punishment
+     * @param silent true if the punishment was created with the "-s" flag
+     */
+    void callPunishmentEvent(Punishment punishment, boolean silent);
+
+    /**
      * Call revoke punishment event.
      *
      * @param punishment the punishment
