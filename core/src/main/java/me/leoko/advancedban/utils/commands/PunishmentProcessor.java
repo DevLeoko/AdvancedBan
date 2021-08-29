@@ -69,7 +69,16 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         }
 
         MethodInterface mi = Universal.get().getMethods();
-        String operator = mi.getName(input.getSender());
+        String operator = mi.isConsoleSender(input.getSender()) ?
+                mi.getString(mi.getConfig(), "ConsoleName", "CONSOLE") :
+                mi.getName(input.getSender());
+
+        if (operator.length() > 16) {
+            // Avoid using ConsoleNames that exceed 16 characters to avoid database errors
+            mi.log("Could not set operator name for punishment "+target+" with operator name "+operator);
+            operator = mi.getName(input.getSender());
+        }
+
         Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
 
         MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".Done",

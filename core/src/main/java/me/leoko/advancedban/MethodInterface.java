@@ -251,6 +251,13 @@ public interface MethodInterface {
     boolean callCMD(Object player, String cmd);
 
     /**
+     * Check if the given Sender object is a consoleSender
+     *
+     * @param sender the sender
+     * @return the boolean
+     */
+    boolean isConsoleSender(Object sender);
+    /**
      * Get MySQL.yml file.
      *
      * @return the my sql file

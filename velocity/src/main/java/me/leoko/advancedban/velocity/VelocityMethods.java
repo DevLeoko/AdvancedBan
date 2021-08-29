@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.AbstractMethodInterface;
@@ -263,6 +264,11 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
       return true;
     }
     return false;
+  }
+
+  @Override
+  public boolean isConsoleSender(Object sender) {
+    return sender instanceof ConsoleCommandSource;
   }
 
   @Override
