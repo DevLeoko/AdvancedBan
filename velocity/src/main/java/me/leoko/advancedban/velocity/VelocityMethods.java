@@ -267,11 +267,6 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
   }
 
   @Override
-  public boolean isConsoleSender(Object sender) {
-    return sender instanceof ConsoleCommandSource;
-  }
-
-  @Override
   public String parseJSON(InputStreamReader json, String key) {
     JsonObject element;
     try {

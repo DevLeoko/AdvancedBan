@@ -288,11 +288,6 @@ public class BungeeMethods extends AbstractMethodInterface<Configuration> {
     }
 
     @Override
-    public boolean isConsoleSender(Object sender) {
-        return sender instanceof CommandSender && !(sender instanceof ProxiedPlayer);
-    }
-
-    @Override
     public String parseJSON(InputStreamReader json, String key) {
         JsonElement element = new JsonParser().parse(json);
         if (element instanceof JsonNull) {

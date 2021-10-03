@@ -269,11 +269,6 @@ public class BukkitMethods extends AbstractMethodInterface<YamlConfiguration> {
     }
 
     @Override
-    public boolean isConsoleSender(Object sender) {
-        return sender instanceof ConsoleCommandSender;
-    }
-
-    @Override
     public String parseJSON(InputStreamReader json, String key) {
         try {
             return ((JSONObject) new JSONParser().parse(json)).get(key).toString();

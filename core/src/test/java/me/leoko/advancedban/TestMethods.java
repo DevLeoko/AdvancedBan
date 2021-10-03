@@ -202,11 +202,6 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public boolean isConsoleSender(Object sender) {
-        return false;
-    }
-
-    @Override
     public Object getMySQLFile() {
         fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #22");
         return null;
