@@ -70,6 +70,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
 
         MethodInterface mi = Universal.get().getMethods();
         String operator = mi.getName(input.getSender());
+
         Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
 
         MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".Done",

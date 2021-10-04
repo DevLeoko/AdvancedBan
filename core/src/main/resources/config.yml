@@ -31,6 +31,9 @@ LockdownOnError: true
 # This will be the default reason to be displayed if none is given
 DefaultReason: "none"
 
+# Change the console identifier when a player gets punished through the console
+ConsoleName: "CONSOLE"
+
 # Change this if your server has a different time that your users.
 # e.g.: ServerTime: 16:43 | Your Time: 13:43 | TimeDiff has to be set to -3
 # You can check the server time with /systemPrefs
