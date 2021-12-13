@@ -93,22 +93,22 @@ public class Universal {
         }
 
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
-            mi.log("\n \n&8[]=====[&7Enabling AdvancedBan&8]=====[]"
-                    + "\n&8| &cInformation:"
-                    + "\n&8|   &cName: &7AdvancedBan"
-                    + "\n&8|   &cDeveloper: &7Leoko"
-                    + "\n&8|   &cVersion: &7" + mi.getVersion()
-                    + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
-                    + "\n&8| &cSupport:"
-                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
-                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
-                    + "\n&8| &cTwitter: &7@LeokoGar"
-                    + "\n&8| &cUpdate:"
-                    + "\n&8|   &7" + upt
+            mi.log("\n \n&8[]=====[&7Enabling AdvancedBan&8]=====[]&r"
+                    + "\n&8| &cInformation:&r"
+                    + "\n&8|   &cName: &7AdvancedBan&r"
+                    + "\n&8|   &cDeveloper: &7Leoko&r"
+                    + "\n&8|   &cVersion: &7" + mi.getVersion() + "&r"
+                    + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)") + "&r"
+                    + "\n&8| &cSupport:&r"
+                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues &r"
+                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS &r"
+                    + "\n&8| &cTwitter: &7@LeokoGar&r"
+                    + "\n&8| &cUpdate:&r"
+                    + "\n&8|   &7" + upt  + "&r"
                     + "\n&8[]================================[]&r\n ");
         } else {
-            mi.log("&cEnabling AdvancedBan on Version &7" + mi.getVersion());
-            mi.log("&cCoded by &7Leoko &8| &7Twitter: @LeokoGar");
+            mi.log("&cEnabling AdvancedBan on Version &7&r" + mi.getVersion());
+            mi.log("&cCoded by &7Leoko &8| &7Twitter: @LeokoGar&r");
         }
     }
 
