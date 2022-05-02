@@ -157,14 +157,14 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
+    public void setCommandExecutor(String cmd, String permission, TabCompleter tabCompleter) {
         boolean friendly = getBoolean(getConfig(), "Friendly Register Commands", false);
         PluginCommand command = (friendly) ? getPlugin().getCommand(cmd) : Bukkit.getPluginCommand(cmd);
         if (command != null) {
             command.setExecutor(CommandReceiver.get());
             if (tabCompleter != null)
                 command.setTabCompleter((commandSender, c, s, args) -> {
-                    if (command.getPermission() != null && !hasPerms(commandSender, command.getPermission()))
+                    if (permission != null && !hasPerms(commandSender, permission))
                         return Collections.emptyList();
                     return tabCompleter.onTabComplete(commandSender, args);
                 });
@@ -186,7 +186,7 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-        if(permissionVault == null || player == null || !player.hasPlayedBefore())
+        if (permissionVault == null || player == null || !player.hasPlayedBefore())
             return permission -> false;
 
         return permission -> permissionVault.apply(player, permission);

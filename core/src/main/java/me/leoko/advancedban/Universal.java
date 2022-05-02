@@ -80,7 +80,7 @@ public class Universal {
 
         for (Command command : Command.values()) {
             for (String commandName : command.getNames()) {
-                mi.setCommandExecutor(commandName, command.getTabCompleter());
+                mi.setCommandExecutor(commandName, command.getPermission(), command.getTabCompleter());
             }
         }
 
