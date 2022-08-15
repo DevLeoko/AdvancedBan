@@ -2,6 +2,8 @@ General:
   Prefix: "&c&lAdvancedBan &8&l»"
   NoPerms: "&cYou don't have perms for that!"
   LayoutNotFound: "&cThere is no layout called %NAME%"
+  TimeLayoutsDisabled: "&cThe use of time layouts has been disabled"
+  MessageLayoutsDisabled: "&cThe use of message layouts has been disabled"
   # This will be the replacement for the %DURATION% variable
   TimeLayoutD: "%D%day(s) %H%h %M%min and %S%sec"
   TimeLayoutH: "%H%hour(s) %M%min and %S%sec"

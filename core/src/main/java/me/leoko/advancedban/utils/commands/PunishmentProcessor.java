@@ -83,6 +83,10 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         input.next();
         MethodInterface mi = Universal.get().getMethods();
         if (time.matches("#.+")) {
+            if (!mi.getBoolean(mi.getLayouts(), "Use Time Layouts", true)) {
+                MessageManager.sendMessage(input.getSender(), "General.TimeLayoutsDisabled", true);
+                return null;
+        }
             String layout = time.substring(1);
             if (!mi.contains(mi.getLayouts(), "Time." + layout)) {
                 MessageManager.sendMessage(input.getSender(), "General.LayoutNotFound", true, "NAME", layout);

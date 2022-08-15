@@ -1,5 +1,4 @@
 # The default layouts are in the Message.yml file!
-
 # Message-Layouts can not only be used for bans but also for mutes and warns
 # Currently available variables:
 #   %OPERATOR% - The user who dealt the punishment.
@@ -12,6 +11,13 @@
 # For warns you have also the variable %COUNT% which will be
 # replaced with the current amount of warns the player already received
 # Example usage: /ban Leoko @ExampleLayout
+
+# Use Message Layouts (If disabled, this will disable Tab-completion of Message Layouts aswell. Any entries within the Message section will be ignored)
+Use Message Layouts: true
+
+# Use Time Layouts (If disabled, this will disable Tab-completion of Time Layouts aswell. Any entries within the Time section will be ignored)
+Use Time Layouts: true
+
 Message:
   ExampleLayout:
     - '%PREFIX% &7Banned for Hacking'
