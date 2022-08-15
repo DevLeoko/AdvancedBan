@@ -7,7 +7,6 @@ Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/
 ![Minecraft Version 1.7-1.13](https://img.shields.io/badge/supports%20minecraft%20versions-1.7--1.16-brightgreen.svg)
 ![license GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-lightgrey.svg)
 [![CircleCI](https://circleci.com/gh/DevLeoko/AdvancedBan.svg?style=svg)](https://circleci.com/gh/DevLeoko/AdvancedBan)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a84ecbeefd4d4eca864152d72adfde9c)](https://www.codacy.com/app/DevLeoko/AdvancedBan?utm_source=github.com&utm_medium=referral&utm_content=DevLeoko/AdvancedBan&utm_campaign=badger)
 
 _Coded by Leoko_ 
 
@@ -23,14 +22,26 @@ To use the API you need to add AdvancedBan to your project and declare it as a d
 
 Add AdvancedBan to you project by adding the AdvancedBan.jar to your build-path or as a:
 #### Maven dependency in your pom.xml
-```
+
+Example Usage from Jitpack:
+```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+...
 <dependency>
-  <groupId>me.leoko.advancedban</groupId>
+  <groupId>com.github.DevLeoko.AdvancedBan</groupId>
   <artifactId>AdvancedBan</artifactId>
-  <version>2.1.6</version>
+  <version>v2.3.0</version>
 </dependency>
 ```
-https://github.com/DevLeoko/AdvancedBan/packages/147493
+Note: Jitpack also supports dependencies for gradle!
+
+[AdvancedBan on Jitpack](https://jitpack.io/#DevLeoko/AdvancedBan)
+
 
 You can use this API for both Spigot and Bungeecord plugins.
 Check out the [Java Docs](https://devleoko.github.io/AdvancedBan/) to get started.
