@@ -15,7 +15,7 @@
 # Use Message Layouts (If disabled, this will disable Tab-completion of Message Layouts aswell. Any entries within the Message section will be ignored)
 Use Message Layouts: true
 
-# Use Time Layouts (If disabled, this will disable Tab-completion of Time Layouts aswell. Any entries within the Time section will be ignored)
+# Use Time Layouts (If disabled, this will disable Tab-completion of Time Layouts as well. Any entries within the Time section will be ignored)
 Use Time Layouts: true
 
 Message:
