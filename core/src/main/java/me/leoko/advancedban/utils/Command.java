@@ -18,6 +18,7 @@ import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -557,7 +558,19 @@ public enum Command {
 
 
     public TabCompleter getTabCompleter() {
+        MethodInterface mi = Universal.get().getMethods();
+        if (!mi.getBoolean(mi.getConfig(), "Use Tab Completion", true)) {
+            return new TabCompleter() {
+                @Override
+                public List<String> onTabComplete(Object user, String[] args) {
+                    // Return an empty arrayList in order to not suggest tab-completions
+                    return new ArrayList<>();
+                }
+            };
+
+        }
         return tabCompleter;
+
     }
 
     public static Command getByName(String name) {
