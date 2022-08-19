@@ -20,6 +20,10 @@ public class PunishmentTabCompleter implements TabCompleter {
         final MethodInterface methodInterface = Universal.get().getMethods();
 
         List<String> suggestions = new ArrayList<>();
+        
+        if (!methodInterface.getBoolean(methodInterface.getConfig(), "Use Tab Completion", true)) {
+            return suggestions;
+        }
 
         boolean hiddenTag = false;
         if(args.length > 1 && args[0].equalsIgnoreCase("-s")) {
@@ -53,9 +57,8 @@ public class PunishmentTabCompleter implements TabCompleter {
             }
 
         } else if((temporary && args.length == 3) || args.length == 2) {
-            suggestions.add("Reason...");
             if (methodInterface.getBoolean(methodInterface.getLayouts(), "Use Message Layouts", true)) {
-                
+                suggestions.add("Reason...");
                 for (String layout : methodInterface.getKeys(methodInterface.getLayouts(), "Message")) {
                     suggestions.add("@"+layout);
                 }

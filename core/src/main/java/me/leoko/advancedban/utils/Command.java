@@ -18,7 +18,6 @@ import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -134,9 +133,9 @@ public enum Command {
     UN_WARN("ab." + PunishmentType.WARNING.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
-                if (args.length == 1) {
+                if(args.length == 1) {
                     return list("[ID]", "clear");
-                } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
+                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
@@ -173,9 +172,9 @@ public enum Command {
     UN_NOTE("ab." + PunishmentType.NOTE.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
-                if (args.length == 1) {
+                if(args.length == 1) {
                     return list("[ID]", "clear");
-                } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
+                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
@@ -220,13 +219,13 @@ public enum Command {
     CHANGE_REASON("ab.changeReason",
             "([0-9]+|(?i)(ban|mute) \\S+) .+",
             new CleanTabCompleter((user, args) -> {
-                if (args.length <= 1) {
+                if(args.length <= 1) {
                     return list("<ID>", "ban", "mute");
-                } else {
+                }else {
                     boolean playerTarget = args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("mute");
-                    if (args.length == 2 && playerTarget) {
+                    if(args.length == 2 && playerTarget){
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
-                    } else if ((playerTarget && args.length == 3) || args.length == 2) {
+                    } else if((playerTarget && args.length == 3) || args.length == 2){
                         return list("new reason...");
                     } else {
                         return list();
@@ -284,9 +283,9 @@ public enum Command {
     HISTORY("ab.history",
             "\\S+( [1-9][0-9]*)?",
             new CleanTabCompleter((user, args) -> {
-                if (args.length == 1)
+                if(args.length == 1)
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
-                else if (args.length == 2)
+                else if(args.length == 2)
                     return list("<Page>");
                 else
                     return list();
@@ -300,12 +299,12 @@ public enum Command {
     WARNS(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter((user, args) -> {
-                if (args.length == 1)
-                    if (Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                if(args.length == 1)
+                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if (args.length == 2 && !args[0].matches("\\d+"))
+                else if(args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
                     return list();
@@ -327,7 +326,7 @@ public enum Command {
                     }
 
                     String name = Universal.get().getMethods().getName(input.getSender());
-                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[] { name }));
+                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[]{name}));
                     new ListProcessor(
                             target -> PunishmentManager.get().getPunishments(identifier, PunishmentType.WARNING, true),
                             "WarnsOwn", false, false).accept(input);
@@ -338,12 +337,12 @@ public enum Command {
     NOTES(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter((user, args) -> {
-                if (args.length == 1)
-                    if (Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                if(args.length == 1)
+                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if (args.length == 2 && !args[0].matches("\\d+"))
+                else if(args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
                     return list();
@@ -365,7 +364,7 @@ public enum Command {
                     }
 
                     String name = Universal.get().getMethods().getName(input.getSender());
-                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[] { name }));
+                    String identifier = processName(new Command.CommandInput(input.getSender(), new String[]{name}));
                     new ListProcessor(
                             target -> PunishmentManager.get().getPunishments(identifier, PunishmentType.NOTE, true),
                             "NotesOwn", false, false).accept(input);
@@ -397,30 +396,23 @@ public enum Command {
                 boolean uuidCached = PunishmentManager.get().isCached(uuid);
 
                 Object sender = input.getSender();
-                MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name, "CACHED",
-                        nameCached ? cached : notCached);
-                MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid, "CACHED",
-                        uuidCached ? cached : notCached);
+                MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name, "CACHED", nameCached ? cached : notCached);
+                MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid, "CACHED", uuidCached ? cached : notCached);
                 if (Universal.get().hasPerms(sender, "ab.check.ip")) {
-                    MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip, "CACHED",
-                            ipCached ? cached : notCached);
+                    MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip, "CACHED", ipCached ? cached : notCached);
                 }
                 MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
-                MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION",
-                        mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");
+                MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION", mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");
                 if (mute != null) {
                     MessageManager.sendMessage(sender, "Check.MuteReason", false, "REASON", mute.getReason());
                 }
-                MessageManager.sendMessage(sender, "Check.Ban", false, "DURATION",
-                        ban == null ? "§anone" : ban.getType().isTemp() ? "§e" + ban.getDuration(false) : "§cperma");
+                MessageManager.sendMessage(sender, "Check.Ban", false, "DURATION", ban == null ? "§anone" : ban.getType().isTemp() ? "§e" + ban.getDuration(false) : "§cperma");
                 if (ban != null) {
                     MessageManager.sendMessage(sender, "Check.BanReason", false, "REASON", ban.getReason());
                 }
-                MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT",
-                        PunishmentManager.get().getCurrentWarns(uuid) + "");
+                MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
 
-                MessageManager.sendMessage(sender, "Check.Note", false, "COUNT",
-                        PunishmentManager.get().getCurrentNotes(uuid) + "");
+                MessageManager.sendMessage(sender, "Check.Note", false, "COUNT", PunishmentManager.get().getCurrentNotes(uuid) + "");
             },
             "Check.Usage",
             "check"),
@@ -433,14 +425,12 @@ public enum Command {
                 Calendar calendar = new GregorianCalendar();
                 Object sender = input.getSender();
                 mi.sendMessage(sender, "§c§lAdvancedBan v2 §cSystemPrefs");
-                mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":"
-                        + calendar.get(Calendar.MINUTE));
+                mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
                 mi.sendMessage(sender, "§cYour UUID (Intern) §8» §7" + mi.getInternUUID(sender));
                 if (input.hasNext()) {
                     String target = input.getPrimaryData();
                     mi.sendMessage(sender, "§c" + target + "'s UUID (Intern) §8» §7" + mi.getInternUUID(target));
-                    mi.sendMessage(sender,
-                            "§c" + target + "'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(target));
+                    mi.sendMessage(sender, "§c" + target + "'s UUID (Fetched) §8» §7" + UUIDManager.get().getUUID(target));
                 }
             },
             null,
@@ -516,21 +506,19 @@ public enum Command {
                     }
                 }
 
+
                 mi.sendMessage(sender, "§8§l§m-=====§r §c§lAdvancedBan v2 §8§l§m=====-§r ");
                 mi.sendMessage(sender, "  §cDev §8• §7Leoko");
                 mi.sendMessage(sender, "  §cStatus §8• §a§oStable");
                 mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
                 mi.sendMessage(sender, "  §cLicense §8• §7Public");
-                mi.sendMessage(sender, "  §cStorage §8• §7"
-                        + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
+                mi.sendMessage(sender, "  §cStorage §8• §7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)"));
                 mi.sendMessage(sender, "  §cServer §8• §7" + Universal.get().getServerType().toString());
                 if (Universal.get().isProxy() && Universal.get().getServerType() == ServerType.BUNGEECORD) {
                     mi.sendMessage(sender, "  §cRedisBungee §8• §7" + (Universal.isRedis() ? "true" : "false"));
                 }
                 mi.sendMessage(sender, "  §cUUID-Mode §8• §7" + UUIDManager.get().getMode());
-                mi.sendMessage(sender,
-                        "  §cPrefix §8• §7" + (mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? ""
-                                : MessageManager.getMessage("General.Prefix")));
+                mi.sendMessage(sender, "  §cPrefix §8• §7" + (mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix")));
                 mi.sendMessage(sender, "§8§l§m-=========================-§r ");
             },
             null,
@@ -555,8 +543,7 @@ public enum Command {
 
     Command(String permission, String regex, TabCompleter tabCompleter, Consumer<CommandInput> commandHandler,
             String usagePath, String... names) {
-        this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath,
-                names);
+        this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath, names);
     }
 
     public boolean validateArguments(String[] args) {
@@ -567,21 +554,9 @@ public enum Command {
         commandHandler.accept(new CommandInput(player, args));
     }
 
+
+
     public TabCompleter getTabCompleter() {
-
-        MethodInterface mi = Universal.get().getMethods();
-
-        if (!mi.getBoolean(mi.getConfig(), "Use Tab Completion", true)) {
-
-            // Return an empty Tab completer as the tab completion was disabled in the config
-            return new TabCompleter() {
-
-                @Override
-                public List<String> onTabComplete(Object user, String[] args) {
-                    return new ArrayList<>();
-                }
-            };
-        }
         return tabCompleter;
     }
 
