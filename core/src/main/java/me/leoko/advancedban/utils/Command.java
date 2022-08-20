@@ -560,7 +560,7 @@ public enum Command {
     public TabCompleter getTabCompleter() {
         MethodInterface mi = Universal.get().getMethods();
         if (!mi.getBoolean(mi.getConfig(), "Use Tab Completion", true)) {
-            return new TabCompleter() {
+            return new NullTabCompleter();
                 @Override
                 public List<String> onTabComplete(Object user, String[] args) {
                     // Return an empty arrayList in order to not suggest tab-completions
