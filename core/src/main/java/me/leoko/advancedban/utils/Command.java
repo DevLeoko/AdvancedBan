@@ -531,7 +531,7 @@ public enum Command {
     private final Consumer<CommandInput> commandHandler;
     private final String usagePath;
     private final String[] names;
-    private static final NullTabCompleter nullTabCompleter = new NullTabCompleter();
+    private static final NullTabCompleter NULL_TAB_COMPLETER  = new NullTabCompleter();
 
     Command(String permission, Predicate<String[]> syntaxValidator,
             TabCompleter tabCompleter, Consumer<CommandInput> commandHandler, String usagePath, String... names) {
@@ -561,7 +561,7 @@ public enum Command {
     public TabCompleter getTabCompleter() {
         MethodInterface mi = Universal.get().getMethods();
         if (!mi.getBoolean(mi.getConfig(), "Use Tab Completion", true)) 
-            return nullTabCompleter;
+            return NULL_TAB_COMPLETER;
         return tabCompleter;
     }
 
