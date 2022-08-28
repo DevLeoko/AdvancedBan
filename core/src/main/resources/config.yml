@@ -143,3 +143,13 @@ Disable Prefix: false
 # Off by default, so AdvancedBan can override /ban from other plugins
 # This is a Bukkit-specific option. It has no meaning on BungeeCord
 Friendly Register Commands: false
+
+# Disable Tab-Completion entirely
+# This will disable everything Tab-Completion related on AdvancedBan, such as:
+# - Layout Tab Completion (@Layout)
+# - Time Layout Tab Completion (#Time)
+# - Options Tab Completion (-s for example)
+# - Player Autocompletion
+
+# If you wish to only disable tab-completion for layouts, check out the Layouts.yml file under "Use Message Layouts" and "Use Time Layouts"
+Use Tab Completion: true

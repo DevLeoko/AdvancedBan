@@ -18,6 +18,7 @@ import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -530,6 +531,7 @@ public enum Command {
     private final Consumer<CommandInput> commandHandler;
     private final String usagePath;
     private final String[] names;
+    private static final NullTabCompleter NULL_TAB_COMPLETER = new NullTabCompleter();
 
     Command(String permission, Predicate<String[]> syntaxValidator,
             TabCompleter tabCompleter, Consumer<CommandInput> commandHandler, String usagePath, String... names) {
@@ -557,6 +559,9 @@ public enum Command {
 
 
     public TabCompleter getTabCompleter() {
+        MethodInterface mi = Universal.get().getMethods();
+        if (!mi.getBoolean(mi.getConfig(), "Use Tab Completion", true)) 
+            return NULL_TAB_COMPLETER;
         return tabCompleter;
     }
 
