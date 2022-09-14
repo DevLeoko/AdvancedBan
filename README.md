@@ -34,7 +34,7 @@ Example Usage from Jitpack:
 ...
 <dependency>
   <groupId>com.github.DevLeoko.AdvancedBan</groupId>
-  <artifactId>AdvancedBan</artifactId>
+  <artifactId>AdvancedBan-Core</artifactId>
   <version>v2.3.0</version>
 </dependency>
 ```
