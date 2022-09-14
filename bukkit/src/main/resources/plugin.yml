@@ -8,49 +8,72 @@ api-version: 1.13
 commands:
   AdvancedBan:
     description: Information about the Plugin
+    default: false
   ban:
     description: Ban a user permanently
+    permission: ab.ban.perma
   tempban:
     description: Ban a user temporarily
+    permission: ab.ban.temp
   ipban:
     description: Ban a user by IP
     aliases: [banip, ban-ip]
+    permission: ab.ipban.perma
   tempipban:
     description: Ban a user temporarily by IP
     aliases: [tipban]
+    permission: ab.ipban.temp
   kick:
     description: Kick a user
+    permission: ab.kick.use
   warn:
     description: Warn a user permanently
+    permission: ab.warn.perma
   note:
     description: Adds a note to a users file
+    permission: ab.note.use
   tempwarn:
     description: Warn a user temporarily
+    permission: ab.warn.temp
   mute:
     description: Mute a user permanently
+    permission: ab.mute.perma
   tempmute:
     description: Mute a user temporarily
+    permission: ab.mute.temp
   banlist:
     description: See all punishments
+    permission: ab.banlist
   history:
     description: See a user''s history
+    permission: ab.history
   warns:
     description: See your or a user''s warns
+    permission: ab.warns.other
   notes:
     description: See your or a user''s notes
+    permission: ab.notes.own
   check:
     description: Get all information about a user
+    permission: ab.check
   systemPrefs:
     description: Displays System-Preferences for setting up the plugin
+    permission: ab.systemprefs
   unwarn:
     description: Deletes a warn
+    permission: ab.warn.undo
   unnote:
     description: Deletes a note
+    permission: ab.note.undo
   unpunish:
     description: Deletes a punishment by ID
+    permission: ab.all.undo
   unban:
     description: Unban a user
+    permission: ab.ban.undo
   unmute:
     description: Unmute a user
+    permission: ab.mute.undo
   change-reason:
     description: Change the reason of an existing punishment
+    permission: ab.changeReason
