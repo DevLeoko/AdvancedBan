@@ -33,7 +33,7 @@ Example Usage from Jitpack:
 </repositories>
 ...
 <dependency>
-  <groupId>com.github.DevLeoko.AdvancedBan</groupId>
+  <groupId>com.github.DevLeoko</groupId>
   <artifactId>AdvancedBan</artifactId>
   <version>v2.3.0</version>
 </dependency>
