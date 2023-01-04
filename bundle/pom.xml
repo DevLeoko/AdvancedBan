@@ -56,6 +56,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>${project.groupId}.shaded.org.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.google.common</pattern>
+                            <shadedPattern>${project.groupId}.shaded.com.google.common</shadedPattern>
+                        </relocation>
                     </relocations>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
