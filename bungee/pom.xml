@@ -87,6 +87,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- CloudNet V4 -->
+        <dependency>
+            <groupId>eu.cloudnetservice.cloudnet</groupId>
+            <artifactId>bridge</artifactId>
+            <version>4.0.0-RC5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.cloudnetservice.cloudnet</groupId>
+            <artifactId>driver</artifactId>
+            <version>4.0.0-RC5</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
