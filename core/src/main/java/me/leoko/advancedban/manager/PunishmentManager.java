@@ -6,6 +6,7 @@ import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
 import me.leoko.advancedban.utils.UncheckedSQLException;
+import me.leoko.advancedban.MethodInterface;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -126,12 +127,17 @@ public class PunishmentManager {
      * @return the punishments
      */
     public List<Punishment> getPunishments(String target, PunishmentType put, boolean current) {
+        MethodInterface mi = Universal.get().getMethods();
         List<Punishment> ptList = new ArrayList<>();
+        List<PunishmentType> putList = new ArrayList<>();
+
+        if(put==null)
+            mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
 
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
-                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
+                if ((put == null && putList.contains(pt.getType().getBasic()) || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -144,7 +150,7 @@ public class PunishmentManager {
             try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
-                    if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
+                    if ((put == null && putList.contains(punishment.getType().getBasic()) || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
                     }
                 }

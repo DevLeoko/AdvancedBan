@@ -153,3 +153,16 @@ Friendly Register Commands: false
 
 # If you wish to only disable tab-completion for layouts, check out the Layouts.yml file under "Use Message Layouts" and "Use Time Layouts"
 Use Tab Completion: true
+
+# These are the Punishment types that show up when running /history on a player
+FullHistory:
+  - "BAN"
+  - "TEMP_BAN"
+  - "IP_BAN"
+  - "TEMP_IP_BAN"
+  - "MUTE"
+  - "TEMP_MUTE"
+  - "WARNING"
+  - "TEMP_WARNING"
+  - "KICK"
+  - "NOTE"
