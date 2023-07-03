@@ -96,9 +96,7 @@ public class Punishment {
             }
         }
 
-        if (!silent) {
-            announce(cWarnings);
-        }
+        announce(cWarnings, silent);
 
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
@@ -143,7 +141,7 @@ public class Punishment {
         }
     }
 
-    private void announce(int cWarnings) {
+    private void announce(int cWarnings, boolean silent) {
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
                 getType().getName() + ".Notification",
                 "OPERATOR", getOperator(),
@@ -156,7 +154,7 @@ public class Punishment {
                 "DATE", getDate(start),
                 "COUNT", cWarnings + "");
 
-        mi.notify("ab.notify." + getType().getName(), notification);
+        mi.notify(silent ? "ab.silentnotify." + getType().getName() : "ab.notify." + getType().getName(), notification);
     }
 
     public void delete() {
