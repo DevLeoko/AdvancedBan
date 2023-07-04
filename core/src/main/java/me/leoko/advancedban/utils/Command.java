@@ -292,7 +292,7 @@ public enum Command {
                     return list();
             }),
             new ListProcessor(
-                    target -> PunishmentManager.get().getPunishments(target, null, false),
+                    target -> PunishmentManager.get().getPunishments(target,  false, null),
                     "History", true, true),
             "History.Usage",
             "history"),

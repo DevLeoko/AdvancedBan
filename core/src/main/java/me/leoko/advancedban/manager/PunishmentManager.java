@@ -127,17 +127,36 @@ public class PunishmentManager {
      * @return the punishments
      */
     public List<Punishment> getPunishments(String target, PunishmentType put, boolean current) {
+        List<PunishmentType> putList= new ArrayList<>();
+        if(put == null)
+            putList = Arrays.asList(PunishmentType.values());
+        else
+            putList.add(put);
+        return getPunishments(target, current, putList);
+    }
+    /**
+     * Get all punishments which belong to the given uuid or ip.
+     *
+     * @param target  the uuid or ip to search for
+     * @param current if only active punishments should be included.
+     * @param putList a list of basic punishment types to search for ({@link PunishmentType#BAN} would also include Tempbans).
+     *                Use <code>null</code> to search for all punishments.
+     * @return the punishments
+     */
+    public List<Punishment> getPunishments(String target, boolean current, List<PunishmentType> putList) {
         MethodInterface mi = Universal.get().getMethods();
         List<Punishment> ptList = new ArrayList<>();
-        List<PunishmentType> putList = new ArrayList<>();
 
-        if(put==null)
-            mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
+        if(putList==null){
+            final ArrayList<PunishmentType> temp = new ArrayList<>();
+            mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> temp.add(PunishmentType.valueOf(typeString))));
+            putList = temp;
+        }
 
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
-                if ((put == null && putList.contains(pt.getType().getBasic()) || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
+                if (putList.contains(pt.getType().getBasic()) && pt.getUuid().equals(target)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -150,7 +169,7 @@ public class PunishmentManager {
             try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
-                    if ((put == null && putList.contains(punishment.getType().getBasic()) || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
+                    if (putList.contains(punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
                     }
                 }
