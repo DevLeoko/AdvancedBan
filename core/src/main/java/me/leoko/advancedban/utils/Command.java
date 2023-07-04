@@ -298,11 +298,6 @@ public enum Command {
                 List<PunishmentType> putList = new ArrayList<>();
                 mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
 
-                if (!Universal.get().hasPerms(input.getSender(), "ab.history")) {
-                    MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
-                    return;
-                }
-
                 new ListProcessor(
                         target -> PunishmentManager.get().getPunishmentsOfTypes(target, putList, false),
                         "History", true, true).accept(input);
