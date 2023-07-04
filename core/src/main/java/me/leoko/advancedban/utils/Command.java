@@ -16,10 +16,8 @@ import me.leoko.advancedban.utils.tabcompletion.CleanTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.NullTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-import org.apache.commons.io.file.Counters;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
