@@ -134,12 +134,13 @@ public class PunishmentManager {
             putList.add(put);
         return getPunishments(target, current, putList);
     }
+
     /**
      * Get all punishments which belong to the given uuid or ip.
      *
      * @param target  the uuid or ip to search for
      * @param current if only active punishments should be included.
-     * @param putList a list of basic punishment types to search for ({@link PunishmentType#BAN} would also include Tempbans).
+     * @param putList a list of basic punishment types to search for
      *                Use <code>null</code> to search for all punishments.
      * @return the punishments
      */
