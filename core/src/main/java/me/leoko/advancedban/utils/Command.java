@@ -304,7 +304,7 @@ public enum Command {
                 }
 
                 new ListProcessor(
-                        target -> PunishmentManager.get().getPunishments(target, putList, false),
+                        target -> PunishmentManager.get().getPunishmentsOfTypes(target, putList, false),
                         "History", true, true).accept(input);
             },
             "History.Usage",

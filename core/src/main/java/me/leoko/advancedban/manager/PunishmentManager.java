@@ -126,7 +126,7 @@ public class PunishmentManager {
      * @return the punishments
      */
     public List<Punishment> getPunishments(String target, PunishmentType put, boolean current) {
-        return getPunishments(target, put == null ? Arrays.asList(PunishmentType.values()) : Arrays.asList(put), current);
+        return getPunishmentsOfTypes(target, put == null ? Arrays.asList(PunishmentType.values()) : Arrays.asList(put), current);
     }
 
     /**
@@ -137,8 +137,7 @@ public class PunishmentManager {
      * @param current if only active punishments should be included.
      * @return the punishments
      */
-    public List<Punishment> getPunishments(String target, List<PunishmentType> putList, boolean current) {
-        System.out.println("putList");
+    public List<Punishment> getPunishmentsOfTypes(String target, List<PunishmentType> putList, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
 
         if (isCached(target)) {
