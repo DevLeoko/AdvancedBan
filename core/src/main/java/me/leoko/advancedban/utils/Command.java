@@ -301,7 +301,7 @@ public enum Command {
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1)
-                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                    if(Universal.get().getMethods().hasPerms(user, "ab.warns.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
