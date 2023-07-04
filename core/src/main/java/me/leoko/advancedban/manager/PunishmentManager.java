@@ -6,7 +6,6 @@ import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import me.leoko.advancedban.utils.SQLQuery;
 import me.leoko.advancedban.utils.UncheckedSQLException;
-import me.leoko.advancedban.MethodInterface;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -127,28 +126,20 @@ public class PunishmentManager {
      * @return the punishments
      */
     public List<Punishment> getPunishments(String target, PunishmentType put, boolean current) {
-        return put == null ? getPunishments(target, current, PunishmentType.values()) : getPunishments(target, current, put);
+        return getPunishments(target, put == null ? Arrays.asList(PunishmentType.values()) : Arrays.asList(put), current);
     }
 
     /**
      * Get all punishments which belong to the given uuid or ip.
      *
      * @param target  the uuid or ip to search for
+     * @param putList a List of the basic punishment type to search for ({@link PunishmentType#BAN} would also include Tempbans).
      * @param current if only active punishments should be included.
-     * @param put     an array of the basic punishment type to search for ({@link PunishmentType#BAN} would also include Tempbans).
-     *      *                Use <code>null</code> to search for all punishments.
      * @return the punishments
      */
-    public List<Punishment> getPunishments(String target, boolean current, PunishmentType ... put ) {
-        MethodInterface mi = Universal.get().getMethods();
+    public List<Punishment> getPunishments(String target, List<PunishmentType> putList, boolean current) {
+        System.out.println("putList");
         List<Punishment> ptList = new ArrayList<>();
-        List<PunishmentType> putList;
-
-        if(put==null) {
-            putList = new ArrayList<>();
-            mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
-        } else
-            putList = Arrays.asList(put);
 
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {

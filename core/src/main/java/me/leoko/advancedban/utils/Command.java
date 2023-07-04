@@ -16,8 +16,10 @@ import me.leoko.advancedban.utils.tabcompletion.CleanTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.NullTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
+import org.apache.commons.io.file.Counters;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -291,9 +293,20 @@ public enum Command {
                 else
                     return list();
             }),
-            new ListProcessor(
-                    target -> PunishmentManager.get().getPunishments(target,  false, null),
-                    "History", true, true),
+            input -> {
+                MethodInterface mi = Universal.get().getMethods();
+                List<PunishmentType> putList = new ArrayList<>();
+                mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
+
+                if (!Universal.get().hasPerms(input.getSender(), "ab.history")) {
+                    MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
+                    return;
+                }
+
+                new ListProcessor(
+                        target -> PunishmentManager.get().getPunishments(target, putList, false),
+                        "History", true, true).accept(input);
+            },
             "History.Usage",
             "history"),
 

@@ -42,13 +42,9 @@ public class UpdateManager {
                         "# These are the Punishment types that show up when running /history on a player",
                         "FullHistory:",
                         "  - \"BAN\"",
-                        "  - \"TEMP_BAN\"",
                         "  - \"IP_BAN\"",
-                        "  - \"TEMP_IP_BAN\"",
                         "  - \"MUTE\"",
-                        "  - \"TEMP_MUTE\"",
                         "  - \"WARNING\"",
-                        "  - \"TEMP_WARNING\"",
                         "  - \"KICK\"",
                         "  - \"NOTE\""
                 ), true);
