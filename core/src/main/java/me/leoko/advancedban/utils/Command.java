@@ -296,8 +296,7 @@ public enum Command {
                     return list();
             }),
             input -> {
-                PunishmentType[] puts={};
-                hasPerm(input, "History", false, puts);
+                hasPerm(input, "History", null, false);
             },
             "History.Usage",
             "history"),
@@ -315,7 +314,7 @@ public enum Command {
                 else
                     return list();
             }),
-            input -> hasPerm(input, "Warns", true, PunishmentType.WARNING),
+            input -> hasPerm(input, "Warns", PunishmentType.WARNING, true),
             "Warns.Usage",
             "warns"),
     NOTES(null,
@@ -331,7 +330,7 @@ public enum Command {
                 else
                     return list();
             }),
-            input -> hasPerm(input, "Notes", true, PunishmentType.NOTE),
+            input -> hasPerm(input, "Notes", PunishmentType.NOTE, true),
             "Notes.Usage",
             "notes"),
 
@@ -486,15 +485,15 @@ public enum Command {
             null,
             "advancedban");
 
-    private static void hasPerm(Command.CommandInput input, String FriendlyName, boolean current, PunishmentType ... puts){
+    private static void hasPerm(Command.CommandInput input, String FriendlyName, PunishmentType put, boolean current){
         MethodInterface mi = Universal.get().getMethods();
         List<PunishmentType> Types;
-        if(puts.length == 0){
+
+        if(put == null){
             Types = new ArrayList<>();
             mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> Types.add(PunishmentType.valueOf(typeString))));
         }else
-            Types = Arrays.asList(puts);
-
+            Types.add(put);
 
         if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
             if (!Universal.get().hasPerms(input.getSender(), "ab." + FriendlyName.toLowerCase() + ".other")) {
