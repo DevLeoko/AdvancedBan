@@ -487,12 +487,11 @@ public enum Command {
 
     private static void hasPerm(Command.CommandInput input, String FriendlyName, PunishmentType put, boolean current){
         MethodInterface mi = Universal.get().getMethods();
-        List<PunishmentType> Types;
+        List<PunishmentType> Types = new ArrayList<>();
 
-        if(put == null){
-            Types = new ArrayList<>();
+        if(put == null)
             mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> Types.add(PunishmentType.valueOf(typeString))));
-        }else
+        else
             Types.add(put);
 
         if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
