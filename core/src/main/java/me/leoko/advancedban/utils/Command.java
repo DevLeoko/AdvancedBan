@@ -291,9 +291,15 @@ public enum Command {
                 else
                     return list();
             }),
-            new ListProcessor(
-                    target -> PunishmentManager.get().getPunishments(target, null, false),
-                    "History", true, true),
+            input -> {
+                MethodInterface mi = Universal.get().getMethods();
+                List<PunishmentType> putList = new ArrayList<>();
+                mi.getStringList(mi.getConfig(),"FullHistory").forEach((typeString -> putList.add(PunishmentType.valueOf(typeString))));
+
+                new ListProcessor(
+                        target -> PunishmentManager.get().getPunishmentsOfTypes(target, putList, false),
+                        "History", true, true).accept(input);
+            },
             "History.Usage",
             "history"),
 

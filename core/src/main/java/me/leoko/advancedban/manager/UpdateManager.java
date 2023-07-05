@@ -36,6 +36,23 @@ public class UpdateManager {
 
         if (mi.isUnitTesting()) return;
 
+        if(!mi.contains(mi.getConfig(), "FullHistory")){
+            try {
+                FileUtils.writeLines(new File(mi.getDataFolder(), "config.yml"), "UTF8", Arrays.asList(
+                        "# These are the Punishment types that show up when running /history on a player",
+                        "FullHistory:",
+                        "  - \"BAN\"",
+                        "  - \"IP_BAN\"",
+                        "  - \"MUTE\"",
+                        "  - \"WARNING\"",
+                        "  - \"KICK\"",
+                        "  - \"NOTE\""
+                ), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (!mi.contains(mi.getMessages(), "UnNote.Usage")) {
             try {
                 addMessage("Check:", "  Note: \"&cNotes &8» &7%COUNT%\"", 1);

@@ -126,12 +126,24 @@ public class PunishmentManager {
      * @return the punishments
      */
     public List<Punishment> getPunishments(String target, PunishmentType put, boolean current) {
+        return getPunishmentsOfTypes(target, put == null ? Arrays.asList(PunishmentType.values()) : Arrays.asList(put), current);
+    }
+
+    /**
+     * Get all punishments which belong to the given uuid or ip.
+     *
+     * @param target  the uuid or ip to search for
+     * @param putList a List of the basic punishment type to search for ({@link PunishmentType#BAN} would also include Tempbans).
+     * @param current if only active punishments should be included.
+     * @return the punishments
+     */
+    public List<Punishment> getPunishmentsOfTypes(String target, List<PunishmentType> putList, boolean current) {
         List<Punishment> ptList = new ArrayList<>();
 
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
-                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
+                if (putList.contains(pt.getType().getBasic()) && pt.getUuid().equals(target)) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -144,7 +156,7 @@ public class PunishmentManager {
             try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
-                    if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
+                    if (putList.contains(punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
                     }
                 }
