@@ -36,6 +36,25 @@ public class UpdateManager {
 
         if (mi.isUnitTesting()) return;
 
+        if (!mi.contains(mi.getMessages(), "HistoryOwn")) {
+            addMessage("Warns:", "", 0);
+            addMessage("Warns:", "HistoryOwn:", -1);
+            addMessage("Warns:", "  OutOfIndex: \"&cThere is no page %PAGE%!\"", -1);
+            addMessage("Warns:", "  NoEntries: \"&c&oYou have no punishments yet\"", -1);
+            addMessage("Warns:", "  Header:", -1);
+            addMessage("Warns:", "  - \"%PREFIX% &7Your History:\"", -1);
+            addMessage("Warns:", "  - \"&e&oDuration &8| &7&oOperator\"", -1);
+            addMessage("Warns:", "  - \"&c&oType &8> &7&oReason\"", -1);
+            addMessage("Warns:", "  - \"&7\"", -1);
+            addMessage("Warns:", "  Entry:", -1);
+            addMessage("Warns:", "  - \"&8[&e%DATE%&8]\"", -1);
+            addMessage("Warns:", "  - \"&e%DURATION% &8| &7%OPERATOR%\"", -1);
+            addMessage("Warns:", "  - \"&c%TYPE% &8> &7&o%REASON%\"", -1);
+            addMessage("Warns:", "  - \"&7\"", -1);
+            addMessage("Warns:", "  Footer: \"&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Total entries: &e&o%COUNT%\"", -1);
+            addMessage("Warns:", "  PageFooter: \"&7Use &e&o/history %NEXT_PAGE% &7to see the next page\"", -1);
+        }
+
         if(!mi.contains(mi.getConfig(), "FullHistory")){
             try {
                 FileUtils.writeLines(new File(mi.getDataFolder(), "config.yml"), "UTF8", Arrays.asList(
