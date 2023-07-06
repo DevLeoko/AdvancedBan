@@ -501,7 +501,7 @@ public enum Command {
             }
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishmentsOfTypes(target, Types, current),
-                    FriendlyName, false, true).accept(input);
+                    FriendlyName, put == null, true).accept(input);
         } else {
             if (!Universal.get().hasPerms(input.getSender(), "ab." + FriendlyName.toLowerCase() + ".own")) {
                 MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
@@ -512,7 +512,7 @@ public enum Command {
             String identifier = processName(new Command.CommandInput(input.getSender(), new String[]{name}));
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishmentsOfTypes(identifier, Types, current),
-                    FriendlyName + "Own", false, false).accept(input);
+                    FriendlyName + "Own", put == null, false).accept(input);
         }
     }
     private final String permission;
