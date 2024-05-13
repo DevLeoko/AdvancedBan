@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>me.leoko.advancedban</groupId>
+        <artifactId>AdvancedBan</artifactId>
+        <version>2.4.1</version>
+    </parent>
+
+    <artifactId>AdvancedBan-Velocity</artifactId>
+    <packaging>jar</packaging>
+
+    <repositories>
+        <repository>
+            <id>velocity</id>
+            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>1.1.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.leoko.advancedban</groupId>
+            <artifactId>AdvancedBan-Core</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <!-- Should be the same version as HikariCP uses -->
+            <version>1.7.30</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.apache.commons</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.apache.commons</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.zaxxer.hikari</pattern>
+                            <shadedPattern>${project.groupId}.shaded.com.zaxxer.hikari</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.hsqldb</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.hsqldb</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.mariadb.jdbc</pattern>
+                            <shadedPattern>${project.groupId}.shaded.org.mariadb.jdbc</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/java-templates</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java-templates</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
