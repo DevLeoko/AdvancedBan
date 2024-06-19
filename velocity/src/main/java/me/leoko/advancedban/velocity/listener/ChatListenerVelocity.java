@@ -17,4 +17,5 @@ public class ChatListenerVelocity {
             event.setResult(PlayerChatEvent.ChatResult.denied());
         }
     }
+
 }

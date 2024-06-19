@@ -1,32 +1,20 @@
 package me.leoko.advancedban.velocity;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.leoko.advancedban.AbstractMethodInterface;
-import me.leoko.advancedban.ServerType;
+import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.VersionInfo;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
-import me.leoko.advancedban.velocity.listener.CommandReceiverVelocity;
-import me.leoko.advancedban.velocity.event.PunishmentEvent;
-import me.leoko.advancedban.velocity.event.RevokePunishmentEvent;
-import me.leoko.advancedban.velocity.utils.LuckPermsOfflineUser;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,21 +27,42 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> {
+import me.leoko.advancedban.velocity.event.PunishmentEvent;
+import me.leoko.advancedban.velocity.listener.CommandReceiverVelocity;
+import me.leoko.advancedban.velocity.utils.LuckPermsOfflineUser;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.simpleyaml.configuration.file.YamlFile;
+import org.slf4j.Logger;
 
+public class VelocityMethods implements MethodInterface {
+
+    private final Logger logger;
     private final ProxyServer server;
     private final Path dataDirectory;
-    private final Logger logger;
 
     private boolean luckPermsSupport;
 
-    public VelocityMethods(Path dataDirectory,
-                           final @NonNull ProxyServer server,
-                           Logger logger) {
-        super(dataDirectory);
+    private final File configFile;
+    private final File messageFile;
+    private final File layoutFile;
+    private final File mysqlFile;
+    private YamlFile config;
+    private YamlFile messages;
+    private YamlFile layouts;
+    private YamlFile mysql;
+
+
+
+
+    public VelocityMethods(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger){
         this.dataDirectory = dataDirectory;
         this.server = server;
         this.logger = logger;
+
+        this.configFile = new File(getDataFolder(), "config.yml");
+        this.messageFile =new File(getDataFolder(), "Messages.yml");
+        this.layoutFile = new File(getDataFolder(), "Layouts.yml");
+        this.mysqlFile = new File(getDataFolder(), "MySQL.yml");
 
         if (server.getPluginManager().getPlugin("luckperms").isPresent()) {
             luckPermsSupport = true;
@@ -62,16 +71,42 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
             luckPermsSupport = false;
             log("[AdvancedBan] No offline permission support through LuckPerms");
         }
-
     }
 
 
-    @Override
-    protected ConfigurationNode loadConfiguration(Path configPath) throws IOException {
-        YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(configPath).build();
 
-        //YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(configPath).build();
-        return loader.load();
+
+    @Override
+    public void loadFiles() {
+        try {
+            config = new YamlFile(configFile);
+            messages = new YamlFile(messageFile);
+            layouts = new YamlFile(layoutFile);
+            mysql = new YamlFile(mysqlFile);
+
+            if (!configFile.exists()) {
+                config.createNewFile();
+            }
+            if (!messageFile.exists()) {
+                messages.createNewFile();
+            }
+            if (!layoutFile.exists()) {
+                layouts.createNewFile();
+            }
+            if (!mysqlFile.exists()) {
+                mysql.createNewFile();
+            }
+            config.load();
+            messages.load();
+            layouts.load();
+            mysql.load();
+
+
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+
     }
 
     @Override
@@ -96,39 +131,44 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
 
     @Override
     public String getVersion() {
-        return VersionInfo.VERSION;
+        return "2.3.0";
     }
 
-    // Object.toString() is considered safe in this scenario (as per Configurate Docs)
     @Override
     public String[] getKeys(Object file, String path) {
-        return ((ConfigurationNode)file).getNode(path.split("\\.")).getChildrenMap().keySet().stream().map(Object::toString).toArray(String[]::new);
+        return ((YamlFile) file).getConfigurationSection(path).getKeys(true).toArray(new String[0]);
+
+
+    }
+
+    @Override
+    public Object getConfig() {
+        return config;
+    }
+
+    @Override
+    public Object getMessages() {
+        return messages;
+    }
+
+    @Override
+    public Object getLayouts() {
+        return layouts;
     }
 
     @Override
     public void setupMetrics() {
-        // no bstats for velocity yet
-    }
 
-
-    @Override @Deprecated
-    public boolean isBungee() {
-        return false;
     }
 
     @Override
-    public boolean isProxy() {
+    public boolean isBungee() {
         return true;
     }
 
     @Override
-    public ServerType getServerType() {
-        return ServerType.VELOCITY;
-    }
-
-    @Override
-    public String clearFormatting(String text) {
-        return text.replaceAll("(&[^\\s])+", "");
+    public String clearFormatting(String s) {
+        return s.replaceAll("(&[^\\s])+", "");
     }
 
     @Override
@@ -142,112 +182,113 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     }
 
     @Override
-    public void setCommandExecutor(String cmd, TabCompleter tabCompleter) {
+    public void setCommandExecutor(String cmd, String permission, TabCompleter tabCompleter) {
+
+        //With permissions
         CommandMeta meta = server.getCommandManager().metaBuilder(cmd).build();
         server.getCommandManager().register(meta, new CommandReceiverVelocity(server, cmd));
     }
 
     @Override
-    public void sendMessage(Object player, String msg) {
-        ((CommandSource) player).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
+    public void sendMessage(Object o, String s) {
+        ((CommandSource) o).sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(s));
     }
 
     @Override
-    public String getName(Object player) {
-        if (player instanceof Player) {
-            return ((Player) player).getUsername();
+    public String getName(Object o) {
+        if (o instanceof Player) {
+            return ((Player) o).getUsername();
         } else {
             return "CONSOLE";
         }
     }
 
     @Override
-    public String getName(String uuid) {
-        return server.getPlayer(UUID.fromString(uuid)).get().getUsername();
+    public String getName(String s) {
+        return server.getPlayer(UUID.fromString(s)).get().getUsername();
     }
 
     @Override
-    public String getIP(Object player) {
-        return ((Player)player).getRemoteAddress().getHostName();
+    public String getIP(Object o) {
+        return ((Player) o).getRemoteAddress().getHostName();
     }
 
     @Override
-    public String getInternUUID(Object player) {
-        return player instanceof  Player ? ((Player) player).getUniqueId().toString().replace("-", "") : "none";
+    public String getInternUUID(Object o) {
+        return o instanceof  Player ? ((Player) o).getUniqueId().toString().replace("-", "") : "none";
     }
 
     @Override
-    public String getInternUUID(String player) {
-        Optional<Player> optionalPlayer = server.getPlayer(player);
+    public String getInternUUID(String s) {
+        Optional<Player> optionalPlayer = server.getPlayer(s);
         return optionalPlayer.map(value -> value.getUniqueId().toString().replace("-", "")).orElse(null);
     }
 
     @Override
-    public boolean hasPerms(Object player, String perms) {
-        return ((CommandSource) player).hasPermission(perms);
+    public boolean hasPerms(Object o, String s) {
+        return ((CommandSource) o).hasPermission(s);
     }
 
     @Override
-    public Permissionable getOfflinePermissionPlayer(String name) {
-        if(luckPermsSupport) return new LuckPermsOfflineUser(name);
-
+    public Permissionable getOfflinePermissionPlayer(String s) {
+        if(luckPermsSupport) return new LuckPermsOfflineUser(s);
         return permission -> false;
     }
 
     @Override
-    public boolean isOnline(String name) {
-        return server.getPlayer(name).isPresent();
+    public boolean isOnline(String s) {
+        return server.getPlayer(s).isPresent();
     }
 
     @Override
-    public Player getPlayer(String name) {
-        return server.getPlayer(name).orElse(null);
+    public Object getPlayer(String s) {
+        return server.getPlayer(s).orElse(null);
     }
 
     @Override
-    public void kickPlayer(String player, String reason) {
-        server.getPlayer(player).get().disconnect(LegacyComponentSerializer.legacyAmpersand().deserialize(reason));
+    public void kickPlayer(String s, String s1) {
+        server.getPlayer(s).get().disconnect(LegacyComponentSerializer.legacyAmpersand().deserialize(s1));
     }
 
     @Override
-    public Player[] getOnlinePlayers() {
+    public Object[] getOnlinePlayers() {
         return server.getAllPlayers().toArray(new Player[]{});
     }
 
     @Override
-    public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).repeat(l2*50, TimeUnit.MILLISECONDS).schedule();
+    public void scheduleAsyncRep(Runnable runnable, long l, long l1) {
+        server.getScheduler().buildTask(getPlugin(), runnable).delay(l*50, TimeUnit.MILLISECONDS).repeat(l1*50, TimeUnit.MILLISECONDS).schedule();
     }
 
     @Override
-    public void scheduleAsync(Runnable rn, long l1) {
-        server.getScheduler().buildTask(getPlugin(), rn).delay(l1*50, TimeUnit.MILLISECONDS).schedule();
+    public void scheduleAsync(Runnable runnable, long l) {
+        server.getScheduler().buildTask(getPlugin(), runnable).delay(l*50, TimeUnit.MILLISECONDS).schedule();
     }
 
     @Override
-    public void runAsync(Runnable rn) {
-        server.getScheduler().buildTask(getPlugin(), rn).schedule();
+    public void runAsync(Runnable runnable) {
+        server.getScheduler().buildTask(getPlugin(), runnable).schedule();
     }
 
     @Override
-    public void runSync(Runnable rn) {
-        rn.run();
+    public void runSync(Runnable runnable) {
+        runnable.run();
     }
 
     @Override
-    public void executeCommand(String cmd) {
-        server.getCommandManager().executeAsync(server.getConsoleCommandSource(), cmd).exceptionally((ex) -> {
-            ex.printStackTrace();
+    public void executeCommand(String s) {
+        server.getCommandManager().executeAsync(server.getConsoleCommandSource(), s).exceptionally((ex) -> {
+            logger.error(ex.getMessage());
             return null;
         });
     }
 
     @Override
-    public boolean callChat(Object player) {
-        Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)));
+    public boolean callChat(Object o) {
+        Punishment pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(o)));
         if (pnt != null) {
             for (String str : pnt.getLayout()) {
-                sendMessage(player, str);
+                sendMessage(o, str);
             }
             return true;
         }
@@ -255,12 +296,12 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     }
 
     @Override
-    public boolean callCMD(Object player, String cmd) {
+    public boolean callCMD(Object o, String s) {
         Punishment pnt;
-        if (Universal.get().isMuteCommand(cmd.substring(1))
-                && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(player)))) != null) {
+        if (Universal.get().isMuteCommand(s.substring(1))
+                && (pnt = PunishmentManager.get().getMute(UUIDManager.get().getUUID(getName(o)))) != null) {
             for (String str : pnt.getLayout()) {
-                sendMessage(player, str);
+                sendMessage(o, str);
             }
             return true;
         }
@@ -268,101 +309,97 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     }
 
     @Override
-    public String parseJSON(InputStreamReader json, String key) {
+    public Object getMySQLFile() {
+        return null;
+    }
+
+    @Override
+    public String parseJSON(InputStreamReader inputStreamReader, String s) {
         JsonObject element;
         try {
-            element = JsonParser.parseReader(json).getAsJsonObject();
+            element = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
         } catch (IllegalStateException e) {
             return null;
         }
-        JsonElement obj = element.get(key);
+        JsonElement obj = element.get(s);
         return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
-    public String parseJSON(String json, String key) {
+    public String parseJSON(String s, String s1) {
         JsonObject element;
         try {
-            element = (JsonObject) JsonParser.parseString(json).getAsJsonObject();
+            element = (JsonObject) JsonParser.parseString(s).getAsJsonObject();
         } catch (IllegalStateException e) {
             return null;
         }
-        JsonElement obj = element.get(key);
+        JsonElement obj = element.get(s1);
         return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
-    public Boolean getBoolean(Object file, String path) {
-        return getConfigNode(file, path).getBoolean();
+    public Boolean getBoolean(Object o, String s) {
+        return ((YamlFile) o).getBoolean(s);
     }
 
     @Override
-    public String getString(Object file, String path) {
-        return getConfigNode(file, path).getString();
+    public String getString(Object o, String s) {
+        return ((YamlFile) o).getString(s);
     }
 
     @Override
-    public Long getLong(Object file, String path) {
-        return getConfigNode(file, path).getLong();
+    public Long getLong(Object o, String s) {
+        return ((YamlFile) o).getLong(s);
     }
 
     @Override
-    public Integer getInteger(Object file, String path) {
-        return getConfigNode(file, path).getInt();
+    public Integer getInteger(Object o, String s) {
+        return ((YamlFile) o).getInt(s);
     }
 
     @Override
-    public List<String> getStringList(Object file, String path) {
-        try {
-            return getConfigNode(file, path).getList(TypeToken.of(String.class));
-        } catch (ObjectMappingException e) {
-            throw new RuntimeException(e);
-        }
+    public List<String> getStringList(Object o, String s) {
+        return ((YamlFile) o).getStringList(s);
     }
 
     @Override
-    public boolean getBoolean(Object file, String path, boolean def) {
-        return getConfigNode(file, path).getBoolean(def);
+    public boolean getBoolean(Object o, String s, boolean b) {
+        return ((YamlFile) o).getBoolean(s, b);
     }
 
     @Override
-    public String getString(Object file, String path, String def) {
-        return getConfigNode(file, path).getString(def);
+    public String getString(Object o, String s, String s1) {
+        return ((YamlFile) o).getString(s, s1);
     }
 
     @Override
-    public long getLong(Object file, String path, long def) {
-        return getConfigNode(file, path).getLong(def);
+    public long getLong(Object o, String s, long l) {
+        return ((YamlFile) o).getLong(s, l);
     }
 
     @Override
-    public int getInteger(Object file, String path, int def) {
-        return getConfigNode(file, path).getInt(def);
+    public int getInteger(Object o, String s, int i) {
+        return ((YamlFile) o).getInt(s, i);
     }
 
     @Override
-    public boolean contains(Object file, String path) {
-        return !getConfigNode(file, path).isEmpty();
+    public boolean contains(Object o, String s) {
+        return ((YamlFile) o).contains(s);
     }
 
     @Override
-    public String getFileName(Object file) {
-        return "[Only Available in the Bukkit Version!]";
+    public String getFileName(Object o) {
+        return "[Only available in the Bukkit Version!]";
     }
 
     @Override
     public void callPunishmentEvent(Punishment punishment) {
-        callPunishmentEvent(punishment, false);
+        server.getEventManager().fireAndForget(new PunishmentEvent(punishment));
     }
 
     @Override
-    public void callPunishmentEvent(Punishment punishment, boolean silent) {
-        server.getEventManager().fireAndForget(new PunishmentEvent(punishment, silent));
-    }
-
-    @Override
-    public void callRevokePunishmentEvent(Punishment punishment, boolean massClear) {
-        server.getEventManager().fireAndForget(new RevokePunishmentEvent(punishment, massClear));
+    public void callRevokePunishmentEvent(Punishment punishment, boolean b) {
+        server.getEventManager().fireAndForget(new PunishmentEvent(punishment, b));
     }
 
     @Override
@@ -371,25 +408,21 @@ public class VelocityMethods extends AbstractMethodInterface<ConfigurationNode> 
     }
 
     @Override
-    public void notify(String perm, List<String> notification) {
+    public void notify(String s, List<String> list) {
         server.getAllPlayers().forEach(player -> {
-            if (player.hasPermission(perm)) {
-                notification.forEach(str -> sendMessage(player, str));
+            if (player.hasPermission(s)) {
+                list.forEach(str -> sendMessage(player, str));
             }
         });
     }
 
     @Override
-    public void log(String msg) {
-        server.getConsoleCommandSource().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
+    public void log(String s) {
+        server.getConsoleCommandSource().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(s));
     }
 
     @Override
     public boolean isUnitTesting() {
         return false;
-    }
-
-    private ConfigurationNode getConfigNode(Object file, String path) {
-        return ((ConfigurationNode) file).getNode((Object[]) path.split("\\."));
     }
 }

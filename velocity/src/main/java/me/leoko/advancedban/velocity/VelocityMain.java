@@ -3,18 +3,16 @@ package me.leoko.advancedban.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.velocity.listener.ChatListenerVelocity;
 import me.leoko.advancedban.velocity.listener.ConnectionListenerVelocity;
 import org.slf4j.Logger;
-import me.leoko.advancedban.Universal;
 
 import java.nio.file.Path;
-
 
 @Plugin(
         id = "advancedban",
@@ -30,35 +28,29 @@ public class VelocityMain {
     private final Logger logger;
     private final Path dataDirectory;
     private final ProxyServer server;
+    private static VelocityMain instance;
 
-    private static VelocityMain velocityMain;
 
     @Inject
-    public VelocityMain(Logger logger, @DataDirectory Path dataDirectory, ProxyServer server) {
-        velocityMain = this;
-        this.logger = logger;
-        this.dataDirectory = dataDirectory;
+    public VelocityMain(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger){
         this.server = server;
+        this.dataDirectory = dataDirectory;
+        this.logger = logger;
+        instance = this;
     }
-
 
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        Universal.get().setup(new VelocityMethods(dataDirectory, server, logger));
 
-        server.getEventManager().register(this, new ChatListenerVelocity());
+        Universal.get().setup(new VelocityMethods(server, dataDirectory, logger));
+
         server.getEventManager().register(this, new ConnectionListenerVelocity());
+        server.getEventManager().register(this, new ChatListenerVelocity());
 
     }
-
-    @Subscribe
-    public void onProxyShutdown(ProxyShutdownEvent event) {
-        Universal.get().shutdown();
-    }
-
 
     public static VelocityMain get() {
-        return velocityMain;
+        return instance;
     }
 }

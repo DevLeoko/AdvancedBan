@@ -1,6 +1,5 @@
 package me.leoko.advancedban.velocity.utils;
 
-
 import me.leoko.advancedban.utils.Permissionable;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -15,11 +14,10 @@ public class LuckPermsOfflineUser implements Permissionable {
     public LuckPermsOfflineUser(String name) {
         final UserManager userManager = LuckPermsProvider.get().getUserManager();
         final UUID uuid = userManager.lookupUniqueId(name).join();
-        if(uuid != null) {
+        if (uuid != null) {
             this.permissionUser = userManager.loadUser(uuid).join();
         }
     }
-
 
     @Override
     public boolean hasPermission(String permission) {

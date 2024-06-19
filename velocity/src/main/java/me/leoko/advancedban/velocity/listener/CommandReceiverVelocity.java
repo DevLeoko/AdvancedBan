@@ -1,5 +1,4 @@
 package me.leoko.advancedban.velocity.listener;
-
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
