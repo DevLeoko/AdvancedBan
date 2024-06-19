@@ -18,6 +18,7 @@ import java.nio.file.Path;
         id = "advancedban",
         name = "AdvancedBan",
         version = "1.0-SNAPSHOT",
+        authors = {"Leoko"},
         dependencies = {
                 @Dependency(id = "luckperms", optional = true)
         }
