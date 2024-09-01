@@ -44,10 +44,10 @@ public class VelocityMain {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
 
-        Universal.get().setup(new VelocityMethods(server, dataDirectory, logger));
-
         server.getEventManager().register(this, new ConnectionListenerVelocity());
         server.getEventManager().register(this, new ChatListenerVelocity());
+
+        Universal.get().setup(new VelocityMethods(server, dataDirectory, logger));
 
     }
 

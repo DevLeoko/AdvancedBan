@@ -11,12 +11,12 @@ public class DynamicDataSource {
     public DynamicDataSource(boolean preferMySQL) throws ClassNotFoundException {
         MethodInterface mi = Universal.get().getMethods();
         if (preferMySQL) {
-            String ip = mi.getString(mi.getMySQLFile(), "MySQL.IP", "Unknown");
-            String dbName = mi.getString(mi.getMySQLFile(), "MySQL.DB-Name", "Unknown");
-            String usrName = mi.getString(mi.getMySQLFile(), "MySQL.Username", "Unknown");
-            String password = mi.getString(mi.getMySQLFile(), "MySQL.Password", "Unknown");
-            String properties = mi.getString(mi.getMySQLFile(), "MySQL.Properties", "verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8");
-            int port = mi.getInteger(mi.getMySQLFile(), "MySQL.Port", 3306);
+            String ip = mi.getString(mi.getConfig(), "MySQL.IP", "Unknown");
+            String dbName = mi.getString(mi.getConfig(), "MySQL.DB-Name", "Unknown");
+            String usrName = mi.getString(mi.getConfig(), "MySQL.Username", "Unknown");
+            String password = mi.getString(mi.getConfig(), "MySQL.Password", "Unknown");
+            String properties = mi.getString(mi.getConfig(), "MySQL.Properties", "verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8");
+            int port = mi.getInteger(mi.getConfig(), "MySQL.Port", 3306);
 
             Class.forName("com.mysql.jdbc.Driver");
             config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?"+properties);
