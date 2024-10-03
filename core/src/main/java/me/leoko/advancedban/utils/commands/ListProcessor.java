@@ -53,7 +53,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         punishments
                 .stream()
-                .filter(punishment -> punishment.isExpired() && !history)
+                .filter(punishment -> punishment != null && punishment.isExpired() && !history)
                 .forEach(punishment -> {
                     punishment.delete();
                     punishments.remove(punishment);
