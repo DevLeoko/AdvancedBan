@@ -15,28 +15,44 @@ import java.util.Date;
  * @author Beelzebu
  */
 public class InternalListener implements Listener {
-    
+
+    private void ban(BanList banlist, PunishmentEvent e) {
+        try {
+            banlist.addBan(e.getPunishment().getName(), e.getPunishment().getReason(), new Date(e.getPunishment().getEnd()), e.getPunishment().getOperator());
+        } catch (NullPointerException ex) {
+            Bukkit.getLogger().severe("No player is known by the name '" + e.getPunishment().getName() + "'");
+        }
+    }
+
     @EventHandler
     public void onPunish(PunishmentEvent e) {
         BanList banlist;
         if (e.getPunishment().getType().equals(PunishmentType.BAN) || e.getPunishment().getType().equals(PunishmentType.TEMP_BAN)) {
             banlist = Bukkit.getBanList(BanList.Type.NAME);
-            banlist.addBan(e.getPunishment().getName(), e.getPunishment().getReason(), new Date(e.getPunishment().getEnd()), e.getPunishment().getOperator());
+            ban(banlist, e);
         } else if (e.getPunishment().getType().equals(PunishmentType.IP_BAN) || e.getPunishment().getType().equals(PunishmentType.TEMP_IP_BAN)) {
             banlist = Bukkit.getBanList(BanList.Type.IP);
-            banlist.addBan(e.getPunishment().getName(), e.getPunishment().getReason(), new Date(e.getPunishment().getEnd()), e.getPunishment().getOperator());
+            ban(banlist, e);
         }
     }
-    
+
+    private void pardon(BanList banlist, RevokePunishmentEvent e) {
+        try {
+            banlist.pardon(e.getPunishment().getName());
+        } catch (NullPointerException ex) {
+            Bukkit.getLogger().severe("No player is known by the name '" + e.getPunishment().getName() + "'");
+        }
+    }
+
     @EventHandler
     public void onRevokePunishment(RevokePunishmentEvent e) {
         BanList banlist;
         if (e.getPunishment().getType().equals(PunishmentType.BAN) || e.getPunishment().getType().equals(PunishmentType.TEMP_BAN)) {
             banlist = Bukkit.getBanList(BanList.Type.NAME);
-            banlist.pardon(e.getPunishment().getName());
+            pardon(banlist, e);
         } else if (e.getPunishment().getType().equals(PunishmentType.IP_BAN) || e.getPunishment().getType().equals(PunishmentType.TEMP_IP_BAN)) {
             banlist = Bukkit.getBanList(BanList.Type.IP);
-            banlist.pardon(e.getPunishment().getName());
+            pardon(banlist, e);
         }
     }
 }
