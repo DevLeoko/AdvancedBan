@@ -130,7 +130,7 @@ public class VelocityMethods implements MethodInterface {
 
     @Override
     public String getVersion() {
-        return "2.3.0";
+        return server.getPluginManager().getPlugin("advancedban").get().getDescription().getVersion().orElse("Unknown");
     }
 
     @Override

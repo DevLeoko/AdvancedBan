@@ -12,17 +12,26 @@ import me.leoko.advancedban.velocity.listener.ChatListenerVelocity;
 import me.leoko.advancedban.velocity.listener.ConnectionListenerVelocity;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Properties;
+
+
+
 
 @Plugin(
         id = "advancedban",
         name = "AdvancedBan",
-        version = "1.0-SNAPSHOT",
+        version = "2.4.0",
         authors = {"Leoko"},
         dependencies = {
                 @Dependency(id = "luckperms", optional = true)
         }
 )
+
+
+
 public class VelocityMain {
 
     @Inject
@@ -39,7 +48,6 @@ public class VelocityMain {
         this.logger = logger;
         instance = this;
     }
-
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
