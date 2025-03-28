@@ -100,10 +100,10 @@ public class Punishment {
             announce(cWarnings);
         }
 
+        PunishmentManager.get().getLoadedPunishments(false).add(this);
+
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
-
-            PunishmentManager.get().getLoadedPunishments(false).add(this);
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
                 mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
