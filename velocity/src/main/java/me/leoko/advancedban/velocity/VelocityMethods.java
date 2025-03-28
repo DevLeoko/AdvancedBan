@@ -483,8 +483,6 @@ public class VelocityMethods implements MethodInterface {
                 }
                 out.close();
                 in.close();
-            } else {
-                logger.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
             logger.error("Could not save " + outFile.getName() + " to " + outFile, ex);
