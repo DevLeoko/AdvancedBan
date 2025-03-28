@@ -38,7 +38,7 @@
         <dependency>
             <groupId>me.leoko.advancedban</groupId>
             <artifactId>AdvancedBan-Core</artifactId>
-            <version>2.3.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
