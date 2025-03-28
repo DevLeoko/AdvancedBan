@@ -14,6 +14,7 @@ import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.ServerType;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.OutputStream;
@@ -190,6 +191,11 @@ public class VelocityMethods implements MethodInterface {
     @Override
     public boolean isBungee() {
         return true;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.VELOCITY;
     }
 
     @Override

@@ -2,6 +2,7 @@ package me.leoko.advancedban;
 
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.ServerType;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
@@ -68,7 +69,10 @@ public interface MethodInterface {
      */
     void setupMetrics();
 
+    @Deprecated
     boolean isBungee();
+
+    ServerType getServerType();
 
     String clearFormatting(String text);
 

@@ -2,6 +2,7 @@ package me.leoko.advancedban;
 
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.ServerType;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
@@ -68,6 +69,11 @@ public class TestMethods implements MethodInterface {
     @Override
     public boolean isBungee() {
         return false;
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return null;
     }
 
     @Override
