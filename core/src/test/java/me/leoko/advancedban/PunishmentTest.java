@@ -60,7 +60,7 @@ public class PunishmentTest {
     public void shouldWorkWithCachedAndNotCachedPunishments(){
         Punishment punishment = new Punishment("cache", "cache", "Cache test", "JUnit5", PunishmentType.BAN, TimeManager.getTime(), -1, null, -1);
         punishment.create();
-        //assertFalse(PunishmentManager.get().getLoadedPunishments(false).contains(punishment), "Punishment should not be cached if user is not online");
+        assertFalse(PunishmentManager.get().getLoadedPunishments(false).contains(punishment), "Punishment should not be cached if user is not online");
         assertTrue(PunishmentManager.get().isBanned("cache"), "Punishment should be active even if not in cache");
         PunishmentManager.get().load("cache", "cache", "127.0.0.1").accept();
         assertTrue(PunishmentManager.get().getLoadedPunishments(false).stream().anyMatch(pt -> pt.getUuid().equals("cache")),
