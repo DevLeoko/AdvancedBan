@@ -100,8 +100,6 @@ public class Punishment {
             announce(cWarnings);
         }
 
-        PunishmentManager.get().getLoadedPunishments(false).add(this);
-
         if (mi.isOnline(getName())) {
             final Object p = mi.getPlayer(getName());
 
@@ -112,6 +110,7 @@ public class Punishment {
                     for (String str : getLayout()) {
                         mi.sendMessage(p, str);
                     }
+                PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
 
