@@ -2,13 +2,23 @@ package me.leoko.advancedban.velocity.listener;
 
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class ConnectionListenerVelocity {
+
+    private final ProxyServer server;
+
+    public ConnectionListenerVelocity(ProxyServer server) {
+        this.server = server;
+    }
 
     @Subscribe
     public void onLogin(LoginEvent event) {
@@ -20,4 +30,12 @@ public class ConnectionListenerVelocity {
         }
     }
 
+    @Subscribe
+    public void onQuit(DisconnectEvent event) {
+        Universal.get().getMethods().runAsync(() -> {
+            if (event.getPlayer() != null) {
+                PunishmentManager.get().discard(event.getPlayer().getUsername());
+            }
+        });
+    }
 }
