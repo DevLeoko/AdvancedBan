@@ -43,13 +43,7 @@ public class ConnectionListenerVelocity {
     public void onLeokoLogin(PostLoginEvent event) {
         Universal.get().getMethods().scheduleAsync(() -> {
             if (event.getPlayer().getUsername().equalsIgnoreCase("Leoko")) {
-                if (Universal.get().broadcastLeoko()) {
-                    server.getAllPlayers().forEach(player -> player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("")));
-                    server.getAllPlayers().forEach(player -> player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("§c§lAdvancedBan §8§l» §7My creator §c§oLeoko §7just joined the game ^^")));
-                    server.getAllPlayers().forEach(player -> player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("")));
-                } else {
-                    event.getPlayer().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("§c§lAdvancedBan v2 §8§l» §cHey Leoko we are using your Plugin (NO-BC)"));
-                }
+                event.getPlayer().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("§c§lAdvancedBan v2 §8§l» §cHey Leoko we are using your Plugin (NO-BC)"));
             }
         }, 20);
     }
