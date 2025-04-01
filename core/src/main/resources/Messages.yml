@@ -225,6 +225,22 @@ History:
   Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Total entries: &e&o%COUNT%"
   PageFooter: "&7Use &e&o/history %NAME% %NEXT_PAGE% &7to see the next page"
 
+HistoryOwn:
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&oCould not find the history of %NAME% :("
+  Header:
+  - "%PREFIX% &7Your History:"
+  - "&e&oDuration &8| &7&oOperator"
+  - "&c&oType &8> &7&oReason"
+  - "&7"
+  Entry:
+  - "&8[&e%DATE%&8]"
+  - "&e%DURATION% &8| &7%OPERATOR%"
+  - "&c%TYPE% &8> &7&o%REASON%"
+  - "&7"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Total entries: &e&o%COUNT%"
+  PageFooter: "&7Use &e&o/history %NEXT_PAGE% &7to see the next page"
+
 Warns:
   Usage: "&cUsage &8» &7&o/warns [Name] <Page> &cor &7&o/warns <Page>"
   OutOfIndex: "&cThere is no page %PAGE%!"
