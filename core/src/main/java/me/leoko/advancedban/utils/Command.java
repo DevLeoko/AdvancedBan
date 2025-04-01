@@ -18,7 +18,6 @@ import me.leoko.advancedban.utils.tabcompletion.PunishmentTabCompleter;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
