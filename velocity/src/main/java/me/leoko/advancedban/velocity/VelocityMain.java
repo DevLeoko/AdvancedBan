@@ -26,7 +26,8 @@ import java.util.Properties;
         version = "2.4.0",
         authors = {"Leoko"},
         dependencies = {
-                @Dependency(id = "luckperms", optional = true)
+                @Dependency(id = "luckperms", optional = true),
+                @Dependency(id = "signedvelocity", optional = true)
         }
 )
 
@@ -55,6 +56,10 @@ public class VelocityMain {
         server.getEventManager().register(this, new ConnectionListenerVelocity(server));
         server.getEventManager().register(this, new ChatListenerVelocity());
 
+        //If signed velocity is missing send a warning
+        if (!server.getPluginManager().getPlugin("signedvelocity").isPresent()) {
+            logger.warn("SignedVelocity is not installed, mute system may kick your players while muted. Please install SignedVelocity to prevent this.");
+        }
         Universal.get().setup(new VelocityMethods(server, dataDirectory, logger));
 
     }
