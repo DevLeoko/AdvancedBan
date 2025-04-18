@@ -148,7 +148,8 @@ public class Punishment {
                 getType().getName() + ".Notification",
                 "OPERATOR", getOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
-                "DURATION", getDuration(true),
+                "DURATION", getDuration(true), // Using true to avoid minor time discrepancies (e.g., ms delay between creation and announcement).
+                "DURATION_TOTAL", getDuration(true),
                 "REASON", getReason(),
                 "NAME", getName(),
                 "ID", String.valueOf(id),
@@ -202,6 +203,8 @@ public class Punishment {
                 "OPERATOR", getOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
+                "DURATION_TOTAL", getDuration(true),
+                "NAME", getName(),
                 "REASON", isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason(),
                 "HEXID", getHexId(),
                 "ID", String.valueOf(id),
