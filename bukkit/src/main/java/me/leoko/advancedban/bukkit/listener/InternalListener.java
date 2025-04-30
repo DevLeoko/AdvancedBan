@@ -5,6 +5,7 @@ import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
 import me.leoko.advancedban.utils.PunishmentType;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -16,12 +17,27 @@ import java.util.Date;
  */
 public class InternalListener implements Listener {
 
-    private void ban(BanList banlist, PunishmentEvent e) {
-        try {
-            banlist.addBan(e.getPunishment().getName(), e.getPunishment().getReason(), new Date(e.getPunishment().getEnd()), e.getPunishment().getOperator());
-        } catch (NullPointerException ex) {
-            Bukkit.getLogger().severe("No player is known by the name '" + e.getPunishment().getName() + "'");
+    private boolean canSafelyBan(String playerName) {
+        boolean userKnown = false;
+        if (playerName != null) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+            userKnown = offlinePlayer.hasPlayedBefore() || offlinePlayer.isOnline();
         }
+
+        if (!userKnown) {
+            Bukkit.getLogger().warning("Cannot ban " + playerName + ": player has never joined and GameProfile may be null");
+        }
+
+        return userKnown;
+    }
+
+    private void ban(BanList banlist, PunishmentEvent e) {
+        String playerName = e.getPunishment().getName();
+        if ( !canSafelyBan(playerName)) {
+            return;
+        }
+
+        banlist.addBan(playerName, e.getPunishment().getReason(), new Date(e.getPunishment().getEnd()), e.getPunishment().getOperator());
     }
 
     @EventHandler
@@ -37,11 +53,12 @@ public class InternalListener implements Listener {
     }
 
     private void pardon(BanList banlist, RevokePunishmentEvent e) {
-        try {
-            banlist.pardon(e.getPunishment().getName());
-        } catch (NullPointerException ex) {
-            Bukkit.getLogger().severe("No player is known by the name '" + e.getPunishment().getName() + "'");
+        String playerName = e.getPunishment().getName();
+        if ( !canSafelyBan(playerName)) {
+            return;
         }
+
+        banlist.pardon(playerName);
     }
 
     @EventHandler
