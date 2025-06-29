@@ -1,5 +1,9 @@
 General:
+  # Hex color prefix example: &#FF5555 is red, &#FFAA00 is orange
+  # Gradient example: {#FF5555>AdvancedBan>#FFAA00} creates red to orange gradient
   Prefix: "&c&lAdvancedBan &8&l»"
+  # Gradient prefix example (optional):
+  # Prefix: "{#FF5555>Advanced>#FFAA00}{#FFAA00>Ban>#FF5555} &8&l»"
   NoPerms: "&cYou don't have perms for that!"
   LayoutNotFound: "&cThere is no layout called %NAME%"
   # This will be the replacement for the %DURATION% variable

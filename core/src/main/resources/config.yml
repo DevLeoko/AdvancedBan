@@ -136,3 +136,20 @@ Disable Prefix: false
 # Off by default, so AdvancedBan can override /ban from other plugins
 # This is a Bukkit-specific option. It has no meaning on BungeeCord
 Friendly Register Commands: false
+
+# Hex Color Support Settings
+# These settings control how hex colors are handled in messages
+HexColors:
+  # Enable hex color support (&#RRGGBB format)
+  # Set to false to disable hex color processing
+  Enabled: true
+
+  # Enable gradient color support ({#RRGGBB>text>#RRGGBB} format)
+  # This allows creating smooth color transitions in text
+  Gradients: true
+
+  # Fallback behavior for unsupported clients
+  # 'strip' - Remove hex colors completely
+  # 'closest' - Convert to closest traditional color (future feature)
+  # 'keep' - Keep hex codes as-is
+  Fallback: 'strip'

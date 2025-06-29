@@ -2,6 +2,7 @@ package me.leoko.advancedban.manager;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,9 @@ public class MessageManager {
                     + "\n  - Visit yamllint.com to  validate your Message.yml"
                     + "\n  - Delete the message file and restart the server");
         } else {
-            str = replace(str, parameters).replace('&', '§');
+            str = replace(str, parameters);
+            // Use ColorUtils to process all color codes (including hex colors)
+            str = ColorUtils.translateColors(str);
         }
         return str;
     }
@@ -75,7 +78,10 @@ public class MessageManager {
         if (mi.contains(file, path)) {
             List<String> list = new ArrayList<>();
             for (String str : mi.getStringList(file, path)) {
-                list.add(replace(str, parameters).replace('&', '§'));
+                str = replace(str, parameters);
+                // Use ColorUtils to process all color codes (including hex colors)
+                str = ColorUtils.translateColors(str);
+                list.add(str);
             }
             return list;
         }

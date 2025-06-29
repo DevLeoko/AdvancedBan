@@ -8,6 +8,7 @@ import me.leoko.advancedban.bukkit.listener.CommandReceiver;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.ColorUtils;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
@@ -48,6 +49,23 @@ public class BukkitMethods implements MethodInterface {
     private YamlConfiguration layouts;
     private YamlConfiguration mysql;
     private BiFunction<OfflinePlayer, String, Boolean> permissionVault;
+
+    // Check if native hex colors are supported (1.16+)
+    private static final boolean SUPPORTS_HEX_COLORS = checkHexColorSupport();
+
+    /**
+     * Check if current Bukkit version supports native hex colors
+     * @return true if supported
+     */
+    private static boolean checkHexColorSupport() {
+        try {
+            // Try to access ChatColor.of method from 1.16+
+            ChatColor.class.getMethod("of", String.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
 
     public BukkitMethods() {
         // Vault support
@@ -175,6 +193,13 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void sendMessage(Object player, String msg) {
+        // If native hex colors are supported, use ChatColor.translateAlternateColorCodes
+        // Otherwise, message has already been processed by ColorUtils in MessageManager
+        if (SUPPORTS_HEX_COLORS) {
+            // For 1.16+, use native color processing
+            msg = ChatColor.translateAlternateColorCodes('&', msg);
+        }
+        // Message has already been processed by ColorUtils, send directly
         ((CommandSender) player).sendMessage(msg);
     }
 
@@ -390,7 +415,9 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void log(String msg) {
-        Bukkit.getServer().getConsoleSender().sendMessage(msg.replaceAll("&", "§"));
+        // Use ColorUtils to process all color codes
+        msg = ColorUtils.translateColors(msg);
+        Bukkit.getServer().getConsoleSender().sendMessage(msg);
     }
 
     @Override

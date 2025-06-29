@@ -15,6 +15,7 @@ import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.ColorUtils;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
@@ -429,7 +430,9 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void log(String msg) {
-        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg.replaceAll("&", "§")));
+        // Use ColorUtils to process all color codes
+        msg = ColorUtils.translateColors(msg);
+        ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(msg));
     }
 
     @Override
