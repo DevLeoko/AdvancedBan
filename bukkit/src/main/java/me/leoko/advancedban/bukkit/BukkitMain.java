@@ -5,7 +5,10 @@ import me.leoko.advancedban.bukkit.listener.ChatListener;
 import me.leoko.advancedban.bukkit.listener.CommandListener;
 import me.leoko.advancedban.bukkit.listener.ConnectionListener;
 import me.leoko.advancedban.bukkit.listener.InternalListener;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerAdapter;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,13 +30,16 @@ public class BukkitMain extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new CommandListener(), this);
         this.getServer().getPluginManager().registerEvents(new InternalListener(), this);
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(player.getName(), player.getAddress().getAddress(), player.getUniqueId());
-            connListener.onConnect(apple);
-            if (apple.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_BANNED) {
-                player.kickPlayer(apple.getKickMessage());
-            }
-        });
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            scheduler.runEntityTask(this, player, () -> {
+                AsyncPlayerPreLoginEvent apple = new AsyncPlayerPreLoginEvent(player.getName(), player.getAddress().getAddress(), player.getUniqueId());
+                connListener.onConnect(apple);
+                if (apple.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_BANNED) {
+                    player.kickPlayer(apple.getKickMessage());
+                }
+            });
+        }
 
     }
 

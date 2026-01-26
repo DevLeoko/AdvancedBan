@@ -5,6 +5,8 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bukkit.listener.CommandReceiver;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerAdapter;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerProvider;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -175,7 +177,13 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void sendMessage(Object player, String msg) {
-        ((CommandSender) player).sendMessage(msg);
+        if (player instanceof Player) {
+            Player p = (Player) player;
+            SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+            scheduler.runEntityTask(getPlugin(), p, () -> p.sendMessage(msg));
+        } else {
+            ((CommandSender) player).sendMessage(msg);
+        }
     }
 
     @Override
@@ -205,8 +213,10 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if (getPlayer(player) != null && getPlayer(player).isOnline()) {
-            getPlayer(player).kickPlayer(reason);
+        Player p = getPlayer(player);
+        if (p != null && p.isOnline()) {
+            SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+            scheduler.runEntityTask(getPlugin(), p, () -> p.kickPlayer(reason));
         }
     }
 
@@ -217,22 +227,26 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), rn, l1, l2);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsyncRepeating(getPlugin(), rn, l1, l2);
     }
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), rn, l1);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsyncDelayed(getPlugin(), rn, l1);
     }
 
     @Override
     public void runAsync(Runnable rn) {
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), rn);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsync(getPlugin(), rn);
     }
 
     @Override
     public void runSync(Runnable rn) {
-        Bukkit.getScheduler().runTask(getPlugin(), rn);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runSync(getPlugin(), rn);
     }
 
     @Override
@@ -382,10 +396,16 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void notify(String perm, List<String> notification) {
-        Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(player -> hasPerms(player, perm))
-                .forEach(player -> notification.forEach(str -> sendMessage(player, str)));
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (hasPerms(player, perm)) {
+                scheduler.runEntityTask(getPlugin(), player, () -> {
+                    for (String str : notification) {
+                        sendMessage(player, str);
+                    }
+                });
+            }
+        }
     }
 
     @Override
