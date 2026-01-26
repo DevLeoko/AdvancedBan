@@ -69,7 +69,7 @@ public class FoliaSchedulerAdapter implements SchedulerAdapter {
             Object scheduler = entity.getClass().getMethod("getScheduler").invoke(entity);
             scheduler.getClass()
                     .getMethod("run", Plugin.class, java.util.function.Consumer.class, Runnable.class)
-                    .invoke(scheduler, plugin, (java.util.function.Consumer<Object>) t -> task.run(), null);
+                    .invoke(scheduler, plugin, (java.util.function.Consumer<Object>) t -> {}, task);
         } catch (Exception e) {
             throw new RuntimeException("Failed to schedule entity task on Folia", e);
         }
