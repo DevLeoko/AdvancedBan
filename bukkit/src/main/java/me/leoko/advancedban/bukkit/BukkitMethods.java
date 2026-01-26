@@ -177,7 +177,13 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void sendMessage(Object player, String msg) {
-        ((CommandSender) player).sendMessage(msg);
+        if (player instanceof Player) {
+            Player p = (Player) player;
+            SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+            scheduler.runEntityTask(getPlugin(), p, () -> p.sendMessage(msg));
+        } else {
+            ((CommandSender) player).sendMessage(msg);
+        }
     }
 
     @Override
@@ -207,8 +213,10 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if (getPlayer(player) != null && getPlayer(player).isOnline()) {
-            getPlayer(player).kickPlayer(reason);
+        Player p = getPlayer(player);
+        if (p != null && p.isOnline()) {
+            SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+            scheduler.runEntityTask(getPlugin(), p, () -> p.kickPlayer(reason));
         }
     }
 
@@ -388,10 +396,16 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void notify(String perm, List<String> notification) {
-        Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(player -> hasPerms(player, perm))
-                .forEach(player -> notification.forEach(str -> sendMessage(player, str)));
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (hasPerms(player, perm)) {
+                scheduler.runEntityTask(getPlugin(), player, () -> {
+                    for (String str : notification) {
+                        sendMessage(player, str);
+                    }
+                });
+            }
+        }
     }
 
     @Override
