@@ -5,6 +5,8 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bukkit.listener.CommandReceiver;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerAdapter;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerProvider;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -217,22 +219,26 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void scheduleAsyncRep(Runnable rn, long l1, long l2) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), rn, l1, l2);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsyncRepeating(getPlugin(), rn, l1, l2);
     }
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), rn, l1);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsyncDelayed(getPlugin(), rn, l1);
     }
 
     @Override
     public void runAsync(Runnable rn) {
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), rn);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsync(getPlugin(), rn);
     }
 
     @Override
     public void runSync(Runnable rn) {
-        Bukkit.getScheduler().runTask(getPlugin(), rn);
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runSync(getPlugin(), rn);
     }
 
     @Override

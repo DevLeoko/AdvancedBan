@@ -2,6 +2,8 @@ package me.leoko.advancedban.bukkit.listener;
 
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bukkit.BukkitMain;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerAdapter;
+import me.leoko.advancedban.bukkit.scheduler.SchedulerProvider;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import org.bukkit.Bukkit;
@@ -34,9 +36,10 @@ public class ConnectionListener implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        Universal.get().getMethods().scheduleAsync(() -> {
+        SchedulerAdapter scheduler = SchedulerProvider.getScheduler();
+        scheduler.runAsyncDelayed(BukkitMain.get(), () -> {
             if (event.getPlayer().getName().equalsIgnoreCase("Leoko")) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(BukkitMain.get(), () -> {
+                scheduler.runAsyncDelayed(BukkitMain.get(), () -> {
                     if (Universal.get().broadcastLeoko()) {
                         Bukkit.broadcastMessage("");
                         Bukkit.broadcastMessage("§c§lAdvancedBan §8§l» §7My creator §c§oLeoko §7just joined the game ^^");
