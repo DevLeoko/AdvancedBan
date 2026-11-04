@@ -54,6 +54,47 @@ public enum SQLQuery {
             "end BIGINT," +
             "calculation VARCHAR(50))"
     ),
+    CREATE_TABLE_LOGIN_HISTORY(
+            "CREATE TABLE IF NOT EXISTS `LoginHistory` (" +
+            "`uuid` VARCHAR(35) NOT NULL," +
+            "`name` VARCHAR(16) NULL DEFAULT NULL," +
+            "`ip` VARCHAR(45) NOT NULL," +
+            "`lastSeen` BIGINT DEFAULT NULL," +
+            "PRIMARY KEY (`uuid`, `ip`)," +
+            "INDEX (`ip`))",
+
+            "CREATE TABLE IF NOT EXISTS LoginHistory (" +
+            "uuid VARCHAR(35) NOT NULL," +
+            "name VARCHAR(16)," +
+            "ip VARCHAR(45) NOT NULL," +
+            "lastSeen BIGINT," +
+            "PRIMARY KEY (uuid, ip))"
+    ),
+    // MySQL gets this as a part of the table
+    CREATE_INDEX_LOGIN_HISTORY_IP(
+            "SELECT 1",
+            "CREATE INDEX IF NOT EXISTS LoginHistoryIp ON LoginHistory (ip)"
+    ),
+    INSERT_LOGIN(
+            "INSERT INTO `LoginHistory` (`uuid`, `name`, `ip`, `lastSeen`) VALUES (?, ?, ?, ?)",
+            "INSERT INTO LoginHistory (uuid, name, ip, lastSeen) VALUES (?, ?, ?, ?)"
+    ),
+    DELETE_LOGIN(
+            "DELETE FROM `LoginHistory` WHERE `uuid` = ? AND `ip` = ?",
+            "DELETE FROM LoginHistory WHERE uuid = ? AND ip = ?"
+    ),
+    DELETE_OLD_LOGINS(
+            "DELETE FROM `LoginHistory` WHERE `lastSeen` < ?",
+            "DELETE FROM LoginHistory WHERE lastSeen < ?"
+    ),
+    SELECT_LOGINS_BY_IP(
+            "SELECT * FROM `LoginHistory` WHERE `ip` = ?",
+            "SELECT * FROM LoginHistory WHERE ip = ?"
+    ),
+    SELECT_LOGIN_ALTS(
+            "SELECT * FROM `LoginHistory` WHERE `ip` IN (SELECT `ip` FROM `LoginHistory` WHERE `uuid` = ?) AND `uuid` <> ?",
+            "SELECT * FROM LoginHistory WHERE ip IN (SELECT ip FROM LoginHistory WHERE uuid = ?) AND uuid <> ?"
+    ),
     INSERT_PUNISHMENT(
             "INSERT INTO `Punishments` " +
             "(`name`, `uuid`, `reason`, `operator`, `punishmentType`, `start`, `end`, `calculation`) " +

@@ -30,7 +30,7 @@ public class MessageManager {
         String str = mi.getString(mi.getMessages(), path);
         if (str == null) {
             str = "Failed! See console for details!";
-            System.out.println("!! Message-Error!\n"
+            Universal.get().log("!! Message-Error!\n"
                     + "In order to solve the problem please:"
                     + "\n  - Check the Message.yml-File for any missing or double \" or '"
                     + "\n  - Visit yamllint.com to  validate your Message.yml"
@@ -80,7 +80,7 @@ public class MessageManager {
             return list;
         }
         String fileName = mi.getFileName(file);
-		System.out.println("!! Message-Error in " + fileName + "!\n"
+		Universal.get().log("!! Message-Error in " + fileName + "!\n"
 		        + "In order to solve the problem please:"
 		        + "\n  - Check the " + fileName + "-File for any missing or double \" or '"
 		        + "\n  - Visit yamllint.com to  validate your " + fileName
@@ -113,7 +113,8 @@ public class MessageManager {
 
     private static String replace(String str, String... parameters) {
         for (int i = 0; i < parameters.length - 1; i = i + 2) {
-            str = str.replaceAll("%" + parameters[i] + "%", parameters[i + 1]);
+            // Literal replacement: values such as reasons may contain regex characters like '$'
+            str = str.replace("%" + parameters[i] + "%", parameters[i + 1]);
         }
         return str;
     }

@@ -12,22 +12,23 @@ import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,8 @@ import java.util.function.BiFunction;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BukkitMethods implements MethodInterface {
+
+    private static final int BSTATS_PLUGIN_ID = 1225;
 
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
@@ -52,8 +55,11 @@ public class BukkitMethods implements MethodInterface {
     public BukkitMethods() {
         // Vault support
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-            RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-            permissionVault = (player, perms) -> rsp.getProvider().playerHas(null, player, perms);
+            // Looked up on demand as the permission plugin might register its service after we are enabled
+            permissionVault = (player, perms) -> {
+                RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+                return rsp != null && rsp.getProvider().playerHas(null, player, perms);
+            };
         }
     }
 
@@ -86,33 +92,14 @@ public class BukkitMethods implements MethodInterface {
     }
 
     @Override
-    public String getFromUrlJson(String url, String key) {
-        try {
-            HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
-            request.connect();
-
-            JSONParser jp = new JSONParser();
-            JSONObject json = (JSONObject) jp.parse(new InputStreamReader(request.getInputStream()));
-
-            String[] keys = key.split("\\|");
-            for (int i = 0; i < keys.length - 1; i++) {
-                json = (JSONObject) json.get(keys[i]);
-            }
-
-            return json.get(keys[keys.length - 1]).toString();
-        } catch (Exception exc) {
-            return null;
-        }
-    }
-
-    @Override
     public String getVersion() {
         return getPlugin().getDescription().getVersion();
     }
 
     @Override
     public String[] getKeys(Object file, String path) {
-        return ((YamlConfiguration) file).getConfigurationSection(path).getKeys(false).toArray(new String[0]);
+        ConfigurationSection section = ((YamlConfiguration) file).getConfigurationSection(path);
+        return section == null ? new String[0] : section.getKeys(false).toArray(new String[0]);
     }
 
     @Override
@@ -132,8 +119,8 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public void setupMetrics() {
-        Metrics metrics = new Metrics(getPlugin());
-        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
+        Metrics metrics = new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
+        metrics.addCustomChart(new SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -164,12 +151,12 @@ public class BukkitMethods implements MethodInterface {
             command.setExecutor(CommandReceiver.get());
             if (tabCompleter != null)
                 command.setTabCompleter((commandSender, c, s, args) -> {
-                    if (permission != null && !hasPerms(commandSender, permission))
+                    if (permission != null && !Universal.get().hasPerms(commandSender, permission))
                         return Collections.emptyList();
                     return tabCompleter.onTabComplete(commandSender, args);
                 });
         } else {
-            System.out.println("AdvancedBan >> Failed to register command " + cmd);
+            Universal.get().log("Failed to register command " + cmd);
         }
     }
 
@@ -183,6 +170,7 @@ public class BukkitMethods implements MethodInterface {
         return ((CommandSender) player).hasPermission(perms);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
@@ -192,21 +180,22 @@ public class BukkitMethods implements MethodInterface {
         return permission -> permissionVault.apply(player, permission);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isOnline(String name) {
-        return Bukkit.getOfflinePlayer(name).isOnline();
+        return getPlayer(name) != null;
     }
 
     @Override
     public Player getPlayer(String name) {
-        return Bukkit.getPlayer(name);
+        // Bukkit.getPlayer would also return players whose name just starts with the given name
+        return Bukkit.getPlayerExact(name);
     }
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if (getPlayer(player) != null && getPlayer(player).isOnline()) {
-            getPlayer(player).kickPlayer(reason);
+        Player target = getPlayer(player);
+        if (target != null) {
+            target.kickPlayer(reason);
         }
     }
 
@@ -247,12 +236,14 @@ public class BukkitMethods implements MethodInterface {
 
     @Override
     public String getName(String uuid) {
-        return Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
+        UUID parsedUuid = UUIDManager.get().fromString(uuid);
+        return parsedUuid == null ? null : Bukkit.getOfflinePlayer(parsedUuid).getName();
     }
 
     @Override
     public String getIP(Object player) {
-        return ((Player) player).getAddress().getHostName();
+        InetSocketAddress address = ((Player) player).getAddress();
+        return address == null ? null : address.getAddress().getHostAddress();
     }
 
     @Override
@@ -289,25 +280,6 @@ public class BukkitMethods implements MethodInterface {
     @Override
     public YamlConfiguration getMySQLFile() {
         return mysql;
-    }
-
-    @Override
-    public String parseJSON(InputStreamReader json, String key) {
-        try {
-            return ((JSONObject) new JSONParser().parse(json)).get(key).toString();
-        } catch (ParseException | IOException e) {
-            System.out.println("Error -> " + e.getMessage());
-            return null;
-        }
-    }
-
-    @Override
-    public String parseJSON(String json, String key) {
-        try {
-            return ((JSONObject) new JSONParser().parse(json)).get(key).toString();
-        } catch (ParseException e) {
-            return null;
-        }
     }
 
     @Override

@@ -305,3 +305,24 @@ Check:
   NotFound: "&cSorry we have not been able to find %NAME%"
   Cached: "&a&ocached"
   NotCached: "&c&onot cached"
+
+Punish:
+  Usage: "&cUsage &8» &7&o/punish (-s) [Name] [Offence] <Details>"
+  Done: "&c&o%NAME% &7was punished for &e&o%OFFENCE% &8(&7step %STEP%/%STEPS%: %ACTION%&8)"
+  NotFound: "&cThere is no offence called %NAME%! &7Available: %OFFENCES%"
+  InvalidStep: "&cThe step '%STEP%' of the offence %OFFENCE% is invalid, please check the Layouts.yml"
+
+Alts:
+  Usage: "&cUsage &8» &7&o/alts [Name/IP]"
+  Disabled: "&cAlt detection is disabled in the config.yml"
+  NoEntries: "&7No other accounts found for &e&o%NAME%"
+  Header: "&7Accounts sharing an IP with &e&o%NAME%&7:"
+  Entry: "&8- &7%ALT% &8(%STATUS%&8) &7last seen %DATE%"
+  Banned: "&cbanned"
+  Muted: "&emuted"
+  Clean: "&aclean"
+
+AltDetection:
+  Notification:
+  - "%PREFIX% &c&o%NAME% &7shares an IP with the banned account &c&o%ALT%"
+  - "&7Ban reason: &o%REASON%"

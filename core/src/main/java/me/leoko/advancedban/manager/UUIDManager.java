@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The UUID Manager used to resolve and cache the UUIDs.
@@ -16,7 +18,7 @@ import java.util.Map.Entry;
 public class UUIDManager {
     private static UUIDManager instance = null;
     private FetcherMode mode;
-    private final Map<String, String> activeUUIDs = new HashMap<>();
+    private final Map<String, String> activeUUIDs = new ConcurrentHashMap<>();
     
     private MethodInterface mi() {
     	return Universal.get().getMethods();
@@ -81,24 +83,24 @@ public class UUIDManager {
         try {
             uuid = askAPI(mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"), name, mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.Key"));
         } catch (IOException e) {
-            System.out.println("Error -> " + e.getMessage());
-            System.out.println("!! Failed fetching UUID of " + name);
-            System.out.println("!! Could not connect to REST-API under " + mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"));
+            Universal.get().log("Error -> " + e.getMessage());
+            Universal.get().log("!! Failed fetching UUID of " + name);
+            Universal.get().log("!! Could not connect to REST-API under " + mi.getString(mi.getConfig(), "UUID-Fetcher.REST-API.URL"));
         }
 
         if (uuid == null) {
-            System.out.println("Trying to fetch UUID form BackUp-API...");
+            Universal.get().log("Trying to fetch UUID form BackUp-API...");
             try {
                 uuid = askAPI(mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.URL"), name, mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.Key"));
             } catch (IOException e) {
-                System.out.println("!! Failed fetching UUID of " + name);
-                System.out.println("!! Could not connect to REST-API under " + mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.URL"));
+                Universal.get().log("!! Failed fetching UUID of " + name);
+                Universal.get().log("!! Could not connect to REST-API under " + mi.getString(mi.getConfig(), "UUID-Fetcher.BackUp-API.URL"));
             }
         }
 
         if (uuid == null) {
-            System.out.println("!! !! Warning we have not been able to fetch the UUID of the Player " + name);
-            System.out.println("!! Make sure that the name is spelled correctly and if it is change your UUID-Fetcher settings!");
+            Universal.get().log("!! !! Warning we have not been able to fetch the UUID of the Player " + name);
+            Universal.get().log("!! Make sure that the name is spelled correctly and if it is change your UUID-Fetcher settings!");
         }
 
         return uuid;
@@ -114,6 +116,17 @@ public class UUIDManager {
         if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             activeUUIDs.put(name.toLowerCase(), uuid.toString().replace("-", ""));
         }
+    }
+
+    /**
+     * Remembers what the name of a connecting player got resolved to, so that nothing has to be
+     * looked up again while the player is online. Placeholders rely on this as they can't wait for a lookup.
+     *
+     * @param name the name
+     * @param uuid the uuid
+     */
+    public void supplyResolvedUUID(String name, String uuid) {
+        activeUUIDs.put(name.toLowerCase(), uuid);
     }
 
     /**
@@ -194,13 +207,7 @@ public class UUIDManager {
             }
         }
 
-        try (Scanner scanner = new Scanner(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), "UTF-8")) {
-            String s = scanner.useDelimiter("\\A").next();
-            s = s.substring(s.lastIndexOf('{'), s.lastIndexOf('}') + 1);
-            return mi.parseJSON(s, "name");
-        } catch (Exception exc) {
-            return null;
-        }
+        return mi.getFromUrlJson("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.replace("-", ""), "name");
     }
 
 
@@ -208,15 +215,19 @@ public class UUIDManager {
     private String askAPI(String url, String name, String key) throws IOException {
     	MethodInterface mi = mi();
         name = name.toLowerCase();
-        HttpURLConnection request = (HttpURLConnection) new URL(url.replaceAll("%NAME%", name).replaceAll("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
-        request.connect();
+        HttpURLConnection request = (HttpURLConnection) new URL(url.replace("%NAME%", name).replace("%TIMESTAMP%", new Date().getTime() + "")).openConnection();
+        request.setConnectTimeout(5000);
+        request.setReadTimeout(5000);
 
-        String uuid = mi.parseJSON(new InputStreamReader(request.getInputStream()), key);
+        String uuid;
+        try (InputStreamReader reader = new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8)) {
+            uuid = mi.parseJSON(reader, key);
+        }
 
         if (uuid == null) {
-            System.out.println("!! Failed fetching UUID of " + name);
-            System.out.println("!! Could not find key '" + key + "' in the servers response");
-            System.out.println("!! Response: " + request.getResponseMessage());
+            Universal.get().log("!! Failed fetching UUID of " + name);
+            Universal.get().log("!! Could not find key '" + key + "' in the servers response");
+            Universal.get().log("!! Response: " + request.getResponseMessage());
         } else {
             activeUUIDs.put(name, uuid);
         }

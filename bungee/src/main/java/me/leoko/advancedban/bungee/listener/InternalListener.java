@@ -44,7 +44,9 @@ public class InternalListener implements Listener {
         if (!e.getTag().equals("advancedban:main")) {
             return;
         }
+        // Players are not allowed to use this channel. Don't let their messages reach the backend servers either.
         if (e.getSender() instanceof ProxiedPlayer) {
+            e.setCancelled(true);
             return;
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
@@ -54,6 +56,7 @@ public class InternalListener implements Listener {
                 String message = in.readUTF();
                 try {
                     JsonObject punishment = universal.getGson().fromJson(message, JsonObject.class);
+                    long end = punishment.get("end").getAsLong();
                     new Punishment(
                             punishment.get("name").getAsString(),
                             UUIDManager.get().getUUID(punishment.get("uuid").getAsString()),
@@ -61,13 +64,14 @@ public class InternalListener implements Listener {
                             punishment.get("operator") != null ? punishment.get("operator").getAsString() : "CONSOLE",
                             PunishmentType.valueOf(punishment.get("punishmenttype").getAsString().toUpperCase()),
                             punishment.get("start") != null ? punishment.get("start").getAsLong() : TimeManager.getTime(),
-                            TimeManager.getTime() + punishment.get("end").getAsLong(),
+                            // -1 marks a permanent punishment and must not be turned into a timestamp
+                            end == -1 ? -1 : TimeManager.getTime() + end,
                             punishment.get("calculation") != null ? punishment.get("calculation").getAsString() : null,
                             -1
                     ).create(punishment.get("silent") != null && punishment.get("silent").getAsBoolean());
                     universal.log("A punishment was created using PluginMessaging listener.");
                     universal.debug(punishment.toString());
-                } catch (JsonSyntaxException | NullPointerException ex) {
+                } catch (JsonSyntaxException | NullPointerException | IllegalArgumentException ex) {
                     universal.log("An exception as occurred while reading a punishment from plugin messaging channel.");
                     universal.debug("Message: " + message);
                     universal.log("StackTrace:");

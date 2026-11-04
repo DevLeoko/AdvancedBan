@@ -43,3 +43,24 @@ Time:
     - '2mo'
     - '4mo'
     - 'perma'
+
+# Ladders are used by "/punish Leoko Hacking". Every time a player gets punished for
+# the same offence the next step is used, and the last one stays after reaching it.
+# Possible steps: ban, tempban X, mute, tempmute X, warn, tempwarn X, kick and note
+# with X being a time like 30m, 2h, 1d, 1w or 1mo. IP bans can not be used here.
+# The steps ignore the ab.*.dur.* limits, only the permission ab.punish is required.
+# The reason can also use a message layout like "@ExampleLayout"
+Ladder:
+  Hacking:
+    Reason: "Using a hacked client"
+    Steps:
+    - 'tempban 7d'
+    - 'tempban 30d'
+    - 'ban'
+  Spam:
+    Reason: "Spamming"
+    Steps:
+    - 'warn'
+    - 'tempmute 1h'
+    - 'tempmute 1d'
+    - 'mute'

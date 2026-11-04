@@ -4,6 +4,7 @@ import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -16,14 +17,13 @@ public class PubSubMessageListener implements Listener {
     
     private static final MethodInterface mi = Universal.get().getMethods();
 
-    @SuppressWarnings("deprecation")
-	@EventHandler
+    @EventHandler
     public void onMessageReceive(PubSubMessageEvent e) {
         if (e.getChannel().equals("advancedban:main")) {
             String[] msg = e.getMessage().split(" ");
             if (e.getMessage().startsWith("kick ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
-                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                    ProxyServer.getInstance().getPlayer(msg[1]).disconnect(TextComponent.fromLegacyText(e.getMessage().substring((msg[0] + msg[1]).length() + 2)));
                 }
             } else if (e.getMessage().startsWith("notification ")) {
                 for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
@@ -33,10 +33,10 @@ public class PubSubMessageListener implements Listener {
                 }
             } else if (e.getMessage().startsWith("message ")) {
                 if (ProxyServer.getInstance().getPlayer(msg[1]) != null) {
-                    ProxyServer.getInstance().getPlayer(msg[1]).sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                    ProxyServer.getInstance().getPlayer(msg[1]).sendMessage(TextComponent.fromLegacyText(e.getMessage().substring((msg[0] + msg[1]).length() + 2)));
                 }
                 if (msg[1].equalsIgnoreCase("CONSOLE")) {
-                    ProxyServer.getInstance().getConsole().sendMessage(e.getMessage().substring((msg[0] + msg[1]).length() + 2));
+                    ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(e.getMessage().substring((msg[0] + msg[1]).length() + 2)));
                 }
             }
         } else if (e.getChannel().equals("advancedban:connection")) {

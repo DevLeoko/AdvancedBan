@@ -12,15 +12,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -34,7 +35,7 @@ public class Universal {
         Universal.redis = redis;
     }
 
-    private final Map<String, String> ips = new HashMap<>();
+    private final Map<String, String> ips = new ConcurrentHashMap<>();
     private MethodInterface mi;
     private LogManager logManager;
 
@@ -77,6 +78,7 @@ public class Universal {
 
         mi.setupMetrics();
         PunishmentManager.get().setup();
+        AltManager.get().setup();
 
         for (Command command : Command.values()) {
             for (String commandName : command.getNames()) {
@@ -175,11 +177,13 @@ public class Universal {
     public String getFromURL(String surl) {
         String response = null;
         try {
-            URL url = new URL(surl);
-            Scanner s = new Scanner(url.openStream());
-            if (s.hasNext()) {
-                response = s.next();
-                s.close();
+            URLConnection connection = new URL(surl).openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            try (Scanner s = new Scanner(connection.getInputStream(), "UTF-8")) {
+                if (s.hasNext()) {
+                    response = s.next();
+                }
             }
         } catch (IOException exc) {
             debug("!! Failed to connect to URL: " + surl);
@@ -206,6 +210,10 @@ public class Universal {
      */
     boolean isMuteCommand(String cmd, List<String> muteCommands) {
         String[] words = cmd.split(" ");
+        // A command consisting of nothing but spaces has no words at all
+        if (words.length == 0) {
+            return false;
+        }
         // Handle commands with colons
         if (words[0].indexOf(':') != -1) {
             words[0] = words[0].split(":", 2)[1];
@@ -276,7 +284,8 @@ public class Universal {
             return true;
         }
         try {
-            if (Files.readAllLines(Paths.get(readme.getPath()), Charset.defaultCharset()).get(0).equalsIgnoreCase("I don't want that there will be any message when the dev of this plugin joins the server! I want this even though the plugin is 100% free and the join-message is the only reward for the Dev :(")) {
+            List<String> lines = Files.readAllLines(Paths.get(readme.getPath()), Charset.defaultCharset());
+            if (!lines.isEmpty() && lines.get(0).equalsIgnoreCase("I don't want that there will be any message when the dev of this plugin joins the server! I want this even though the plugin is 100% free and the join-message is the only reward for the Dev :(")) {
                 return false;
             }
         } catch (IOException ignore) {
@@ -292,14 +301,28 @@ public class Universal {
      * @return the string
      */
     public String callConnection(String name, String ip) {
-        name = name.toLowerCase();
+        try {
+            return checkConnection(name.toLowerCase(), ip);
+        } catch (RuntimeException ex) {
+            // Otherwise a banned player would get in, as the connection just continues
+            log("An error has occurred checking the connection of " + name);
+            debugException(ex);
+            return getMethods().getBoolean(mi.getConfig(), "LockdownOnError", true) ? "[AdvancedBan] Failed to load player data!" : null;
+        }
+    }
+
+    private String checkConnection(String name, String ip) {
         String uuid = UUIDManager.get().getUUID(name);
         if (uuid == null) return "[AdvancedBan] Failed to fetch your UUID";
+        UUIDManager.get().supplyResolvedUUID(name, uuid);
 
         if (ip != null) {
             getIps().remove(name);
             getIps().put(name, ip);
         }
+
+        // Also for banned players: their new IPs are what connects them to the accounts they come back with
+        AltManager.get().recordLogin(name, uuid, ip);
 
         InterimData interimData = PunishmentManager.get().load(name, uuid, ip);
 
@@ -314,6 +337,11 @@ public class Universal {
         Punishment pt = interimData.getBan();
 
         if (pt == null) {
+            String evasionBan = AltManager.get().checkEvasion(name, uuid, ip);
+            if (evasionBan != null) {
+                return evasionBan;
+            }
+
             interimData.accept();
             return null;
         }
@@ -396,7 +424,7 @@ public class Universal {
                 System.out.print("An error has occurred creating the 'latest.log' file again, check your server.");
                 System.out.print("Error message" + ex.getMessage());
             }
-        } else {
+        } else if (logManager != null) {
             logManager.checkLastLog(false);
         }
         try {

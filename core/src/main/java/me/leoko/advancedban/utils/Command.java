@@ -6,6 +6,8 @@ import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.commands.AltsProcessor;
+import me.leoko.advancedban.utils.commands.LadderProcessor;
 import me.leoko.advancedban.utils.commands.ListProcessor;
 import me.leoko.advancedban.utils.commands.PunishmentProcessor;
 import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
@@ -36,7 +38,7 @@ public enum Command {
 
     TEMP_BAN(
             PunishmentType.TEMP_BAN.getPerms(),
-            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            Syntax.TEMPORARY,
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_BAN),
             PunishmentType.TEMP_BAN.getConfSection("Usage"),
@@ -52,11 +54,11 @@ public enum Command {
 
     TEMP_IP_BAN(
             PunishmentType.TEMP_IP_BAN.getPerms(),
-            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            Syntax.TEMPORARY,
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_IP_BAN),
             PunishmentType.TEMP_IP_BAN.getConfSection("Usage"),
-            "tempipban"),
+            "tempipban", "tipban"),
 
     MUTE(
             PunishmentType.MUTE.getPerms(),
@@ -68,7 +70,7 @@ public enum Command {
 
     TEMP_MUTE(
             PunishmentType.TEMP_MUTE.getPerms(),
-            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            Syntax.TEMPORARY,
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_MUTE),
             PunishmentType.TEMP_MUTE.getConfSection("Usage"),
@@ -84,7 +86,7 @@ public enum Command {
 
     TEMP_WARN(
             PunishmentType.TEMP_WARNING.getPerms(),
-            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            Syntax.TEMPORARY,
             new PunishmentTabCompleter(true),
             new PunishmentProcessor(PunishmentType.TEMP_WARNING),
             PunishmentType.TEMP_WARNING.getConfSection("Usage"),
@@ -102,15 +104,7 @@ public enum Command {
             PunishmentType.KICK.getPerms(),
             ".+",
             new PunishmentTabCompleter(false),
-            input -> {
-                if (!Universal.get().getMethods().isOnline(input.getPrimaryData())) {
-                    MessageManager.sendMessage(input.getSender(), "Kick.NotOnline", true,
-                            "NAME", input.getPrimary());
-                    return;
-                }
-
-                new PunishmentProcessor(PunishmentType.KICK).accept(input);
-            },
+            new PunishmentProcessor(PunishmentType.KICK),
             PunishmentType.KICK.getConfSection("Usage"),
             "kick"),
 
@@ -129,7 +123,7 @@ public enum Command {
             "unmute"),
 
     UN_WARN("ab." + PunishmentType.WARNING.getName() + ".undo",
-            "[0-9]+|(?i:clear \\S+)",
+            "[0-9]{1,9}|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1) {
                     return list("[ID]", "clear");
@@ -168,7 +162,7 @@ public enum Command {
             "Un" + PunishmentType.WARNING.getConfSection("Usage"),
             "unwarn"),
     UN_NOTE("ab." + PunishmentType.NOTE.getName() + ".undo",
-            "[0-9]+|(?i:clear \\S+)",
+            "[0-9]{1,9}|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1) {
                     return list("[ID]", "clear");
@@ -208,14 +202,14 @@ public enum Command {
             "unnote"),
 
     UN_PUNISH("ab.all.undo",
-            "[0-9]+",
+            "[0-9]{1,9}",
             new BasicTabCompleter("<ID>"),
             new RevokeByIdProcessor("UnPunish", PunishmentManager.get()::getPunishment),
             "UnPunish.Usage",
             "unpunish"),
 
     CHANGE_REASON("ab.changeReason",
-            "([0-9]+|(?i)(ban|mute) \\S+) .+",
+            "([0-9]{1,9}|(?i)(ban|mute) \\S+) .+",
             new CleanTabCompleter((user, args) -> {
                 if(args.length <= 1) {
                     return list("<ID>", "ban", "mute");
@@ -270,7 +264,7 @@ public enum Command {
             "change-reason"),
 
     BAN_LIST("ab.banlist",
-            "([1-9][0-9]*)?",
+            "([1-9][0-9]{0,8})?",
             new BasicTabCompleter("<Page>"),
             new ListProcessor(
                     target -> PunishmentManager.get().getPunishments(SQLQuery.SELECT_ALL_PUNISHMENTS_LIMIT, 150),
@@ -279,7 +273,7 @@ public enum Command {
             "banlist"),
 
     HISTORY("ab.history",
-            "\\S+( [1-9][0-9]*)?",
+            "\\S+( [1-9][0-9]{0,8})?",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1)
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
@@ -295,10 +289,10 @@ public enum Command {
             "history"),
 
     WARNS(null,
-            "\\S+( [1-9][0-9]*)?|\\S+|",
+            "\\S+( [1-9][0-9]{0,8})?|\\S+|",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1)
-                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                    if(Universal.get().hasPerms(user, "ab.warns.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
@@ -308,7 +302,7 @@ public enum Command {
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
+                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]{0,8}")) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.warns.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -333,10 +327,10 @@ public enum Command {
             "Warns.Usage",
             "warns"),
     NOTES(null,
-            "\\S+( [1-9][0-9]*)?|\\S+|",
+            "\\S+( [1-9][0-9]{0,8})?|\\S+|",
             new CleanTabCompleter((user, args) -> {
                 if(args.length == 1)
-                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                    if(Universal.get().hasPerms(user, "ab.notes.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
@@ -346,7 +340,7 @@ public enum Command {
                     return list();
             }),
             input -> {
-                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]*")) {
+                if (input.hasNext() && !input.getPrimary().matches("[1-9][0-9]{0,8}")) {
                     if (!Universal.get().hasPerms(input.getSender(), "ab.notes.other")) {
                         MessageManager.sendMessage(input.getSender(), "General.NoPerms", true);
                         return;
@@ -382,7 +376,9 @@ public enum Command {
                     return;
 
                 String ip = Universal.get().getIps().getOrDefault(name.toLowerCase(), "none cashed");
-                String loc = Universal.get().getMethods().getFromUrlJson("http://ip-api.com/json/" + ip, "country");
+                String loc = Universal.get().getIps().containsKey(name.toLowerCase())
+                        ? Universal.get().getMethods().getFromUrlJson("http://ip-api.com/json/" + ip, "country")
+                        : null;
                 Punishment mute = PunishmentManager.get().getMute(uuid);
                 Punishment ban = PunishmentManager.get().getBan(uuid);
 
@@ -422,7 +418,7 @@ public enum Command {
                 MethodInterface mi = Universal.get().getMethods();
                 Calendar calendar = new GregorianCalendar();
                 Object sender = input.getSender();
-                mi.sendMessage(sender, "§c§lAdvancedBan v2 §cSystemPrefs");
+                mi.sendMessage(sender, "§c§lAdvancedBan v3 §cSystemPrefs");
                 mi.sendMessage(sender, "§cServer-Time §8» §7" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
                 mi.sendMessage(sender, "§cYour UUID (Intern) §8» §7" + mi.getInternUUID(sender));
                 if (input.hasNext()) {
@@ -460,6 +456,10 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7Ban a user by IP");
                             mi.sendMessage(sender, "§c/tempban [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Ban a user temporary");
+                            mi.sendMessage(sender, "§c/punish [Name] [Offence] <Details>");
+                            mi.sendMessage(sender, "§8» §7Punish a user according to the steps of an offence");
+                            mi.sendMessage(sender, "§c/alts [Name/IP]");
+                            mi.sendMessage(sender, "§8» §7List the accounts sharing an IP with a user");
                             mi.sendMessage(sender, "§c/mute [Name] [Reason/@Layout]");
                             mi.sendMessage(sender, "§8» §7Mute a user permanently");
                             mi.sendMessage(sender, "§c/tempmute [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]");
@@ -505,7 +505,7 @@ public enum Command {
                 }
 
 
-                mi.sendMessage(sender, "§8§l§m-=====§r §c§lAdvancedBan v2 §8§l§m=====-§r ");
+                mi.sendMessage(sender, "§8§l§m-=====§r §c§lAdvancedBan v3 §8§l§m=====-§r ");
                 mi.sendMessage(sender, "  §cDev §8• §7Leoko");
                 mi.sendMessage(sender, "  §cStatus §8• §a§oStable");
                 mi.sendMessage(sender, "  §cVersion §8• §7" + mi.getVersion());
@@ -520,7 +520,40 @@ public enum Command {
                 mi.sendMessage(sender, "§8§l§m-=========================-§r ");
             },
             null,
-            "advancedban");
+            "advancedban"),
+
+    PUNISH("ab.punish",
+            "(-s )?\\S+ (-s )?\\S+( .*)?",
+            new CleanTabCompleter((user, args) -> {
+                int position = args.length > 0 && args[0].equalsIgnoreCase("-s") ? args.length - 1 : args.length;
+                if (position == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
+                else if (position == 2)
+                    return list(LadderProcessor.getOffences());
+                else
+                    return list();
+            }),
+            new LadderProcessor(),
+            "Punish.Usage",
+            "punish"),
+
+    ALTS("ab.alts",
+            "\\S+",
+            new CleanTabCompleter((user, args) -> {
+                if (args.length == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name/IP]");
+                else
+                    return list();
+            }),
+            new AltsProcessor(),
+            "Alts.Usage",
+            "alts");
+
+    // Enum constants can not reference static fields of their own enum in their arguments
+    private static class Syntax {
+        // The amount is limited in length as the result would not fit into a timestamp otherwise
+        private static final String TEMPORARY = "(?:(?i:-s) )?(?!(?i:-s) )\\S+ (?:(?i:-s) )?([1-9][0-9]{0,8}([wdhms]|mo)|#.+)( .*)?";
+    }
 
     private final String permission;
     private final Predicate<String[]> syntaxValidator;

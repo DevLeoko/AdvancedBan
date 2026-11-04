@@ -1,5 +1,6 @@
 package me.leoko.advancedban.bungee.listener;
 
+import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.BungeeMain;
 import me.leoko.advancedban.manager.CommandManager;
 import net.md_5.bungee.api.CommandSender;
@@ -19,6 +20,14 @@ public class CommandReceiverBungee extends Command {
         super(name, permission);
     }
     
+    /**
+     * BungeeCord checks this before executing the command, so it has to be aware of the ab.all permission nodes as well.
+     */
+    @Override
+    public boolean hasPermission(CommandSender sender) {
+        return getPermission() == null || Universal.get().hasPerms(sender, getPermission());
+    }
+
     @Override
 	public void execute(final CommandSender sender, final String[] args) {
     	if (args.length > 0) {

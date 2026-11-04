@@ -7,36 +7,17 @@
     <parent>
         <groupId>me.leoko.advancedban</groupId>
         <artifactId>AdvancedBan</artifactId>
-        <version>2.3.0</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>AdvancedBan-Bungee</artifactId>
     <packaging>jar</packaging>
 
     <repositories>
-        <!-- BungeeCord API -->
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
         <!-- RedisBungee -->
         <repository>
-            <id>md_5-snapshots</id>
-            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
-        </repository>
-        <!-- CloudNet -->
-        <repository>
-            <id>cloudnet3-releases</id>
-            <url>https://repo.cloudnetservice.eu/repository/releases/</url>
-        </repository>
-        <repository>
-            <id>cloudnet2-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
-        </repository>
-        <!-- bStats -->
-        <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -44,57 +25,47 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- CloudNet v3-->
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-driver</artifactId>
-            <version>3.3.0-RELEASE</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-bridge</artifactId>
-            <version>3.3.0-RELEASE</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- CloudNet v2-->
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.17</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- CloudNet Core -->
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-core</artifactId>
-            <version>2.1.17</version>
+            <version>1.21-R0.4</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
-            <version>5.2</version>
+            <version>5.5</version>
             <scope>provided</scope>
         </dependency>
 
+        <!-- Provided by the RedisBungee plugin at runtime, only its API classes are compiled against -->
         <dependency>
-            <groupId>com.imaginarycode.minecraft</groupId>
-            <artifactId>RedisBungee</artifactId>
-            <version>0.3.6-SNAPSHOT</version>
+            <groupId>com.github.ProxioDev.RedisBungee</groupId>
+            <artifactId>RedisBungee-API</artifactId>
+            <version>0.13.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ProxioDev.RedisBungee</groupId>
+            <artifactId>RedisBungee-Bungee</artifactId>
+            <version>0.13.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
-            <version>1.5</version>
+            <version>${bstats.version}</version>
             <scope>compile</scope>
         </dependency>
 
