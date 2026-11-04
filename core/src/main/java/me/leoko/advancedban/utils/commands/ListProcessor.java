@@ -45,19 +45,22 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         MethodInterface mi = Universal.get().getMethods();
         final List<Punishment> punishments = listSupplier.apply(target);
+
+        if (!history) {
+            punishments.removeIf(punishment -> {
+                if (!punishment.isExpired()) {
+                    return false;
+                }
+                punishment.delete();
+                return true;
+            });
+        }
+
         if (punishments.isEmpty()) {
             MessageManager.sendMessage(input.getSender(), config + ".NoEntries",
                     true, "NAME", name);
             return;
         }
-
-        punishments
-                .stream()
-                .filter(punishment -> punishment.isExpired() && !history)
-                .forEach(punishment -> {
-                    punishment.delete();
-                    punishments.remove(punishment);
-                });
 
         int page = input.hasNext() ? Integer.parseInt(input.getPrimary()) : 1;
         if (punishments.size() / 5.0 + 1 <= page) {

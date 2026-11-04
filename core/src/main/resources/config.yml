@@ -1,4 +1,4 @@
-# AdvancedBan v2 - Coded by Leoko
+# AdvancedBan v3 - Coded by Leoko
 # For each setting, there is a small description.
 # Please read each description carefully before changing anything.
 # For more information visit: https://www.spigotmc.org/resources/advancedban.8695/
@@ -13,6 +13,8 @@ MySQL:
   Username: admin
   Password: superSecret
   Port: 3306
+  # If MySQL 8 reports "Public Key Retrieval is not allowed" prefer enabling SSL. Only if the
+  # connection can't be intercepted (e.g. localhost) add allowPublicKeyRetrieval=true instead.
   Properties: 'verifyServerCertificate=false&useSSL=false&useUnicode=true&characterEncoding=utf8'
 
 # Set to false if you want to have only short messages in the console
@@ -93,11 +95,11 @@ UUID-Fetcher:
   Enabled: true
   Intern: false
   REST-API:
-    URL: "https://api.mojang.com/users/profiles/minecraft/%NAME%?at=%TIMESTAMP%"
+    URL: "https://api.mojang.com/users/profiles/minecraft/%NAME%"
     Key: "id"
   BackUp-API:
-    URL: "https://us.mc-api.net/v3/uuid/%NAME%"
-    Key: "uuid"
+    URL: "https://api.minetools.eu/uuid/%NAME%"
+    Key: "id"
 
 # These are the commands that will be performed on warns
 # If you skip a number the command from before will be performed
@@ -136,3 +138,29 @@ Disable Prefix: false
 # Off by default, so AdvancedBan can override /ban from other plugins
 # This is a Bukkit-specific option. It has no meaning on BungeeCord
 Friendly Register Commands: false
+
+# Remembers which accounts have been using which IP to find alternative accounts.
+# This is used by /alts and alerts players with the permission ab.alts.notify if
+# someone joins who has been using the same IP as a banned account.
+AltDetection:
+  Enabled: true
+  # After how many days of not being used a login gets forgotten
+  Retention Days: 90
+  # IPs used by more accounts than this will not be taken into account, as they
+  # say nothing about who is behind them. (e.g. schools or a misconfigured proxy)
+  Shared IP Limit: 10
+  # These IPs are never remembered
+  IgnoredIPs:
+  - '127.0.0.1'
+  - '::1'
+  # Also ban accounts which are joining from an IP used by a banned account. They get
+  # banned for as long as the other account. Be careful: people sharing an internet
+  # connection, like siblings, would get banned as well!
+  # An account only gets banned once like this, so that it can be unbanned with /unban.
+  # This does nothing on servers in offline mode, as anyone could use the name of someone
+  # else there. That includes servers behind a proxy: use AdvancedBan on the proxy for this.
+  # Excluded are players in ExemptPlayers and, if a permission plugin can tell for players
+  # who are not online (Vault, LuckPerms or CloudNet-CloudPerms), the permission ab.ban.exempt.
+  AutoBan:
+    Enabled: false
+    Reason: "Ban evasion (alt of %ALT%)"

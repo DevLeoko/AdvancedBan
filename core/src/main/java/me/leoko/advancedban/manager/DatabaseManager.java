@@ -57,16 +57,23 @@ public class DatabaseManager {
 
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT);
         executeStatement(SQLQuery.CREATE_TABLE_PUNISHMENT_HISTORY);
+        executeStatement(SQLQuery.CREATE_TABLE_LOGIN_HISTORY);
+        executeStatement(SQLQuery.CREATE_INDEX_LOGIN_HISTORY_IP);
     }
 
     /**
      * Shuts down the HSQLDB if used.
      */
     public void shutdown() {
+        // The data source does not exist if the initial connection failed
+        if (dataSource == null) {
+            return;
+        }
+
         if (!useMySQL) {
             try(Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")){
                 statement.execute();
-            }catch (SQLException | NullPointerException exc){
+            }catch (SQLException exc){
                 Universal.get().log("An unexpected error has occurred turning off the database");
                 Universal.get().debugException(exc);
             }
@@ -146,7 +153,7 @@ public class DatabaseManager {
      * @return whether there is a valid connection
      */
     public boolean isConnectionValid() {
-        return dataSource.isRunning();
+        return dataSource != null && dataSource.isRunning();
     }
 
     /**

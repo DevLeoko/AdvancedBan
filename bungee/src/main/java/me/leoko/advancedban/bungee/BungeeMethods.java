@@ -1,10 +1,5 @@
 package me.leoko.advancedban.bungee;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -12,6 +7,7 @@ import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
 import me.leoko.advancedban.bungee.utils.CloudNetCloudPermsOfflineUser;
 import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
+import me.leoko.advancedban.bungee.utils.RedisBungeeHook;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -22,18 +18,18 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +40,8 @@ import java.util.function.Function;
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
  */
 public class BungeeMethods implements MethodInterface {
+
+    private static final int BSTATS_PLUGIN_ID = 1226;
 
     private final File configFile = new File(getDataFolder(), "config.yml");
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
@@ -105,34 +103,12 @@ public class BungeeMethods implements MethodInterface {
     }
 
     @Override
-    public String getFromUrlJson(String url, String key) {
-        try {
-            HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
-            request.connect();
-
-            JsonParser jp = new JsonParser();
-            JsonObject json = (JsonObject) jp.parse(new InputStreamReader(request.getInputStream()));
-
-            String[] keys = key.split("\\|");
-            for (int i = 0; i < keys.length - 1; i++) {
-                json = json.getAsJsonObject(keys[i]);
-            }
-
-            return json.get(keys[keys.length - 1]).toString().replaceAll("\"", "");
-
-        } catch (Exception exc) {
-            return null;
-        }
-    }
-
-    @Override
     public String getVersion() {
         return getPlugin().getDescription().getVersion();
     }
 
     @Override
     public String[] getKeys(Object file, String path) {
-        //TODO not sure if it returns all keys or just the first :/
         return ((Configuration) file).getSection(path).getKeys().toArray(new String[0]);
     }
 
@@ -153,8 +129,8 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void setupMetrics() {
-        Metrics metrics = new Metrics(getPlugin());
-        metrics.addCustomChart(new Metrics.SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
+        Metrics metrics = new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
+        metrics.addCustomChart(new SimplePie("MySQL", () -> DatabaseManager.get().isUseMySQL() ? "yes" : "no"));
     }
 
     @Override
@@ -182,10 +158,9 @@ public class BungeeMethods implements MethodInterface {
         ProxyServer.getInstance().getPluginManager().registerCommand(getPlugin(), new CommandReceiverBungee(cmd, permission));
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void sendMessage(Object player, String msg) {
-        ((CommandSender) player).sendMessage(msg);
+        ((CommandSender) player).sendMessage(TextComponent.fromLegacyText(msg));
     }
 
     @Override
@@ -204,18 +179,17 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public boolean isOnline(String name) {
-        try {
-            if (Universal.isRedis()) {
-                for (String str : RedisBungee.getApi().getHumanPlayersOnline()) {
-                    if (str.equalsIgnoreCase(name)) {
-                        return RedisBungee.getApi().getPlayerIp(RedisBungee.getApi().getUuidFromName(str)) != null;
-                    }
+        if (getPlayer(name) != null) {
+            return true;
+        }
+        if (Universal.isRedis()) {
+            for (String str : RedisBungeeHook.getApi().getHumanPlayersOnline()) {
+                if (str.equalsIgnoreCase(name)) {
+                    return true;
                 }
             }
-            return getPlayer(name).getAddress() != null;
-        } catch (NullPointerException exc) {
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -226,12 +200,12 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if(BungeeMain.getCloudSupport() != null){
-            BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
-        }else if (Universal.isRedis()) {
-            RedisBungee.getApi().sendChannelMessage("advancedban:main", "kick " + player + " " + reason);
-        } else {
-            getPlayer(player).disconnect(TextComponent.fromLegacyText(reason));
+        ProxiedPlayer target = getPlayer(player);
+        if (target != null) {
+            target.disconnect(TextComponent.fromLegacyText(reason));
+        } else if (Universal.isRedis()) {
+            // The player might be connected to another proxy
+            RedisBungeeHook.getApi().sendChannelMessage("advancedban:main", "kick " + player + " " + reason);
         }
     }
 
@@ -272,12 +246,26 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public String getName(String uuid) {
-        return ProxyServer.getInstance().getPlayer(UUID.fromString(uuid)).getName();
+        UUID parsedUuid = UUIDManager.get().fromString(uuid);
+        ProxiedPlayer player = parsedUuid == null ? null : ProxyServer.getInstance().getPlayer(parsedUuid);
+        return player == null ? null : player.getName();
     }
 
     @Override
     public String getIP(Object player) {
-        return ((ProxiedPlayer) player).getAddress().getHostName();
+        return getIP((Connection) player);
+    }
+
+    /**
+     * Get the ip of a connection.
+     *
+     * @param connection the connection
+     * @return the ip or <code>null</code> if it's not connected through an ip address (e.g. a unix domain socket)
+     */
+    public static String getIP(Connection connection) {
+        return connection.getSocketAddress() instanceof InetSocketAddress
+                ? ((InetSocketAddress) connection.getSocketAddress()).getAddress().getHostAddress()
+                : null;
     }
 
     @Override
@@ -323,26 +311,6 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public Object getMySQLFile() {
         return mysql;
-    }
-
-    @Override
-    public String parseJSON(InputStreamReader json, String key) {
-        JsonElement element = new JsonParser().parse(json);
-        if (element instanceof JsonNull) {
-            return null;
-        }
-        JsonElement obj = ((JsonObject) element).get(key);
-        return obj != null ? obj.toString().replaceAll("\"", "") : null;
-    }
-
-    @Override
-    public String parseJSON(String json, String key) {
-        JsonElement element = new JsonParser().parse(json);
-        if (element instanceof JsonNull) {
-            return null;
-        }
-        JsonElement obj = ((JsonObject) element).get(key);
-        return obj != null ? obj.toString().replaceAll("\"", "") : null;
     }
 
     @Override
@@ -418,7 +386,7 @@ public class BungeeMethods implements MethodInterface {
     @Override
     public void notify(String perm, List<String> notification) {
         if (Universal.isRedis()) {
-            notification.forEach((str) -> RedisBungee.getApi().sendChannelMessage("advancedban:main", "notification " + perm + " " + str));
+            notification.forEach((str) -> RedisBungeeHook.getApi().sendChannelMessage("advancedban:main", "notification " + perm + " " + str));
         } else {
             ProxyServer.getInstance().getPlayers()
                     .stream()

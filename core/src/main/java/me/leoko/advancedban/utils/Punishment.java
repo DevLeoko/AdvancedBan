@@ -13,13 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
  */
 public class Punishment {
 
-    private static final MethodInterface mi = Universal.get().getMethods();
     private final String name, uuid, operator, calculation;
     private final long start, end;
     private final PunishmentType type;
@@ -39,6 +39,10 @@ public class Punishment {
         this.id = id;
     }
 
+    private static MethodInterface mi() {
+        return Universal.get().getMethods();
+    }
+
     public static void create(String name, String target, String reason, String operator, PunishmentType type, Long end,
                               String calculation, boolean silent) {
         new Punishment(name, target, reason, operator, end == -1 ? type.getPermanent() : type,
@@ -47,7 +51,7 @@ public class Punishment {
     }
 
     public String getReason() {
-        return (reason == null ? mi.getString(mi.getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
+        return (reason == null ? mi().getString(mi().getConfig(), "DefaultReason", "none") : reason).replaceAll("'", "");
     }
 
     public String getHexId() {
@@ -55,7 +59,7 @@ public class Punishment {
     }
 
     public String getDate(long date) {
-        SimpleDateFormat format = new SimpleDateFormat(mi.getString(mi.getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
+        SimpleDateFormat format = new SimpleDateFormat(mi().getString(mi().getConfig(), "DateFormat", "dd.MM.yyyy-HH:mm"));
         return format.format(new Date(date));
     }
 
@@ -84,6 +88,10 @@ public class Punishment {
             try {
                 DatabaseManager.get().executeStatement(SQLQuery.INSERT_PUNISHMENT, getName(), getUuid(), getReason(), getOperator(), getType().name(), getStart(), getEnd(), getCalculation());
                 try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_EXACT_PUNISHMENT, getUuid(), getStart(), getType().name())) {
+                    // It can't be announced or enforced as nothing got saved, and it could never be revoked again
+                    if (rs == null) {
+                        throw new IllegalStateException("The database is not available, failed to save: " + this);
+                    }
                     if (rs.next()) {
                         id = rs.getInt("id");
                     } else {
@@ -100,35 +108,42 @@ public class Punishment {
             announce(cWarnings);
         }
 
-        if (mi.isOnline(getName())) {
-            final Object p = mi.getPlayer(getName());
+        if (mi().isOnline(getName())) {
+            // Can be null if the player is connected to another proxy
+            final Object p = mi().getPlayer(getName());
 
             if (getType().getBasic() == PunishmentType.BAN || getType() == PunishmentType.KICK) {
-                mi.runSync(() -> mi.kickPlayer(getName(), getLayoutBSN()));
+                mi().runSync(() -> mi().kickPlayer(getName(), getLayoutBSN()));
             } else {
-                if (getType().getBasic() != PunishmentType.NOTE)
+                if (getType().getBasic() != PunishmentType.NOTE && p != null)
                     for (String str : getLayout()) {
-                        mi.sendMessage(p, str);
+                        mi().sendMessage(p, str);
                     }
-                PunishmentManager.get().getLoadedPunishments(false).add(this);
             }
         }
 
-        PunishmentManager.get().getLoadedHistory().add(this);
+        // The cache only knows about players it has loaded. Adding anything else would never get discarded
+        // and would be duplicated by the database entry once the player connects.
+        if (PunishmentManager.get().isCached(getUuid())) {
+            if (getType() != PunishmentType.KICK) {
+                PunishmentManager.get().getLoadedPunishments(false).add(this);
+            }
+            PunishmentManager.get().getLoadedHistory().add(this);
+        }
 
-        mi.callPunishmentEvent(this);
+        mi().callPunishmentEvent(this);
 
         if (getType().getBasic() == PunishmentType.WARNING) {
             String cmd = null;
             for (int i = 1; i <= cWarnings; i++) {
-                if (mi.contains(mi.getConfig(), "WarnActions." + i)) {
-                    cmd = mi.getString(mi.getConfig(), "WarnActions." + i);
+                if (mi().contains(mi().getConfig(), "WarnActions." + i)) {
+                    cmd = mi().getString(mi().getConfig(), "WarnActions." + i);
                 }
             }
             if (cmd != null) {
-                final String finalCmd = cmd.replaceAll("%PLAYER%", getName()).replaceAll("%COUNT%", cWarnings + "").replaceAll("%REASON%", getReason());
-                mi.runSync(() -> {
-                    mi.executeCommand(finalCmd);
+                final String finalCmd = cmd.replace("%PLAYER%", getName()).replace("%COUNT%", cWarnings + "").replace("%REASON%", getReason());
+                mi().runSync(() -> {
+                    mi().executeCommand(finalCmd);
                     Universal.get().log("Executing command: " + finalCmd);
                 });
             }
@@ -144,10 +159,10 @@ public class Punishment {
     }
 
     private void announce(int cWarnings) {
-        List<String> notification = MessageManager.getLayout(mi.getMessages(),
+        List<String> notification = MessageManager.getLayout(mi().getMessages(),
                 getType().getName() + ".Notification",
                 "OPERATOR", getOperator(),
-                "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
+                "PREFIX", mi().getBoolean(mi().getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(true),
                 "REASON", getReason(),
                 "NAME", getName(),
@@ -156,7 +171,7 @@ public class Punishment {
                 "DATE", getDate(start),
                 "COUNT", cWarnings + "");
 
-        mi.notify("ab.notify." + getType().getName(), notification);
+        mi().notify("ab.notify." + getType().getName(), notification);
     }
 
     public void delete() {
@@ -184,23 +199,23 @@ public class Punishment {
         if (who != null) {
             String message = MessageManager.getMessage("Un" + getType().getBasic().getConfSection("Notification"),
                     true, "OPERATOR", who, "NAME", getName());
-            mi.notify("ab.undoNotify." + getType().getBasic().getName(), Collections.singletonList(message));
+            mi().notify("ab.undoNotify." + getType().getBasic().getName(), Collections.singletonList(message));
 
             Universal.get().debug(who + " is deleting a punishment");
         }
 
         Universal.get().debug("Deleted punishment " + getId() + " from " + getName() + " punishment reason: " + getReason());
-        mi.callRevokePunishmentEvent(this, massClear);
+        mi().callRevokePunishmentEvent(this, massClear);
     }
 
     public List<String> getLayout() {
         boolean isLayout = getReason().startsWith("@") || getReason().startsWith("~");
 
         return MessageManager.getLayout(
-                isLayout ? mi.getLayouts() : mi.getMessages(),
+                isLayout ? mi().getLayouts() : mi().getMessages(),
                 isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getName() + ".Layout",
                 "OPERATOR", getOperator(),
-                "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
+                "PREFIX", mi().getBoolean(mi().getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
                 "REASON", isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason(),
                 "HEXID", getHexId(),
@@ -247,11 +262,7 @@ public class Punishment {
     }
 
     public String getLayoutBSN() {
-        StringBuilder msg = new StringBuilder();
-        for (String str : getLayout()) {
-            msg.append("\n").append(str);
-        }
-        return msg.substring(1);
+        return String.join("\n", getLayout());
     }
 
     public boolean isExpired() {
@@ -288,6 +299,27 @@ public class Punishment {
 
     public int getId() {
         return this.id;
+    }
+
+    /**
+     * Two instances are the same punishment if they belong to the same target, have the same type and have been
+     * created at the same time. The id can not be used here as it differs between the punishment and history table.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Punishment)) {
+            return false;
+        }
+        Punishment punishment = (Punishment) other;
+        return start == punishment.start && type == punishment.type && Objects.equals(uuid, punishment.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, start, type);
     }
 
     public String toString() {

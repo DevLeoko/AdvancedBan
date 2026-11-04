@@ -5,10 +5,13 @@ import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -17,7 +20,22 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class TestMethods implements MethodInterface {
 	private final File dataFolder;
-	
+
+	// Allows tests to set the scene and to look at the outcome
+	final Set<String> onlinePlayers = new HashSet<>();
+	final List<String> exemptPlayers = new ArrayList<>();
+	final Map<String, List<String>> layouts = new HashMap<>();
+	final List<String> sentMessages = new ArrayList<>();
+	final List<String> notifications = new ArrayList<>();
+	final List<String> kickedPlayers = new ArrayList<>();
+	final List<String> executedCommands = new ArrayList<>();
+	final Map<String, Boolean> booleans = new HashMap<>();
+	final Set<String> offlinePermissions = new HashSet<>();
+	boolean unitTesting = true;
+	boolean onlineMode = false;
+	boolean brokenMessages = false;
+	int loadFilesCalls = 0;
+
     public TestMethods(File dataFolder){
     	this.dataFolder = Objects.requireNonNull(dataFolder);
     }
@@ -25,12 +43,7 @@ public class TestMethods implements MethodInterface {
     @Override
     public void loadFiles() {
         //No files are setup
-    }
-
-    @Override
-    public String getFromUrlJson(String url, String key) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #1");
-        return null;
+        loadFilesCalls++;
     }
 
     @Override
@@ -40,8 +53,12 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String[] getKeys(Object file, String path) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #2");
-        return new String[0];
+        // e.g. "Ladder" with the entry "Ladder.Spam.Steps" has the key "Spam"
+        return layouts.keySet().stream()
+                .filter(key -> key.startsWith(path + "."))
+                .map(key -> key.substring(path.length() + 1).split("\\.")[0])
+                .distinct()
+                .toArray(String[]::new);
     }
 
     @Override
@@ -51,12 +68,14 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public Object getMessages() {
+        if (brokenMessages) {
+            throw new IllegalStateException("Broken messages");
+        }
         return null;
     }
 
     @Override
     public Object getLayouts() {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #5");
         return null;
     }
 
@@ -94,6 +113,7 @@ public class TestMethods implements MethodInterface {
     @Override
     public void sendMessage(Object player, String msg) {
         System.out.println("Message: "+player+" -> "+msg);
+        sentMessages.add(msg);
     }
 
     @Override
@@ -124,29 +144,28 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public boolean hasPerms(Object player, String perms) {
-        return true;
+        // Only the player executing the commands has permissions, punished players do not
+        return !onlinePlayers.contains(player);
     }
 
     @Override
     public Permissionable getOfflinePermissionPlayer(String name) {
-        return permission -> false;
+        return permission -> offlinePermissions.contains(name + ":" + permission);
     }
 
     @Override
     public boolean isOnline(String name) {
-        return false;
+        return onlinePlayers.contains(name.toLowerCase());
     }
 
     @Override
     public Object getPlayer(String name) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #10");
-        return null;
+        return onlinePlayers.contains(name.toLowerCase()) ? name.toLowerCase() : null;
     }
 
     @Override
     public void kickPlayer(String player, String reason) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #11");
-
+        kickedPlayers.add(player.toLowerCase());
     }
 
     @Override
@@ -176,7 +195,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public void executeCommand(String cmd) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #17");
+        executedCommands.add(cmd);
     }
 
     @Override
@@ -198,18 +217,6 @@ public class TestMethods implements MethodInterface {
     }
 
     @Override
-    public String parseJSON(InputStreamReader json, String key) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #23");
-        return null;
-    }
-
-    @Override
-    public String parseJSON(String json, String key) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #24");
-        return null;
-    }
-
-    @Override
     public Boolean getBoolean(Object file, String path) {
         fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #25");
         return null;
@@ -217,7 +224,8 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public String getString(Object file, String path) {
-        return path;
+        List<String> layout = layouts.get(path);
+        return layout == null ? path : layout.get(0);
     }
 
     @Override
@@ -234,7 +242,10 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public List<String> getStringList(Object file, String path) {
-        return new ArrayList<>();
+        if (path.equals("ExemptPlayers")) {
+            return exemptPlayers;
+        }
+        return layouts.getOrDefault(path, new ArrayList<>());
     }
 
     @Override
@@ -245,12 +256,13 @@ public class TestMethods implements MethodInterface {
 
         if(path.equals("Debug")) return true;
 
-        return def;
+        return booleans.getOrDefault(path, def);
     }
 
     @Override
     public String getString(Object file, String path, String def) {
-        return def;
+        List<String> layout = layouts.get(path);
+        return layout == null ? def : layout.get(0);
     }
 
     @Override
@@ -265,7 +277,8 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public boolean contains(Object file, String path) {
-        return true;
+        // Layouts only exist if a test has defined them, everything else claims to be there
+        return !path.startsWith("Message.") || layouts.containsKey(path);
     }
 
     @Override
@@ -286,12 +299,13 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public boolean isOnlineMode() {
-        return false;
+        return onlineMode;
     }
 
     @Override
     public void notify(String perm, List<String> notification) {
         notification.forEach(System.out::println);
+        notifications.addAll(notification);
     }
 
     @Override
@@ -301,6 +315,6 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public boolean isUnitTesting() {
-        return true;
+        return unitTesting;
     }
 }

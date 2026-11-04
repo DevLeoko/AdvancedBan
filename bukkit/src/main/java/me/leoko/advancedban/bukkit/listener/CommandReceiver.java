@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 23.07.2016.
@@ -19,7 +20,11 @@ public class CommandReceiver implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
     	if (strings.length > 0) {
-    		strings[0] = (Bukkit.getPlayer(strings[0]) != null ? Bukkit.getPlayer(strings[0]).getName() : strings[0]);
+    		// Only an exact match: this argument could be another player's name, an ID, a page or a keyword like "clear"
+    		Player player = Bukkit.getPlayerExact(strings[0]);
+    		if (player != null) {
+    			strings[0] = player.getName();
+    		}
     	}
         CommandManager.get().onCommand(commandSender, command.getName(), strings);
         return true;

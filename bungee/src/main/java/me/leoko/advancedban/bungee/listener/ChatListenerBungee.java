@@ -15,7 +15,7 @@ public class ChatListenerBungee implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (!(event.getSender() instanceof ProxiedPlayer)) {
+        if (event.isCancelled() || !(event.getSender() instanceof ProxiedPlayer)) {
             return;
         }
         if (!event.isCommand()) {
@@ -31,11 +31,16 @@ public class ChatListenerBungee implements Listener {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
+        // The cursor is plain chat input unless it starts with a slash
+        if (!event.getCursor().startsWith("/")) {
+            return;
+        }
+
         final String commandName = event.getCursor().split(" ")[0];
         if (commandName.length() > 1 && event.getCursor().length() > commandName.length()) {
             final Command command = Command.getByName(commandName.substring(1));
-            if (command != null && event.getSender() instanceof ProxiedPlayer) {
-                if (command.getPermission() == null || Universal.get().getMethods().hasPerms(event.getSender(), command.getPermission())) {
+            if (command != null && command.getTabCompleter() != null && event.getSender() instanceof ProxiedPlayer) {
+                if (command.getPermission() == null || Universal.get().hasPerms(event.getSender(), command.getPermission())) {
                     final String[] args = event.getCursor().substring(commandName.length() + 1).split(" ", -1);
                     event.getSuggestions().addAll(command.getTabCompleter().onTabComplete(event.getSender(), args));
                 }

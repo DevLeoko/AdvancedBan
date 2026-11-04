@@ -9,6 +9,7 @@ import me.leoko.advancedban.utils.SQLQuery;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Punishment Manager handles the punishments. It loads and parses them from the database, caches them
@@ -17,8 +18,9 @@ import java.util.*;
 public class PunishmentManager {
 
     private static PunishmentManager instance = null;
-    private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
-    private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
+    // These get iterated while chat & login threads modify them, which a synchronizedSet does not allow
+    private final Set<Punishment> punishments = ConcurrentHashMap.newKeySet();
+    private final Set<Punishment> history = ConcurrentHashMap.newKeySet();
     private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
     
     private Universal universal() {
@@ -136,7 +138,7 @@ public class PunishmentManager {
             }
         } else {
             try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
-                while (rs.next()) {
+                while (rs != null && rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
                     if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
                         ptList.add(punishment);
@@ -162,13 +164,11 @@ public class PunishmentManager {
     public List<Punishment> getPunishments(SQLQuery sqlQuery, Object... parameters) {
         List<Punishment> ptList = new ArrayList<>();
 
-        ResultSet rs = DatabaseManager.get().executeResultStatement(sqlQuery, parameters);
-        try {
-            while (rs.next()) {
+        try (ResultSet rs = DatabaseManager.get().executeResultStatement(sqlQuery, parameters)) {
+            while (rs != null && rs.next()) {
                 Punishment punishment = getPunishmentFromResultSet(rs);
                 ptList.add(punishment);
             }
-            rs.close();
         } catch (SQLException ex) {
         	Universal universal = universal();
             universal.log("An error has occurred executing a query in the database.");
@@ -193,7 +193,7 @@ public class PunishmentManager {
 
 
         try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_PUNISHMENT_BY_ID, id)) {
-            if (rs.next()) {
+            if (rs != null && rs.next()) {
                 final Punishment punishment = getPunishmentFromResultSet(rs);
                 if (!punishment.isExpired())
                     return punishment;
@@ -336,7 +336,7 @@ public class PunishmentManager {
         int i = 0;
         try (ResultSet resultSet = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY_BY_CALCULATION, uuid, layout)) {
 
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 i++;
             }
 

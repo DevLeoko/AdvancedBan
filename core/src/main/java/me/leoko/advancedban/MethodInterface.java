@@ -1,11 +1,20 @@
 package me.leoko.advancedban;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import me.leoko.advancedban.utils.Permissionable;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -22,9 +31,29 @@ public interface MethodInterface {
      *
      * @param url the url
      * @param key the key
-     * @return the value corresponding to the key
+     * @return the value corresponding to the key or <code>null</code> if it could not be retrieved
      */
-    String getFromUrlJson(String url, String key);
+    default String getFromUrlJson(String url, String key) {
+        try {
+            HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
+            request.setConnectTimeout(5000);
+            request.setReadTimeout(5000);
+
+            try (Reader reader = new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8)) {
+                JsonObject json = new Gson().fromJson(reader, JsonObject.class);
+
+                String[] keys = key.split("\\|");
+                for (int i = 0; i < keys.length - 1; i++) {
+                    json = json.getAsJsonObject(keys[i]);
+                }
+
+                JsonElement value = json.get(keys[keys.length - 1]);
+                return value == null || value.isJsonNull() ? null : value.getAsString();
+            }
+        } catch (Exception exc) {
+            return null;
+        }
+    }
 
     /**
      * Get the advanced ban version.
@@ -257,18 +286,34 @@ public interface MethodInterface {
      *
      * @param json the json
      * @param key  the key
-     * @return the string
+     * @return the value or <code>null</code> if the json is invalid or has no value for the key
      */
-    String parseJSON(InputStreamReader json, String key);
+    default String parseJSON(InputStreamReader json, String key) {
+        try {
+            JsonObject object = new Gson().fromJson(json, JsonObject.class);
+            JsonElement value = object == null ? null : object.get(key);
+            return value == null || value.isJsonNull() ? null : value.getAsString();
+        } catch (JsonParseException | IllegalStateException | UnsupportedOperationException exc) {
+            return null;
+        }
+    }
 
     /**
      * Parse json string and retrieve value at given key.
      *
      * @param json the json
      * @param key  the key
-     * @return the string
+     * @return the value or <code>null</code> if the json is invalid or has no value for the key
      */
-    String parseJSON(String json, String key);
+    default String parseJSON(String json, String key) {
+        try {
+            JsonObject object = new Gson().fromJson(new StringReader(json), JsonObject.class);
+            JsonElement value = object == null ? null : object.get(key);
+            return value == null || value.isJsonNull() ? null : value.getAsString();
+        } catch (JsonParseException | IllegalStateException | UnsupportedOperationException exc) {
+            return null;
+        }
+    }
 
     /**
      * Get boolean at the given path from the given file.

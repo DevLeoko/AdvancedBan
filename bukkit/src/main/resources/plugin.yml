@@ -2,10 +2,14 @@ name: AdvancedBan
 version: ${project.version}
 main: ${project.groupId}.bukkit.BukkitMain
 author: Leoko
-softdepend: [Vault]
+softdepend: [Vault, PlaceholderAPI]
 api-version: 1.13
 
 commands:
+  punish:
+    description: Punish a user according to the configured steps of an offence
+  alts:
+    description: List the accounts sharing an IP with a user
   AdvancedBan:
     description: Information about the Plugin
   ban:
@@ -33,11 +37,11 @@ commands:
   banlist:
     description: See all punishments
   history:
-    description: See a user''s history
+    description: See a user's history
   warns:
-    description: See your or a user''s warns
+    description: See your or a user's warns
   notes:
-    description: See your or a user''s notes
+    description: See your or a user's notes
   check:
     description: Get all information about a user
   systemPrefs:
